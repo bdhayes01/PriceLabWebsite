@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Person List</title>
+        <script>
+        // Function to search and navigate with query parameter
+        function searchPerson() {
+            const query = document.getElementById('search').value;
+            if (query) {
+                window.location.href = `?q=${query}`;
+            }
+        }
+
+        // Function to render the list of persons dynamically from Django template data
+        function renderPersonList() {
+            const persons = JSON.parse('{{ persons_json|escapejs }}');  // Rendered from Django context
+            const personList = document.getElementById('person-list');
+
+            if (persons.length > 0) {
+                personList.innerHTML = '';  // Clear previous results
+                persons.forEach(function(person) {
+                    const listItem = `<li>${person.name} - ${person.age} years old</li>`;
+                    personList.innerHTML += listItem;
+                });
+            } else {
+                personList.innerHTML = '<li>No results found.</li>';
+            }
+        }
+
+        // Execute renderPersonList function on page load to populate the list
+        window.onload = function() {
+            renderPersonList();
+        };
+    </script>
+</head>
+<body>
+    <h1>People</h1>
+
+    <!-- Search Input -->
+    <input type="text" id="search" placeholder="Search by name..." value="{{ query }}">
+    <button onclick="searchPerson()">Search</button>
+
+    <!-- Container for displaying the person list dynamically with JavaScript -->
+    <ul id="person-list">
+        <!-- This list will be dynamically populated by JavaScript -->
+    </ul>
+
+
+</body>
+</html>
