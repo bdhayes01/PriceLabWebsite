@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Person List</title>
+    <title>Sequence List</title>
         <script>
         // Function to search and navigate with query parameter
-        function searchPerson() {
+        function searchSequence() {
             const query = document.getElementById('search').value;
             if (query) {
                 window.location.href = `?q=${query}`;
@@ -12,24 +12,24 @@
         }
 
         // Function to render the list of persons dynamically from Django template data
-        function renderPersonList() {
-            const persons = JSON.parse('{{ persons_json|escapejs }}');  // Rendered from Django context
-            const personList = document.getElementById('person-list');
+        function renderSequenceList() {
+            const sequences = JSON.parse('{{ sequence_json|escapejs }}');  // Rendered from Django context
+            const seqList = document.getElementById('sequence-list');
 
-            if (persons.length > 0) {
-                personList.innerHTML = '';  // Clear previous results
-                persons.forEach(function(person) {
-                    const listItem = `<li>${person.name} - ${person.age} years old</li>`;
-                    personList.innerHTML += listItem;
+            if (sequences.length > 0) {
+                seqList.innerHTML = '';  // Clear previous results
+                sequences.forEach(function(sequence) {
+                    const listItem = `<li>${sequence.protein} is the protein, ${sequence.individual} is the individual</li>`;
+                    seqList.innerHTML += listItem;
                 });
             } else {
-                personList.innerHTML = '<li>No results found.</li>';
+                seqList.innerHTML = '<li>No results found.</li>';
             }
         }
 
         // Execute renderPersonList function on page load to populate the list
         window.onload = function() {
-            renderPersonList();
+            renderSequenceList();
         };
     </script>
 </head>
@@ -38,10 +38,10 @@
 
     <!-- Search Input -->
     <input type="text" id="search" placeholder="Search by name..." value="{{ query }}">
-    <button onclick="searchPerson()">Search</button>
+    <button onclick="searchSequence()">Search</button>
 
     <!-- Container for displaying the person list dynamically with JavaScript -->
-    <ul id="person-list">
+    <ul id="sequence-list">
         <!-- This list will be dynamically populated by JavaScript -->
     </ul>
 

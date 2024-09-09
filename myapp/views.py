@@ -1,17 +1,16 @@
 from django.shortcuts import render
-from .models import Person
+from .models import Sequence
 import json
 
 
 def home(request):
     query = request.GET.get('q', '')
     if query:
-        persons = Person.objects.filter(name__icontains=query)
+        sequences = Sequence.objects.filter(protein__icontains=query)
     else:
-        persons = Person.objects.all()
+        sequences = Sequence.objects.all()
 
-    persons_json = json.dumps(
-        [{'name': person.name, 'age': person.age} for person in persons])
+    sequence_json = json.dumps(
+        [{'individual': seq.individual, 'protein': seq.protein} for seq in sequences])
 
-    return render(request, 'home.html', {'persons_json': persons_json, 'query': query})
-    # return render(request, 'home.html', {'people': people, 'query': query})
+    return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
