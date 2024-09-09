@@ -11,6 +11,6 @@ def home(request):
         sequences = Sequence.objects.all()
 
     sequence_json = json.dumps(
-        [{'individual': seq.individual, 'protein': seq.protein} for seq in sequences])
+        [{'individual': seq.individual, 'protein': seq.protein, 'aa_sequence': seq.aa_sequence} for seq in sequences])
 
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
