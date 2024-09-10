@@ -20,7 +20,7 @@
                 seqList.innerHTML = '';  // Clear previous results
                 sequences.forEach(function(sequence) {
                     const listItem = `<li>${sequence.Accession} is the Accession number,
-${sequence.Sequence} is the Sequence</li>`;
+${sequence.Variants} are the Variants</li>`;
                     seqList.innerHTML += listItem;
                 });
             } else {
@@ -35,16 +35,22 @@ ${sequence.Sequence} is the Sequence</li>`;
     </script>
 </head>
 <body>
-    <h1>People</h1>
+    <h1>Enter Accession Number</h1>
 
     <!-- Search Input -->
-    <input type="text" id="search" placeholder="Search by name..." value="{{ query }}">
+    <input type="text" id="search" placeholder="Search by Accession number..." value="{{ query }}">
     <button onclick="searchSequence()">Search</button>
 
     <!-- Container for displaying the person list dynamically with JavaScript -->
     <ul id="sequence-list">
         <!-- This list will be dynamically populated by JavaScript -->
     </ul>
+
+    <!-- Button to redirect to the upload CSV page -->
+    <br><br>
+    <a href="{% url 'upload_csv' %}">
+        <button>Go to Upload CSV Page</button>
+    </a>
 
 
 </body>

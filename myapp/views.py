@@ -5,6 +5,7 @@ from .models import Sequence
 import os
 import json
 
+
 def upload_csv(request):
     if request.method == 'POST':
         # Check if the user has uploaded a file
@@ -53,9 +54,9 @@ def upload_csv(request):
 def home(request):
     query = request.GET.get('q', '')
     if query:
-        sequences = Sequence.objects.filter(protein__icontains=query)
+        sequences = Sequence.objects.filter(Accession__exact=query)
     else:
-        sequences = Sequence.objects.all()
+        sequences = Sequence.objects.none()
 
     sequence_json = json.dumps(
         [{'Individual': seq.Individual, 'Accession': seq.Accession, 'Sequence': seq.Sequence, 'Variants': seq.Variants}
