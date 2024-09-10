@@ -19,7 +19,8 @@
             if (sequences.length > 0) {
                 seqList.innerHTML = '';  // Clear previous results
                 sequences.forEach(function(sequence) {
-                    const listItem = `<li>${sequence.protein} is the protein, ${sequence.individual} is the individual</li>`;
+                    const listItem = `<li>${sequence.Accession} is the Accession number,
+${sequence.Sequence} is the Sequence</li>`;
                     seqList.innerHTML += listItem;
                 });
             } else {
