@@ -7,6 +7,7 @@ import json
 
 
 def upload_csv(request):
+    message = None  # Initialize message
     if request.method == 'POST':
         # Check if the user has uploaded a file
         if 'file' in request.FILES:
@@ -44,11 +45,11 @@ def upload_csv(request):
                     Variants=json_variants_str  # Defaults to empty dict if variants column doesn't exist
                 )
 
-            return HttpResponse("File uploaded and parsed successfully.")
+            message = "File uploaded and parsed successfully."  # Set success message
         else:
-            return HttpResponse("No file uploaded.")
+            message = "No file uploaded."
 
-    return render(request, 'upload_csv.html')
+    return render(request, 'upload_csv.html', {'message': message})
 
 
 def home(request):

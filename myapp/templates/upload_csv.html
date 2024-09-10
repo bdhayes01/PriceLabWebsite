@@ -6,6 +6,11 @@
 <body>
     <h2>Upload Excel File</h2>
 
+    <!-- Display success or error message -->
+    {% if message %}
+        <p style="color: green;">{{ message }}</p>
+    {% endif %}
+
     <!-- Form to upload the Excel file -->
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
