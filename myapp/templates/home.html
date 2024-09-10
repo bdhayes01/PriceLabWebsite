@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Sequence List</title>
-        <script>
+    <script>
         // Function to search and navigate with query parameter
         function searchSequence() {
             const query = document.getElementById('search').value;
@@ -33,6 +33,15 @@ ${sequence.Variants} are the Variants</li>`;
             renderSequenceList();
         };
     </script>
+    <style>
+        .normal {
+            color: black;
+        }
+
+        .variant {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1>Enter Accession Number</h1>
