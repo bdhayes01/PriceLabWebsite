@@ -2,8 +2,7 @@ import pandas as pd
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Sequence
-import os
-import json
+import os, re, json
 
 
 def upload_csv(request):
@@ -24,25 +23,16 @@ def upload_csv(request):
 
                 variants_str = row.get('Variants', '{}')
                 if isinstance(variants_str, str):
-                    try:
-                        variants_dict = eval(variants_str)
-                    except Exception as e:
-                        print(f"Error parsing string: {e}")
-                        variants_dict = {}
-
-                    # Convert dictionary keys to strings
-                    variants_dict_str_keys = {str(key): value for key, value in variants_dict.items()}
-
-                    # Convert back to JSON string with stringified keys
-                    json_variants_str = json.dumps(variants_dict_str_keys)
+                    variants = re.findall(r'\d+', variants_str)
+                    variants = [int(num) for num in variants]
                 else:
-                    json_variants_str = {}
+                    variants = []
 
                 Sequence.objects.create(
                     Individual=individual,
                     Accession=row['Accession'],
                     Sequence=row['Sequence'],
-                    Variants=json_variants_str  # Defaults to empty dict if variants column doesn't exist
+                    Variants=variants
                 )
 
             message = "File uploaded and parsed successfully."  # Set success message

@@ -11,7 +11,29 @@
             }
         }
 
-        // Function to render the list of persons dynamically from Django template data
+        // Function to create the heatmap for a sequence
+        function createHeatmap(sequence, variants) {
+            const sequenceContainer = document.createElement('p');
+            for (let i = 0; i < sequence.length; i++) {
+                const span = document.createElement('span');
+
+                // If the current index has a variant, highlight it
+                if (variants[i] !== undefined) {
+                    span.className = 'variant';   // Style as variant (red)
+                    span.innerHTML = sequence[i]; // Show the variant character at this position
+                } else {
+                    span.className = 'normal';    // Style as normal (black)
+                    span.innerHTML = sequence[i]; // Show the original sequence character
+                }
+                {#span.className = 'variant';  // Style as normal (black)#}
+                {#span.innerHTML = sequence[i]; // Show the original sequence character#}
+
+                sequenceContainer.appendChild(span);
+            }
+            return sequenceContainer;
+        }
+
+        // Function to render the list of sequences dynamically with heatmaps
         function renderSequenceList() {
             const sequences = JSON.parse('{{ sequence_json|escapejs }}');  // Rendered from Django context
             const seqList = document.getElementById('sequence-list');
@@ -19,16 +41,23 @@
             if (sequences.length > 0) {
                 seqList.innerHTML = '';  // Clear previous results
                 sequences.forEach(function(sequence) {
-                    const listItem = `<li>${sequence.Accession} is the Accession number,
-${sequence.Variants} are the Variants</li>`;
-                    seqList.innerHTML += listItem;
+                    // Create a header for each sequence
+                    const accessionHeader = document.createElement('h3');
+                    accessionHeader.textContent = `Accession: ${sequence.Accession}`;
+
+                    // Create a heatmap for the sequence
+                    const heatmap = createHeatmap(sequence.Sequence, sequence.Variants);
+
+                    // Add everything to the sequence list
+                    seqList.appendChild(accessionHeader);
+                    seqList.appendChild(heatmap);
                 });
             } else {
                 seqList.innerHTML = '<li>No results found.</li>';
             }
         }
 
-        // Execute renderPersonList function on page load to populate the list
+        // Execute renderSequenceList function on page load to populate the list
         window.onload = function() {
             renderSequenceList();
         };
@@ -50,7 +79,7 @@ ${sequence.Variants} are the Variants</li>`;
     <input type="text" id="search" placeholder="Search by Accession number..." value="{{ query }}">
     <button onclick="searchSequence()">Search</button>
 
-    <!-- Container for displaying the person list dynamically with JavaScript -->
+    <!-- Container for displaying the sequence list dynamically with JavaScript -->
     <ul id="sequence-list">
         <!-- This list will be dynamically populated by JavaScript -->
     </ul>
@@ -60,7 +89,6 @@ ${sequence.Variants} are the Variants</li>`;
     <a href="{% url 'upload_csv' %}">
         <button>Go to Upload CSV Page</button>
     </a>
-
 
 </body>
 </html>
