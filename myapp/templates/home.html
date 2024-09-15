@@ -12,15 +12,16 @@
         }
 
         // Function to create the heatmap for a sequence
-        function createHeatmap(sequence, variants) {
+        function createHeatmap(sequence, variants, nuc_vars) {
             const sequenceContainer = document.createElement('p');
             for (let i = 0; i < sequence.length; i++) {
                 const span = document.createElement('span');
 
                 // If the current index has a variant, highlight it
-                if (variants[i] !== undefined) {
+                if (variants.includes(i)) {
                     span.className = 'variant';   // Style as variant (red)
-                    span.innerHTML = sequence[i]; // Show the variant character at this position
+                    let idx = variants.indexOf(i);
+                    span.innerHTML = nuc_vars[idx]; // Show the variant character at this position
                 } else {
                     span.className = 'normal';    // Style as normal (black)
                     span.innerHTML = sequence[i]; // Show the original sequence character
@@ -46,7 +47,7 @@
                     accessionHeader.textContent = `Accession: ${sequence.Accession}`;
 
                     // Create a heatmap for the sequence
-                    const heatmap = createHeatmap(sequence.Sequence, sequence.Variants);
+                    const heatmap = createHeatmap(sequence.Sequence, sequence.Variants, sequence.Nucleotide_Variants);
 
                     // Add everything to the sequence list
                     seqList.appendChild(accessionHeader);

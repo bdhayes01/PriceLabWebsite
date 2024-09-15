@@ -10,32 +10,37 @@ def upload_csv(request):
     if request.method == 'POST':
         # Check if the user has uploaded a file
         if 'file' in request.FILES:
-            csv_file = request.FILES['file']
+            files = request.FILES.getlist('file')
+            for file in files:
+                # Parse the uploaded Excel file using pandas
+                df = pd.read_csv(file)
 
-            # Parse the uploaded Excel file using pandas
-            df = pd.read_csv(csv_file)
+                file_name = os.path.splitext(file.name)[0]
+                individual = file_name.split('-')[1]
 
-            file_name = os.path.splitext(csv_file.name)[0]
-            individual = file_name.split('-')[1]
+                # Assuming the Excel file has columns: 'individual', 'protein', 'aa_sequence', 'variants'
+                for _, row in df.iterrows():
 
-            # Assuming the Excel file has columns: 'individual', 'protein', 'aa_sequence', 'variants'
-            for _, row in df.iterrows():
+                    variants_str = row.get('Variants', '{}')
+                    if isinstance(variants_str, str):
+                        variants = re.findall(r'\d+', variants_str)
+                        variants = [int(num) for num in variants]
+                        nucleotide_variants = re.findall(r'[a-zA-Z]+', variants_str)
+                        #TODO: Ask Chad what to do if there is more than one nucleotide here.
+                        nucleotide_variants = [str(ch) for ch in nucleotide_variants]
+                    else:
+                        variants = []
+                        nucleotide_variants = []
 
-                variants_str = row.get('Variants', '{}')
-                if isinstance(variants_str, str):
-                    variants = re.findall(r'\d+', variants_str)
-                    variants = [int(num) for num in variants]
-                else:
-                    variants = []
+                    Sequence.objects.create(
+                        Individual=individual,
+                        Accession=row['Accession'],
+                        Sequence=row['Sequence'],
+                        Variants=variants,
+                        Nucleotide_Variants=nucleotide_variants
+                    )
 
-                Sequence.objects.create(
-                    Individual=individual,
-                    Accession=row['Accession'],
-                    Sequence=row['Sequence'],
-                    Variants=variants
-                )
-
-            message = "File uploaded and parsed successfully."  # Set success message
+            message = "File(s) uploaded and parsed successfully."  # Set success message
         else:
             message = "No file uploaded."
 
@@ -50,7 +55,9 @@ def home(request):
         sequences = Sequence.objects.none()
 
     sequence_json = json.dumps(
-        [{'Individual': seq.Individual, 'Accession': seq.Accession, 'Sequence': seq.Sequence, 'Variants': seq.Variants}
+        [{'Individual': seq.Individual, 'Accession': seq.Accession,
+          'Sequence': seq.Sequence, 'Variants': seq.Variants,
+          'Nucleotide_Variants': seq.Nucleotide_Variants}
          for seq in sequences])
 
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})

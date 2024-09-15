@@ -14,8 +14,8 @@
     <!-- Form to upload the Excel file -->
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="file" name="file" accept=".csv">
-        <button type="submit">Upload File</button>
+        <input type="file" name="file" accept=".csv" multiple>
+        <button type="submit">Upload</button>
     </form>
 
     <br><br>
