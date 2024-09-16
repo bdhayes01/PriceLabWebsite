@@ -12,22 +12,19 @@
         }
 
         // Function to create the heatmap for a sequence
-        function createHeatmap(sequence, variants, nuc_vars) {
+        function createHeatmap(sequence, variants) {
             const sequenceContainer = document.createElement('p');
             for (let i = 0; i < sequence.length; i++) {
                 const span = document.createElement('span');
 
                 // If the current index has a variant, highlight it
-                if (variants.includes(i)) {
+                if (i in variants) {
                     span.className = 'variant';   // Style as variant (red)
-                    let idx = variants.indexOf(i);
-                    span.innerHTML = nuc_vars[idx]; // Show the variant character at this position
+                    span.innerHTML = variants[i].join(""); // Show the variant character at this position
                 } else {
                     span.className = 'normal';    // Style as normal (black)
                     span.innerHTML = sequence[i]; // Show the original sequence character
                 }
-                {#span.className = 'variant';  // Style as normal (black)#}
-                {#span.innerHTML = sequence[i]; // Show the original sequence character#}
 
                 sequenceContainer.appendChild(span);
             }
@@ -43,14 +40,14 @@
                 seqList.innerHTML = '';  // Clear previous results
                 sequences.forEach(function(sequence) {
                     // Create a header for each sequence
-                    const accessionHeader = document.createElement('h3');
-                    accessionHeader.textContent = `Accession: ${sequence.Accession}`;
+                    const individual_id = document.createElement('h3');
+                    individual_id.textContent = `Individual: ${sequence.Individual}`;
 
                     // Create a heatmap for the sequence
-                    const heatmap = createHeatmap(sequence.Sequence, sequence.Variants, sequence.Nucleotide_Variants);
+                    const heatmap = createHeatmap(sequence.Sequence, sequence.Variants);
 
                     // Add everything to the sequence list
-                    seqList.appendChild(accessionHeader);
+                    seqList.appendChild(individual_id);
                     seqList.appendChild(heatmap);
                 });
             } else {

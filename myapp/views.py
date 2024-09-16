@@ -22,22 +22,28 @@ def upload_csv(request):
                 for _, row in df.iterrows():
 
                     variants_str = row.get('Variants', '{}')
+                    variants = {}
                     if isinstance(variants_str, str):
-                        variants = re.findall(r'\d+', variants_str)
-                        variants = [int(num) for num in variants]
-                        nucleotide_variants = re.findall(r'[a-zA-Z]+', variants_str)
-                        #TODO: Ask Chad what to do if there is more than one nucleotide here.
-                        nucleotide_variants = [str(ch) for ch in nucleotide_variants]
-                    else:
-                        variants = []
-                        nucleotide_variants = []
+                        if str(row['Accession']) == "O14791|APOL1_HUMAN":
+                            z = 0
+                        varis = variants_str.split('],')
+                        for i in range(len(varis)):
+                            integer_variants = re.findall(r'\d+', varis[i])[0]
+                            peptide_variants = re.findall(r'[a-zA-Z]+', varis[i])
+                            peptide_variants = [str(ch) for ch in peptide_variants]
+                            variants[integer_variants] = peptide_variants
+                        # variants = re.findall(r'\d+', variants_str)
+                        # variants = [int(num) for num in variants]
+                        # peptide_variants = re.findall(r'[a-zA-Z]+', variants_str)
+                        # TODO: Ask Chad what to do if there is more than one nucleotide here.
+                        # peptide_variants = [str(ch) for ch in peptide_variants]
+                        # variants = {int(variants[0]): peptide_variants}
 
                     Sequence.objects.create(
                         Individual=individual,
                         Accession=row['Accession'],
                         Sequence=row['Sequence'],
-                        Variants=variants,
-                        Nucleotide_Variants=nucleotide_variants
+                        Variants=variants
                     )
 
             message = "File(s) uploaded and parsed successfully."  # Set success message
@@ -56,8 +62,7 @@ def home(request):
 
     sequence_json = json.dumps(
         [{'Individual': seq.Individual, 'Accession': seq.Accession,
-          'Sequence': seq.Sequence, 'Variants': seq.Variants,
-          'Nucleotide_Variants': seq.Nucleotide_Variants}
+          'Sequence': seq.Sequence, 'Variants': seq.Variants}
          for seq in sequences])
 
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
