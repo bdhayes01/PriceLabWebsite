@@ -22,29 +22,22 @@ def upload_csv(request):
                 for _, row in df.iterrows():
 
                     variants_str = row.get('Variants', '{}')
-                    variants = {}
+                    variants = {individual: {}}
                     if isinstance(variants_str, str):
-                        if str(row['Accession']) == "O14791|APOL1_HUMAN":
-                            z = 0
                         varis = variants_str.split('],')
                         for i in range(len(varis)):
                             integer_variants = re.findall(r'\d+', varis[i])[0]
                             peptide_variants = re.findall(r'[a-zA-Z]+', varis[i])
                             peptide_variants = [str(ch) for ch in peptide_variants]
-                            variants[integer_variants] = peptide_variants
-                        # variants = re.findall(r'\d+', variants_str)
-                        # variants = [int(num) for num in variants]
-                        # peptide_variants = re.findall(r'[a-zA-Z]+', variants_str)
-                        # TODO: Ask Chad what to do if there is more than one nucleotide here.
-                        # peptide_variants = [str(ch) for ch in peptide_variants]
-                        # variants = {int(variants[0]): peptide_variants}
-
-                    Sequence.objects.create(
-                        Individual=individual,
+                            variants[individual][integer_variants] = peptide_variants
+                    sequence, created = Sequence.objects.get_or_create(
                         Accession=row['Accession'],
-                        Sequence=row['Sequence'],
-                        Variants=variants
-                    )
+                        defaults={'Variants': variants})
+
+                    if not created:
+                        sequence.Accession = row['Accession']
+                        sequence.Variants.update(variants)
+                        sequence.save()
 
             message = "File(s) uploaded and parsed successfully."  # Set success message
         else:
