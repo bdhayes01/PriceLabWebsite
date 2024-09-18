@@ -1,6 +1,6 @@
 import pandas as pd
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .models import Sequence
 import os, re, json
 
@@ -57,3 +57,7 @@ def home(request):
          for seq in sequences])
 
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
+
+def make_cohorts(request):
+    result_message = "Cohorts made successfully!"
+    return JsonResponse({'message': result_message})
