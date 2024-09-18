@@ -59,5 +59,25 @@ def home(request):
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
 
 def make_cohorts(request):
+    seqs = Sequence.objects.all()
+    for seq in seqs:
+        variants = dict(seq.Variants)
+        indivs = list(variants.keys())
+        indivs2 = list(variants.keys())
+        cohorts = []
+        for indiv in indivs:
+            for i in cohorts:
+                for j in i:
+                    if j == indiv:
+                        continue
+            temp = []
+            for ind in indivs2:
+                if variants[ind] == variants[indiv]:
+                    temp.append(ind)
+            for ind in temp:
+                indivs2.pop(indivs2.index(ind))
+            cohorts.append(temp)
+        seq.Cohorts = cohorts
+        seq.save()
     result_message = "Cohorts made successfully!"
     return JsonResponse({'message': result_message})
