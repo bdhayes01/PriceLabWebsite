@@ -35,7 +35,6 @@ def upload_csv(request):
                         defaults={'Variants': variants})
 
                     if not created:
-                        sequence.Accession = row['Accession']
                         sequence.Variants.update(variants)
                         sequence.save()
 
@@ -54,8 +53,7 @@ def home(request):
         sequences = Sequence.objects.none()
 
     sequence_json = json.dumps(
-        [{'Individual': seq.Individual, 'Accession': seq.Accession,
-          'Sequence': seq.Sequence, 'Variants': seq.Variants}
+        [{'Accession': seq.Accession, 'Variants': seq.Variants}
          for seq in sequences])
 
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
