@@ -53,7 +53,7 @@ def home(request):
         sequences = Sequence.objects.none()
 
     sequence_json = json.dumps(
-        [{'Accession': seq.Accession, 'Variants': seq.Variants}
+        [{'Accession': seq.Accession, 'Variants': seq.Variants, 'Cohorts': seq.Cohorts}
          for seq in sequences])
 
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
@@ -76,7 +76,9 @@ def make_cohorts(request):
                     temp.append(ind)
             for ind in temp:
                 indivs2.pop(indivs2.index(ind))
-            cohorts.append(temp)
+            if len(temp) > 0:
+                cohorts.append(temp)
+
         seq.Cohorts = cohorts
         seq.save()
     result_message = "Cohorts made successfully!"

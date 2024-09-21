@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,19 +13,25 @@
         }
 
         // Function to create the heatmap for a sequence
-        function createHeatmap(sequence, variants) {
+        function createHeatmap(cohorts, variants) {
             const sequenceContainer = document.createElement('p');
-            for (let i = 0; i < sequence.length; i++) {
+            {#const variantPositions = Object.keys(variants).map(Number);  // Cast positions to integers#}
+            for (let i = 0; i < cohorts.length; i++) {
                 const span = document.createElement('span');
-
-                // If the current index has a variant, highlight it
-                if (i in variants) {
-                    span.className = 'variant';   // Style as variant (red)
-                    span.innerHTML = variants[i].join(""); // Show the variant character at this position
-                } else {
-                    span.className = 'normal';    // Style as normal (black)
-                    span.innerHTML = sequence[i]; // Show the original sequence character
+                const individuals = document.createElement('h3');
+                for (let j = 0; j < cohorts[i].length; j++){
+                    individuals.textContent += cohorts[i][j];
                 }
+                span.className = 'normal';
+                span.innerHTML = variants[cohorts[i][0]];
+                // If the current index has a variant, highlight it
+                //if (variantPositions.includes(i)) {
+                //    span.className = 'variant';   // Style as variant (red)
+                //    span.innerHTML = variants[i].join(""); // Show the variant character at this position
+                //} else {
+                //    span.className = 'normal';    // Style as normal (black)
+                //    span.innerHTML = sequence[i]; // Show the original sequence character
+                //}
 
                 sequenceContainer.appendChild(span);
             }
@@ -40,14 +47,14 @@
                 seqList.innerHTML = '';  // Clear previous results
                 sequences.forEach(function(sequence) {
                     // Create a header for each sequence
-                    const individual_id = document.createElement('h3');
-                    individual_id.textContent = `Individual: ${sequence.Individual}`;
+                    {#const individual_id = document.createElement('h3');#}
+                    {#individual_id.textContent = `Individual: ${sequence.Individual}`;#}
 
                     // Create a heatmap for the sequence
-                    const heatmap = createHeatmap(sequence.Sequence, sequence.Variants);
+                    const heatmap = createHeatmap(sequence.Cohorts, sequence.Variants);
 
                     // Add everything to the sequence list
-                    seqList.appendChild(individual_id);
+                    {#seqList.appendChild(individual_id);#}
                     seqList.appendChild(heatmap);
                 });
             } else {
