@@ -3,79 +3,9 @@
 <html>
 <head>
     <title>Sequence List</title>
-    <script>
-        // Function to search and navigate with query parameter
-        function searchSequence() {
-            const query = document.getElementById('search').value;
-            if (query) {
-                window.location.href = `?q=${query}`;
-            }
-        }
-
-        // Function to create the heatmap for a sequence
-        function createHeatmap(cohorts, variants) {
-            const sequenceContainer = document.createElement('p');
-            {#const variantPositions = Object.keys(variants).map(Number);  // Cast positions to integers#}
-            for (let i = 0; i < cohorts.length; i++) {
-                const span = document.createElement('span');
-                const individuals = document.createElement('h3');
-                for (let j = 0; j < cohorts[i].length; j++){
-                    individuals.textContent += cohorts[i][j];
-                }
-                span.className = 'normal';
-                span.innerHTML = variants[cohorts[i][0]];
-                // If the current index has a variant, highlight it
-                //if (variantPositions.includes(i)) {
-                //    span.className = 'variant';   // Style as variant (red)
-                //    span.innerHTML = variants[i].join(""); // Show the variant character at this position
-                //} else {
-                //    span.className = 'normal';    // Style as normal (black)
-                //    span.innerHTML = sequence[i]; // Show the original sequence character
-                //}
-
-                sequenceContainer.appendChild(span);
-            }
-            return sequenceContainer;
-        }
-
-        // Function to render the list of sequences dynamically with heatmaps
-        function renderSequenceList() {
-            const sequences = JSON.parse('{{ sequence_json|escapejs }}');  // Rendered from Django context
-            const seqList = document.getElementById('sequence-list');
-
-            if (sequences.length > 0) {
-                seqList.innerHTML = '';  // Clear previous results
-                sequences.forEach(function(sequence) {
-                    // Create a header for each sequence
-                    {#const individual_id = document.createElement('h3');#}
-                    {#individual_id.textContent = `Individual: ${sequence.Individual}`;#}
-
-                    // Create a heatmap for the sequence
-                    const heatmap = createHeatmap(sequence.Cohorts, sequence.Variants);
-
-                    // Add everything to the sequence list
-                    {#seqList.appendChild(individual_id);#}
-                    seqList.appendChild(heatmap);
-                });
-            } else {
-                seqList.innerHTML = '<li>No results found.</li>';
-            }
-        }
-
-        // Execute renderSequenceList function on page load to populate the list
-        window.onload = function() {
-            renderSequenceList();
-        };
-    </script>
-    <style>
-        .normal {
-            color: black;
-        }
-
-        .variant {
-            color: red;
-        }
-    </style>
+    <script src="{% static 'js/home_scripts.js' %}" defer></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home_styles.css' %}">
+    <script> const sequence_json = {{ sequence_json|safe }}; </script>
 </head>
 <body>
     <h1>Enter Accession Number</h1>

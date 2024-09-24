@@ -48,14 +48,17 @@ def upload_csv(request):
 def home(request):
     query = request.GET.get('q', '')
     if query:
-        sequences = Sequence.objects.filter(Accession__exact=query)
+        sequence = Sequence.objects.filter(Accession__exact=query).first()
     else:
-        sequences = Sequence.objects.none()
-
-    sequence_json = json.dumps(
-        [{'Accession': seq.Accession, 'Variants': seq.Variants, 'Cohorts': seq.Cohorts}
-         for seq in sequences])
-
+        sequence = Sequence.objects.first()
+    if sequence:
+        sequence_json = json.dumps({
+                'Accession': sequence.Accession,
+                'Variants': sequence.Variants,
+                'Cohorts': sequence.Cohorts
+            })
+    else:
+        sequence_json = json.dumps({})
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
 
 def make_cohorts(request):
