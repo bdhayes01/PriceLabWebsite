@@ -18,7 +18,6 @@ def upload_csv(request):
                 file_name = os.path.splitext(file.name)[0]
                 individual = file_name.split('-')[1]
 
-                # Assuming the Excel file has columns: 'individual', 'protein', 'aa_sequence', 'variants'
                 for _, row in df.iterrows():
 
                     variants_str = row.get('Variants', '{}')
@@ -32,7 +31,8 @@ def upload_csv(request):
                             variants[individual][integer_variants] = peptide_variants
                     sequence, created = Sequence.objects.get_or_create(
                         Accession=row['Accession'],
-                        defaults={'Variants': variants})
+                        defaults={'Variants': variants},
+                        Sequence=row['Sequence'])
 
                     if not created:
                         sequence.Variants.update(variants)
@@ -55,7 +55,8 @@ def home(request):
         sequence_json = json.dumps({
                 'Accession': sequence.Accession,
                 'Variants': sequence.Variants,
-                'Cohorts': sequence.Cohorts
+                'Cohorts': sequence.Cohorts,
+                'Sequence': sequence.Sequence
             })
     else:
         sequence_json = json.dumps({})

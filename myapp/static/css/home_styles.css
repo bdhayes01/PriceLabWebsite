@@ -5,3 +5,13 @@
 .variant {
     color: red;
 }
+
+span {
+  white-space: normal; /* Ensure it wraps */
+  word-wrap: break-word; /* Optional, breaks long words */
+}
+
+p {
+  white-space: normal; /* Allow line breaks */
+  word-wrap: break-word; /* Ensure words break if they're too long */
+}

@@ -5,8 +5,11 @@ function searchSequence() {
     }
 }
 
-function createHeatmap(cohorts, variants) {
+function createHeatmap(sequence, cohorts, variants) {
     const sequenceContainer = document.createElement('p');
+    const seq = document.createElement('span');
+    seq.textContent = sequence;
+    sequenceContainer.appendChild(seq);
     for (let i = 0; i < cohorts.length; i++) {
         const span = document.createElement('span');
         const individuals = document.createElement('h3');
@@ -37,7 +40,7 @@ function renderSequenceList() {
 
     if (sequence.Cohorts.length > 0) {
         seqList.innerHTML = '';  // Clear previous results
-        const heatmap = createHeatmap(sequence.Cohorts, sequence.Variants);
+        const heatmap = createHeatmap(sequence.Sequence, sequence.Cohorts, sequence.Variants);
         seqList.appendChild(heatmap);
     } else {
         seqList.innerHTML = '<li>No results found.</li>';
