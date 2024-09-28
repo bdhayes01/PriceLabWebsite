@@ -1,3 +1,9 @@
+let curr_cohorts = {};
+let cohortColors = ['red', 'blue'];
+let sequence = null;
+let cohorts = null;
+let variants = null;
+
 function searchSequence() {
     const query = document.getElementById('search').value;
     if (query) {
@@ -5,42 +11,82 @@ function searchSequence() {
     }
 }
 
-function createHeatmap(sequence, cohorts, variants) {
+function color_code(container){
+    for (let i = 0; i < sequence.length; i++) {
+        const charSpan = document.createElement('span');
+        charSpan.textContent = sequence[i];
+
+        // Loop through cohorts to check for a variant at this position
+        for (let key in curr_cohorts){
+            let cohort = cohorts[key][0];
+            const variantPositions = Object.keys(variants[cohort] || {});
+            if (variantPositions.includes((i + 1).toString())) {
+                // Apply background color based on cohort index
+                charSpan.style.backgroundColor = curr_cohorts[key];
+                charSpan.title += `Cohort ${parseInt(key) + 1} Variant: ${sequence[i]} at position ${i + 1};\t`;  // Optional tooltip
+            }
+        }
+        container.appendChild(charSpan);
+    }
+}
+
+function createHeatmap() {
     const sequenceContainer = document.createElement('p');
-    const seq = document.createElement('span');
-    seq.textContent = sequence;
-    sequenceContainer.appendChild(seq);
+    color_code(sequenceContainer);
     for (let i = 0; i < cohorts.length; i++) {
         const span = document.createElement('span');
+        let cohort_container = document.createElement('div');
         const individuals = document.createElement('h3');
         individuals.textContent += "Cohort " + (i + 1) + ':\t' + cohorts[i][0];
 
         for (let j = 1; j < cohorts[i].length; j++){
             individuals.textContent += ',\t' + cohorts[i][j];
         }
+        individuals.style.marginRight = '10px';
+        const cohort_button = document.createElement('button');
+        cohort_button.textContent = "Map Variants";
+        cohort_button.onclick = () => map_cohort(i);
+
+        if (i in curr_cohorts){
+            individuals.style.backgroundColor = curr_cohorts[i];
+        }
+
+        cohort_container.appendChild(individuals);
+        cohort_container.appendChild(cohort_button);
+        cohort_container.style.display = 'flex';
+        cohort_container.style.justifyContent = 'flex-start';
+
+        cohort_container.style.alignItems = 'center';
+
         span.innerHTML += "Variations: ";
         let entered = false;
-        for (const key in variants[cohorts[i][0]]){
+        for (const key in variants[cohorts[i][0]]) {
             entered = true;
-            span.innerHTML += key + ": "  + variants[cohorts[i][0]][key] + '\t';
+            span.innerHTML += sequence[parseInt(key) - 1] + " " + key + " " + variants[cohorts[i][0]][key] + ',\t';
         }
         if(!entered){
             span.innerHTML += "None."
         }
+        else{
+            span.innerHTML = span.innerHTML.slice(0, -2);
+        }
         span.className = 'normal';
-        sequenceContainer.appendChild(individuals);
+        sequenceContainer.appendChild(cohort_container);
         sequenceContainer.appendChild(span);
     }
     return sequenceContainer;
 }
 
 function renderSequenceList() {
-    const sequence = sequence_json;  // Access from global variable
+    const json = sequence_json;  // Access from global variable
     const seqList = document.getElementById('sequence-list');
 
-    if (sequence.Cohorts.length > 0) {
+    if (json.Cohorts.length > 0) {
         seqList.innerHTML = '';  // Clear previous results
-        const heatmap = createHeatmap(sequence.Sequence, sequence.Cohorts, sequence.Variants);
+        sequence = json.Sequence;
+        cohorts = json.Cohorts;
+        variants = json.Variants;
+        const heatmap = createHeatmap();
         seqList.appendChild(heatmap);
     } else {
         seqList.innerHTML = '<li>No results found.</li>';
@@ -50,3 +96,12 @@ function renderSequenceList() {
 window.onload = function() {
     renderSequenceList();
 };
+function map_cohort(cohort){
+    let temp_cohorts = {};
+    for (let i = 0; i < curr_cohorts.length; i++){
+        temp_cohorts[curr_cohorts[i]] = cohortColors[curr_cohorts[i]];
+    }
+    temp_cohorts[parseInt(cohort)] = cohortColors[parseInt(cohort)];
+    curr_cohorts = temp_cohorts;
+    renderSequenceList();
+}
