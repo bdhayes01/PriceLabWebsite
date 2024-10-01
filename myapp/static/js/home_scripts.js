@@ -1,5 +1,5 @@
 let curr_cohorts = {};
-let cohortColors = ['red', 'blue'];
+let cohortColors = ['red', 'blue', 'yellow', 'purple'];
 let sequence = null;
 let cohorts = null;
 let variants = null;
@@ -97,11 +97,18 @@ window.onload = function() {
     renderSequenceList();
 };
 function map_cohort(cohort){
-    let temp_cohorts = {};
-    for (let i = 0; i < curr_cohorts.length; i++){
-        temp_cohorts[curr_cohorts[i]] = cohortColors[curr_cohorts[i]];
+    // let temp_cohorts = {};
+    // for (let i = 0; i < curr_cohorts.length(); i++){
+    //     temp_cohorts[curr_cohorts[i]] = cohortColors[curr_cohorts[i]];
+    // }
+    // temp_cohorts[parseInt(cohort)] = cohortColors[parseInt(cohort)];
+    if(parseInt(cohort) in Object.keys(curr_cohorts)){
+        let c = parseInt(cohort)
+        delete curr_cohorts[c];
     }
-    temp_cohorts[parseInt(cohort)] = cohortColors[parseInt(cohort)];
-    curr_cohorts = temp_cohorts;
+    else{
+        curr_cohorts[parseInt(cohort)] = cohortColors[parseInt(cohort)];
+    }
+    // curr_cohorts = temp_cohorts;
     renderSequenceList();
 }
