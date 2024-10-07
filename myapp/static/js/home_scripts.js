@@ -23,7 +23,7 @@ function color_code(container){
             if (variantPositions.includes((i + 1).toString())) {
                 // Apply background color based on cohort index
                 charSpan.style.backgroundColor = curr_cohorts[key];
-                charSpan.title += `Cohort ${parseInt(key) + 1} Variant: ${sequence[i]} at position ${i + 1};\t`;  // Optional tooltip
+                charSpan.title += `Cohort ${parseInt(key) + 1} Variant: ${variants[cohort][parseInt(i) + 1]} at position ${i + 1};\t`;  // Optional tooltip
             }
         }
         container.appendChild(charSpan);
