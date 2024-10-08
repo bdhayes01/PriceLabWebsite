@@ -12,7 +12,9 @@
     <h1>Enter Accession Number</h1>
 
     <!-- Search Input -->
-    <input type="text" id="search" placeholder="Search by Accession number..." value="{{ query }}">
+
+    <label for="search">Search by Accession number:</label>
+    <input type="text" id="search" placeholder="Q8WZ42|TITIN_HUMAN" value="{{ query }}">
     <button onclick="searchSequence()">Search</button>
 
     <!-- Container for displaying the sequence list dynamically with JavaScript -->
@@ -20,6 +22,12 @@
         <!-- This list will be dynamically populated by JavaScript -->
     </ul>
     <img src="{% url 'make_dendrogram' %}" alt="Dendrogram">
+
+    <br><br>
+    <label for="cohort_number">How many cohorts? (between 1 and 10):</label>
+    <input type="number" id="cohort_number" name="quantity" placeholder="1" value="{{ cohort_query }}" min="1" max="10">
+    <button onclick="make_cohorts()">Make Cohorts</button>
+
 
 
     <!-- Button to redirect to the upload CSV page -->

@@ -112,3 +112,7 @@ function map_cohort(cohort){
     // curr_cohorts = temp_cohorts;
     renderSequenceList();
 }
+
+function make_cohorts(num_cohorts){
+
+}
