@@ -1,5 +1,5 @@
 import pandas as pd
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from .models import Sequence
 import os, re, json
@@ -7,6 +7,8 @@ from scipy.spatial.distance import pdist
 from scipy.cluster.hierarchy import linkage, dendrogram
 import matplotlib.pyplot as plt
 import io
+from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.cluster import KMeans
 
 global variants
 
@@ -55,7 +57,8 @@ def home(request):
     if query:
         sequence = Sequence.objects.filter(Accession__exact=query).first()
     else:
-        sequence = Sequence.objects.first()
+        # sequence = Sequence.objects.first()
+        sequence = Sequence.objects.filter(Accession__exact="Q8WZ42|TITIN_HUMAN").first()
     if sequence:
         global variants
         variants = sequence.Variants
@@ -71,8 +74,12 @@ def home(request):
 
 
 def make_cohorts(request):
-    cohort_number = request.GET.get('cohort_number', 1)  # Default to 1 if not provided
-
+    cohort_number = int(request.GET.get('cohort_number', 1)) # Default to 1 if not provided
+    mlb = MultiLabelBinarizer()
+    global variants
+    encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
+    kmeans = KMeans(n_clusters=cohort_number) # Can add in random_state=1 to ensure that you will always get the same result.
+    clusters = kmeans.fit_predict(encoded_data)
 
     seqs = Sequence.objects.all()
     for seq in seqs:

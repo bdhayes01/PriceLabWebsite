@@ -113,10 +113,10 @@ function map_cohort(cohort){
     renderSequenceList();
 }
 
-function make_cohorts(num_cohorts){
+function make_cohorts(){
     const cohortNumber = document.getElementById('cohort_number').value;
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `{% url 'make_cohorts' %}?cohort_number=${cohortNumber}`, true);
+    xhr.open('GET', `make_cohorts/?cohort_number=${cohortNumber}`, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             // Update the page with the response (if needed)
