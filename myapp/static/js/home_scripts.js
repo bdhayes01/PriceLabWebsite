@@ -121,6 +121,7 @@ function make_cohorts(){
         if (xhr.status === 200) {
             // Update the page with the response (if needed)
             console.log('Cohorts created successfully:', xhr.responseText);
+            location.reload()
             // You can update the page with the new data here
         } else {
             console.error('Error making cohorts:', xhr.status);

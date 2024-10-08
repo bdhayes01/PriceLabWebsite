@@ -9,8 +9,12 @@ import matplotlib.pyplot as plt
 import io
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
+import seaborn as sns
 
-global variants
+global variants, cohorts, encoded_data
+variants = {}
+cohorts = None
+encoded_data = None
 
 def upload_csv(request):
     message = None  # Initialize message
@@ -77,49 +81,34 @@ def make_cohorts(request):
     cohort_number = int(request.GET.get('cohort_number', 1)) # Default to 1 if not provided
     mlb = MultiLabelBinarizer()
     global variants
+    global encoded_data
     encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
     kmeans = KMeans(n_clusters=cohort_number) # Can add in random_state=1 to ensure that you will always get the same result.
-    clusters = kmeans.fit_predict(encoded_data)
+    global cohorts
+    cohorts = kmeans.fit_predict(encoded_data)
 
-    seqs = Sequence.objects.all()
-    for seq in seqs:
-        variants = dict(seq.Variants)
-        indivs = list(variants.keys())
-        indivs2 = list(variants.keys())
-        cohorts = []
-        for indiv in indivs:
-            for i in cohorts:
-                for j in i:
-                    if j == indiv:
-                        continue
-            temp = []
-            for ind in indivs2:
-                if variants[ind] == variants[indiv]:
-                    temp.append(ind)
-            for ind in temp:
-                indivs2.pop(indivs2.index(ind))
-            if len(temp) > 0:
-                cohorts.append(temp)
 
-        seq.Cohorts = cohorts
-        seq.save()
-    result_message = "Cohorts made successfully!"
-    return JsonResponse({'message': result_message})
-
-# Must always have 'request' else a 500 error.
-def make_dendrogram(request):
+def make_dendrogram(request):# Must always have 'request' else a 500 error.
+    global cohorts
     global variants
-    all_items = set(item for sublist in variants.values() for item in sublist)
-    binary_matrix = pd.DataFrame(
-        [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
-        index=list(variants.keys()),
-        columns=list(all_items)
-    )
-    dist_matrix = pdist(binary_matrix.values, metric='jaccard')
+    if cohorts is None:
 
-    linked = linkage(dist_matrix, method='ward')
-    plt.figure(figsize=(10, 7))
-    dendrogram(linked)
+        all_items = set(item for sublist in variants.values() for item in sublist)
+        binary_matrix = pd.DataFrame(
+            [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
+            index=list(variants.keys()),
+            columns=list(all_items)
+        )
+        dist_matrix = pdist(binary_matrix.values, metric='jaccard')
+
+        linked = linkage(dist_matrix, method='ward')
+        plt.figure(figsize=(10, 7))
+        dendrogram(linked)
+    else:
+        linked = linkage(encoded_data.drop('Cluster', axis=1), method='ward')
+
+        sns.clustermap(encoded_data.drop('Cluster', axis=1), row_linkage=linked, col_cluster=False, cmap='coolwarm')
+        plt.title("Heatmap with Hierarchical clustering dendrogram")
 
     # Save the image to a BytesIO object (in-memory file)
     buffer = io.BytesIO()
