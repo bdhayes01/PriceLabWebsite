@@ -71,6 +71,9 @@ def home(request):
 
 
 def make_cohorts(request):
+    cohort_number = request.GET.get('cohort_number', 1)  # Default to 1 if not provided
+
+
     seqs = Sequence.objects.all()
     for seq in seqs:
         variants = dict(seq.Variants)

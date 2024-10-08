@@ -114,5 +114,19 @@ function map_cohort(cohort){
 }
 
 function make_cohorts(num_cohorts){
+    const cohortNumber = document.getElementById('cohort_number').value;
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `{% url 'make_cohorts' %}?cohort_number=${cohortNumber}`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            // Update the page with the response (if needed)
+            console.log('Cohorts created successfully:', xhr.responseText);
+            // You can update the page with the new data here
+        } else {
+            console.error('Error making cohorts:', xhr.status);
+        }
+    };
+    // Send the request
+    xhr.send();
 
 }
