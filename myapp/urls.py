@@ -5,5 +5,6 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('upload_csv/', views.upload_csv, name='upload_csv'),
-    path('make_cohorts/', views.make_cohorts, name='make_cohorts')
+    path('make_cohorts/', views.make_cohorts, name='make_cohorts'),
+    path('dendrogram/', views.make_dendrogram, name='make_dendrogram')
 ]

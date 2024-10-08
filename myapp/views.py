@@ -3,7 +3,12 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from .models import Sequence
 import os, re, json
+from scipy.spatial.distance import pdist
+from scipy.cluster.hierarchy import linkage, dendrogram
+import matplotlib.pyplot as plt
+import io
 
+global variants
 
 def upload_csv(request):
     message = None  # Initialize message
@@ -52,6 +57,8 @@ def home(request):
     else:
         sequence = Sequence.objects.first()
     if sequence:
+        global variants
+        variants = sequence.Variants
         sequence_json = json.dumps({
                 'Accession': sequence.Accession,
                 'Variants': sequence.Variants,
@@ -61,6 +68,7 @@ def home(request):
     else:
         sequence_json = json.dumps({})
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
+
 
 def make_cohorts(request):
     seqs = Sequence.objects.all()
@@ -87,3 +95,26 @@ def make_cohorts(request):
         seq.save()
     result_message = "Cohorts made successfully!"
     return JsonResponse({'message': result_message})
+
+
+def make_dendrogram(request):
+    global variants
+    all_items = set(item for sublist in variants.values() for item in sublist)
+    binary_matrix = pd.DataFrame(
+        [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
+        index=list(variants.keys()),
+        columns=list(all_items)
+    )
+    dist_matrix = pdist(binary_matrix.values, metric='jaccard')
+
+    linked = linkage(dist_matrix, method='ward')
+    plt.figure(figsize=(10, 7))
+    dendrogram(linked)
+
+    # Save the image to a BytesIO object (in-memory file)
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Return the image as an HTTP response
+    return HttpResponse(buffer, content_type='image/png')
