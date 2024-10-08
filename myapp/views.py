@@ -96,7 +96,7 @@ def make_cohorts(request):
     result_message = "Cohorts made successfully!"
     return JsonResponse({'message': result_message})
 
-
+# Must always have 'request' else a 500 error.
 def make_dendrogram(request):
     global variants
     all_items = set(item for sublist in variants.values() for item in sublist)
