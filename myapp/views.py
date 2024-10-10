@@ -86,13 +86,16 @@ def make_cohorts(request):
     kmeans = KMeans(n_clusters=cohort_number) # Can add in random_state=1 to ensure that you will always get the same result.
     global cohorts
     cohorts = kmeans.fit_predict(encoded_data)
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts.tolist()})
 
 
-def make_dendrogram(request):# Must always have 'request' else a 500 error.
+def make_dendrogram(request):  # Must always have 'request' else a 500 error.
     global cohorts
     global variants
-    if cohorts is None:
+    global encoded_data
+    plt.clf()
 
+    if cohorts is None:
         all_items = set(item for sublist in variants.values() for item in sublist)
         binary_matrix = pd.DataFrame(
             [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
@@ -105,14 +108,16 @@ def make_dendrogram(request):# Must always have 'request' else a 500 error.
         plt.figure(figsize=(10, 7))
         dendrogram(linked)
     else:
-        linked = linkage(encoded_data.drop('Cluster', axis=1), method='ward')
+        linked = linkage(encoded_data, method='ward')
 
-        sns.clustermap(encoded_data.drop('Cluster', axis=1), row_linkage=linked, col_cluster=False, cmap='coolwarm')
+        sns.clustermap(encoded_data, row_linkage=linked, col_cluster=False, cmap='coolwarm')
+        plt.figure(figsize=(10,7))
         plt.title("Heatmap with Hierarchical clustering dendrogram")
 
     # Save the image to a BytesIO object (in-memory file)
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
+    plt.close()
     buffer.seek(0)
 
     # Return the image as an HTTP response

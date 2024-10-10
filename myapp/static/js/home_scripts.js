@@ -120,7 +120,9 @@ function make_cohorts(){
     xhr.onload = function() {
         if (xhr.status === 200) {
             // Update the page with the response (if needed)
-            console.log('Cohorts created successfully:', xhr.responseText);
+            // console.log('Cohorts created successfully:', xhr.responseText);
+            const dendrogramImage = document.querySelector("img[alt='Dendrogram']");
+            dendrogramImage.src = dendrogramImage.src + '?' + new Date().getTime();  // Cache-busting
             location.reload()
             // You can update the page with the new data here
         } else {
