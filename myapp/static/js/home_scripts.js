@@ -115,6 +115,7 @@ function map_cohort(cohort){
 
 function make_cohorts(){
     const cohortNumber = document.getElementById('cohort_number').value;
+    localStorage.setItem('cohort_number', cohortNumber);
     const xhr = new XMLHttpRequest();
     xhr.open('GET', `make_cohorts/?cohort_number=${cohortNumber}`, true);
     xhr.onload = function() {
@@ -133,3 +134,9 @@ function make_cohorts(){
     xhr.send();
 
 }
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedCohortNumber = localStorage.getItem('cohort_number');
+        if (savedCohortNumber) {
+            document.getElementById('cohort_number').value = savedCohortNumber;
+        }
+    });

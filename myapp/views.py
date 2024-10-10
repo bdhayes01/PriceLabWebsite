@@ -109,9 +109,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         dendrogram(linked)
     else:
         linked = linkage(encoded_data, method='ward')
-
-        sns.clustermap(encoded_data, row_linkage=linked, col_cluster=False, cmap='coolwarm')
-        plt.figure(figsize=(10,7))
+        sns.clustermap(encoded_data, row_linkage=linked, col_cluster=False, cmap='coolwarm', figsize=(10,7))
         plt.title("Heatmap with Hierarchical clustering dendrogram")
 
     # Save the image to a BytesIO object (in-memory file)
