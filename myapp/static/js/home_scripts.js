@@ -84,10 +84,11 @@ function renderSequenceList() {
     if (json.Cohorts.length > 0) {
         seqList.innerHTML = '';  // Clear previous results
         sequence = json.Sequence;
-        cohorts = json.Cohorts;
         variants = json.Variants;
-        const heatmap = createHeatmap();
-        seqList.appendChild(heatmap);
+        if(cohorts !== null){
+            const heatmap = createHeatmap();
+            seqList.appendChild(heatmap);
+        }
     } else {
         seqList.innerHTML = '<li>No results found.</li>';
     }
@@ -97,11 +98,6 @@ window.onload = function() {
     renderSequenceList();
 };
 function map_cohort(cohort){
-    // let temp_cohorts = {};
-    // for (let i = 0; i < curr_cohorts.length(); i++){
-    //     temp_cohorts[curr_cohorts[i]] = cohortColors[curr_cohorts[i]];
-    // }
-    // temp_cohorts[parseInt(cohort)] = cohortColors[parseInt(cohort)];
     if(parseInt(cohort) in Object.keys(curr_cohorts)){
         let c = parseInt(cohort)
         delete curr_cohorts[c];
@@ -109,7 +105,6 @@ function map_cohort(cohort){
     else{
         curr_cohorts[parseInt(cohort)] = cohortColors[parseInt(cohort)];
     }
-    // curr_cohorts = temp_cohorts;
     renderSequenceList();
 }
 
@@ -120,21 +115,19 @@ function make_cohorts(){
     xhr.open('GET', `make_cohorts/?cohort_number=${cohortNumber}`, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
-            // Update the page with the response (if needed)
-            // console.log('Cohorts created successfully:', xhr.responseText);
+            const response = JSON.parse(xhr.responseText);
+            cohorts = response.cohorts;
             const dendrogramImage = document.querySelector("img[alt='Dendrogram']");
             dendrogramImage.src = dendrogramImage.src + '?' + new Date().getTime();  // Cache-busting
-            location.reload()
-            // You can update the page with the new data here
+            renderSequenceList();
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
     };
     // Send the request
     xhr.send();
-
 }
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
         const savedCohortNumber = localStorage.getItem('cohort_number');
         if (savedCohortNumber) {
             document.getElementById('cohort_number').value = savedCohortNumber;

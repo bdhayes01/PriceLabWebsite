@@ -94,7 +94,7 @@ def make_cohorts(request):
             temp_cohorts[coh] = [indiv]
     cohorts = [temp_cohorts[num] for num in sorted(temp_cohorts.keys())]
 
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts.tolist()})
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
 
 
 def make_dendrogram(request):  # Must always have 'request' else a 500 error.
