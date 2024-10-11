@@ -3,6 +3,7 @@ let cohortColors = ['red', 'blue', 'yellow', 'purple'];
 let sequence = null;
 let cohorts = null;
 let variants = null;
+let cohort_variants = null;
 
 function searchSequence() {
     const query = document.getElementById('search').value;
@@ -119,14 +120,33 @@ function make_cohorts(){
             cohorts = response.cohorts;
             const dendrogramImage = document.querySelector("img[alt='Dendrogram']");
             dendrogramImage.src = dendrogramImage.src + '?' + new Date().getTime();  // Cache-busting
+            make_cohort_variants();
             renderSequenceList();
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
     };
-    // Send the request
     xhr.send();
 }
+
+function make_cohort_variants(){
+    for (let c in cohorts){
+        let varis = {};
+        let cohort = cohorts[c];
+        for (let indiv of cohort){
+            for (let variation of variants[indiv]){
+                if (varis[variation]){
+                    varis[variation] = varis[variation] + 1;
+                }
+                else{
+                    varis[variation] = 1;
+                }
+            }
+        }
+        cohort_variants[c] = varis;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
         const savedCohortNumber = localStorage.getItem('cohort_number');
         if (savedCohortNumber) {
