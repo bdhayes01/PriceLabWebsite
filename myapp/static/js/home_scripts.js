@@ -134,7 +134,7 @@ function make_cohort_variants(){
         let varis = {};
         let cohort = cohorts[c];
         for (let indiv of cohort){
-            for (let variation of variants[indiv]){
+            for (let variation of variants[indiv]){ // TODO: start here
                 if (varis[variation]){
                     varis[variation] = varis[variation] + 1;
                 }
