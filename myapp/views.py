@@ -86,6 +86,14 @@ def make_cohorts(request):
     kmeans = KMeans(n_clusters=cohort_number) # Can add in random_state=1 to ensure that you will always get the same result.
     global cohorts
     cohorts = kmeans.fit_predict(encoded_data)
+    temp_cohorts = {}
+    for indiv, coh in zip(variants.keys(), cohorts):
+        if coh in temp_cohorts:
+            temp_cohorts[coh].append(indiv)
+        else:
+            temp_cohorts[coh] = [indiv]
+    cohorts = [temp_cohorts[num] for num in sorted(temp_cohorts.keys())]
+
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts.tolist()})
 
 
