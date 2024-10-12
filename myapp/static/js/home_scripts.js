@@ -19,13 +19,17 @@ function color_code(container){
 
         // Loop through cohorts to check for a variant at this position
         for (let key in curr_cohorts){
-            let cohort = cohorts[key][0];
-            const variantPositions = Object.keys(variants[cohort] || {});
-            if (variantPositions.includes((i + 1).toString())) {
-                // Apply background color based on cohort index
+            if (cohort_variants[key][i]){
                 charSpan.style.backgroundColor = curr_cohorts[key];
-                charSpan.title += `Cohort ${parseInt(key) + 1} Variant: ${variants[cohort][parseInt(i) + 1]} at position ${i + 1};\t`;  // Optional tooltip
+                charSpan.title += `Cohort ${parseInt(key) + 1} has variant at position ${i + 1};\t`;
             }
+            // let cohort = cohorts[key][0];
+            // const variantPositions = Object.keys(variants[cohort] || {});
+            // if (variantPositions.includes((i + 1).toString())) {
+            //     // Apply background color based on cohort index
+            //     charSpan.style.backgroundColor = curr_cohorts[key];
+            //     charSpan.title += `Cohort ${parseInt(key) + 1} Variant: ${variants[cohort][parseInt(i) + 1]} at position ${i + 1};\t`;  // Optional tooltip
+            // }
         }
         container.appendChild(charSpan);
     }
