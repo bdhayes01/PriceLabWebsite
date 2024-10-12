@@ -4,6 +4,8 @@ let sequence = null;
 let cohorts = null;
 let variants = null;
 let cohort_variants = null;
+let expanded = false;
+
 
 function searchSequence() {
     const query = document.getElementById('search').value;
@@ -13,15 +15,20 @@ function searchSequence() {
 }
 
 function color_code(container){
+    const toggleButton = document.createElement('button');
+    toggleButton.textContent = "Show More";
+    const spans = [];
+
     for (let i = 0; i < sequence.length; i++) {
-        const charSpan = document.createElement('span');
-        charSpan.textContent = sequence[i];
+        const top_char_span = document.createElement('span');
+        top_char_span.textContent = sequence[i];
+        top_char_span.style.display = i < 2000 ? 'inline' : 'none';  // Show only the first 50 chars initially
 
         // Loop through cohorts to check for a variant at this position
         for (let key in curr_cohorts){
             if (cohort_variants[key][i]){
-                charSpan.style.backgroundColor = curr_cohorts[key];
-                charSpan.title += `Cohort ${parseInt(key) + 1} has variant at position ${i + 1};\t`;
+                top_char_span.style.backgroundColor = curr_cohorts[key];
+                top_char_span.title += `Cohort ${parseInt(key) + 1} has variant at position ${i + 1};\t`;
             }
             // let cohort = cohorts[key][0];
             // const variantPositions = Object.keys(variants[cohort] || {});
@@ -31,8 +38,21 @@ function color_code(container){
             //     charSpan.title += `Cohort ${parseInt(key) + 1} Variant: ${variants[cohort][parseInt(i) + 1]} at position ${i + 1};\t`;  // Optional tooltip
             // }
         }
-        container.appendChild(charSpan);
+        container.appendChild(top_char_span);
+        spans.push(top_char_span);
     }
+        // Add toggle button functionality
+    toggleButton.onclick = () => {
+        expanded = !expanded; // Toggle the expanded state
+        // Loop through spans to toggle visibility based on the expanded state
+        spans.forEach((span, index) => {
+            span.style.display = expanded || index < 2000 ? 'inline' : 'none'; // Show the span if expanded or index < 2000
+        });
+
+        toggleButton.textContent = expanded ? 'Show Less' : 'Show More';
+    };
+
+    container.appendChild(toggleButton);  // Add button to the container
 }
 
 function createHeatmap() {
