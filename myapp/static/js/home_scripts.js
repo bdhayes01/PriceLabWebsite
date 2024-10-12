@@ -61,9 +61,16 @@ function createHeatmap() {
 
         span.innerHTML += "Variations: ";
         let entered = false;
-        for (const key in variants[cohorts[i][0]]) {
+
+        let cohort_variants_set = new Set();
+        for (const member of cohorts[i]) {
+            for (const key in variants[member]) {
+                cohort_variants_set.add(sequence[parseInt(key) - 1] + " " + key + " " + variants[member][key] + ',\t');
+            }
+        }
+        for(let item of cohort_variants_set){
             entered = true;
-            span.innerHTML += sequence[parseInt(key) - 1] + " " + key + " " + variants[cohorts[i][0]][key] + ',\t';
+            span.innerHTML += item
         }
         if(!entered){
             span.innerHTML += "None."
@@ -82,7 +89,7 @@ function renderSequenceList() {
     const json = sequence_json;  // Access from global variable
     const seqList = document.getElementById('sequence-list');
 
-    if (json.Cohorts.length > 0) {
+    if (json.Sequence.length > 0) { //TODO: Check if this works with no valid json
         seqList.innerHTML = '';  // Clear previous results
         sequence = json.Sequence;
         variants = json.Variants;
@@ -130,11 +137,12 @@ function make_cohorts(){
 }
 
 function make_cohort_variants(){
+    cohort_variants = {}
     for (let c in cohorts){
         let varis = {};
         let cohort = cohorts[c];
         for (let indiv of cohort){
-            for (let variation of variants[indiv]){ // TODO: start here
+            for (let variation in variants[indiv]){
                 if (varis[variation]){
                     varis[variation] = varis[variation] + 1;
                 }
