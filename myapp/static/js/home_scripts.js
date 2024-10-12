@@ -184,4 +184,4 @@ document.addEventListener('DOMContentLoaded', function () {
         if (savedCohortNumber) {
             document.getElementById('cohort_number').value = savedCohortNumber;
         }
-    });
+});
