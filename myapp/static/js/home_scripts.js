@@ -130,12 +130,13 @@ window.onload = function() {
     renderSequenceList();
 };
 function map_cohort(cohort){
-    if(parseInt(cohort) in Object.keys(curr_cohorts)){
-        let c = parseInt(cohort)
+    let c = parseInt(cohort);
+    if(curr_cohorts.hasOwnProperty(c)){
+        cohortColors.push(curr_cohorts[c]);
         delete curr_cohorts[c];
     }
-    else{
-        curr_cohorts[parseInt(cohort)] = cohortColors[parseInt(cohort)];
+    else if(Object.keys(curr_cohorts).length < 4){
+        curr_cohorts[c] = cohortColors.pop();
     }
     renderSequenceList();
 }
