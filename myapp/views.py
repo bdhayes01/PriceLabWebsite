@@ -16,6 +16,7 @@ variants = {}
 cohorts = None
 encoded_data = None
 
+
 def upload_csv(request):
     message = None  # Initialize message
     if request.method == 'POST':
@@ -67,23 +68,24 @@ def home(request):
         global variants
         variants = sequence.Variants
         sequence_json = json.dumps({
-                'Accession': sequence.Accession,
-                'Variants': sequence.Variants,
-                'Cohorts': sequence.Cohorts,
-                'Sequence': sequence.Sequence
-            })
+            'Accession': sequence.Accession,
+            'Variants': sequence.Variants,
+            'Cohorts': sequence.Cohorts,
+            'Sequence': sequence.Sequence
+        })
     else:
         sequence_json = json.dumps({})
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
 
 
 def make_cohorts(request):
-    cohort_number = int(request.GET.get('cohort_number', 1)) # Default to 1 if not provided
+    cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
     mlb = MultiLabelBinarizer()
     global variants
     global encoded_data
     encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
-    kmeans = KMeans(n_clusters=cohort_number) # Can add in random_state=1 to ensure that you will always get the same result.
+    kmeans = KMeans(
+        n_clusters=cohort_number)  # Can add in random_state=1 to ensure that you will always get the same result.
     global cohorts
     cohorts = kmeans.fit_predict(encoded_data)
     temp_cohorts = {}
@@ -95,6 +97,12 @@ def make_cohorts(request):
     cohorts = [temp_cohorts[num] for num in sorted(temp_cohorts.keys())]
 
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+
+
+def clear_cohorts(request):
+    global cohorts
+    cohorts = None
+    return JsonResponse({'message': 'Cohorts cleared successfully'})
 
 
 def make_dendrogram(request):  # Must always have 'request' else a 500 error.
@@ -117,7 +125,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         dendrogram(linked)
     else:
         linked = linkage(encoded_data, method='ward')
-        sns.clustermap(encoded_data, row_linkage=linked, col_cluster=False, cmap='coolwarm', figsize=(10,7))
+        sns.clustermap(encoded_data, row_linkage=linked, col_cluster=False, cmap='coolwarm', figsize=(10, 7))
         plt.title("Heatmap with Hierarchical clustering dendrogram")
 
     # Save the image to a BytesIO object (in-memory file)
