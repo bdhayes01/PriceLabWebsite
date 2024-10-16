@@ -130,7 +130,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
             label.set_color(cluster_colors[cluster])
             new_labels.append(f"{file_name} ({cluster + 1})")
         ax.set_yticklabels(new_labels, rotation=0)
-        g.fig.subplots_adjust(left=0, right=0.9, top=1.1, bottom=0.1)
+        g.fig.subplots_adjust(left=0, right=0.91, top=1.1, bottom=0.1)
 
         # Save the image to a BytesIO object (in-memory file)
     buffer = io.BytesIO()
