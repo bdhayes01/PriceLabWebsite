@@ -127,7 +127,18 @@ function renderSequenceList() {
 }
 
 window.onload = function() {
-    renderSequenceList();
+    localStorage.removeItem('cohort_number');
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `clear_cohorts/`, true);
+        xhr.onload = function () {
+        if (xhr.status === 200) {
+            cohorts = null;
+            renderSequenceList();
+        } else {
+            console.error('Failed to clear cohorts:', xhr.status);
+        }
+    };
+    xhr.send();
 };
 function map_cohort(cohort){
     let c = parseInt(cohort);
@@ -181,7 +192,7 @@ function make_cohort_variants(){
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-        const savedCohortNumber = localStorage.getItem('cohort_number');
+        let savedCohortNumber = localStorage.getItem('cohort_number');
         if (savedCohortNumber) {
             document.getElementById('cohort_number').value = savedCohortNumber;
         }
