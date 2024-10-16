@@ -86,6 +86,7 @@ def make_cohorts(request):
     kmeans = KMeans(n_clusters=cohort_number) # Can add in random_state=1 to ensure that you will always get the same result.
     global cohorts
     cohorts = kmeans.fit_predict(encoded_data)
+    encoded_data['Cluster'] = cohorts
     temp_cohorts = {}
     for indiv, coh in zip(variants.keys(), cohorts):
         if coh in temp_cohorts:
@@ -116,11 +117,22 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         plt.figure(figsize=(10, 7))
         dendrogram(linked)
     else:
-        linked = linkage(encoded_data, method='ward')
-        sns.clustermap(encoded_data, row_linkage=linked, col_cluster=False, cmap='coolwarm', figsize=(10,7))
+        linked = linkage(encoded_data.drop('Cluster', axis=1), method='ward')
+        g = sns.clustermap(encoded_data.drop('Cluster', axis=1), row_linkage=linked, col_cluster=False,
+                       cmap='Blues', figsize=(12, 9), cbar_pos=None)
         plt.title("Heatmap with Hierarchical clustering dendrogram")
+        cluster_colors = sns.color_palette("husl", len(cohorts))
+        ax = g.ax_heatmap
+        new_labels = []
+        for label in ax.get_yticklabels():
+            file_name = label.get_text()
+            cluster = encoded_data.loc[file_name, 'Cluster']
+            label.set_color(cluster_colors[cluster])
+            new_labels.append(f"{file_name} ({cluster + 1})")
+        ax.set_yticklabels(new_labels, rotation=0)
+        g.fig.subplots_adjust(left=0, right=0.9, top=1.1, bottom=0.1)
 
-    # Save the image to a BytesIO object (in-memory file)
+        # Save the image to a BytesIO object (in-memory file)
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
     plt.close()
