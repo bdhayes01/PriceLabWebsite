@@ -126,19 +126,23 @@ function renderSequenceList() {
     }
 }
 
+// window.onload = function() {
+//     localStorage.removeItem('cohort_number');
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('GET', `clear_cohorts/`, true);
+//         xhr.onload = function () {
+//         if (xhr.status === 200) {
+//             cohorts = null;
+//             renderSequenceList();
+//         } else {
+//             console.error('Failed to clear cohorts:', xhr.status);
+//         }
+//     };
+//     xhr.send();
+// };
+
 window.onload = function() {
-    localStorage.removeItem('cohort_number');
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `clear_cohorts/`, true);
-        xhr.onload = function () {
-        if (xhr.status === 200) {
-            cohorts = null;
-            renderSequenceList();
-        } else {
-            console.error('Failed to clear cohorts:', xhr.status);
-        }
-    };
-    xhr.send();
+    renderSequenceList();
 };
 function map_cohort(cohort){
     let c = parseInt(cohort);
