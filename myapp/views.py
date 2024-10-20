@@ -118,9 +118,15 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         dendrogram(linked)
     else:
         linked = linkage(encoded_data.drop('Cluster', axis=1), method='ward')
-        g = sns.clustermap(encoded_data.drop('Cluster', axis=1), row_linkage=linked, col_cluster=False,
+
+        numeric_columns = sorted([int(col) for col in encoded_data.columns if col != 'Cluster' and col.isdigit()])
+        numeric_columns = [str(col) for col in numeric_columns]
+        encoded_data3 = encoded_data.reindex(numeric_columns, axis=1)
+
+        # encoded_data2 = encoded_data.reindex(sorted(encoded_data.drop('Cluster', axis=1).columns.astype(int)), axis=1)
+        g = sns.clustermap(encoded_data3, row_linkage=linked, col_cluster=False,
                        cmap='Blues', figsize=(12, 9), cbar_pos=None)
-        plt.title("Heatmap with Hierarchical clustering dendrogram")
+        plt.title("Heatmap with Hierarchical clustering dendrogram. Blue represents a variant.")
         cluster_colors = sns.color_palette("husl", len(cohorts))
         ax = g.ax_heatmap
         new_labels = []
