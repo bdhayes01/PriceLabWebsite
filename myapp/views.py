@@ -123,6 +123,8 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         numeric_columns = [str(col) for col in numeric_columns]
         encoded_data3 = encoded_data.reindex(numeric_columns, axis=1)
 
+        # Make figsize based on number of encoded_data3.columns and rows. Ask JC
+
         # encoded_data2 = encoded_data.reindex(sorted(encoded_data.drop('Cluster', axis=1).columns.astype(int)), axis=1)
         g = sns.clustermap(encoded_data3, row_linkage=linked, col_cluster=False,
                        cmap='Blues', figsize=(12, 9), cbar_pos=None)
@@ -138,7 +140,6 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         ax.set_yticklabels(new_labels, rotation=0)
         g.fig.subplots_adjust(left=0, right=0.91, top=1.1, bottom=0.1)
 
-        # Save the image to a BytesIO object (in-memory file)
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
     plt.close()
