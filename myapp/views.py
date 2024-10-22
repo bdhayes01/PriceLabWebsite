@@ -83,7 +83,7 @@ def make_cohorts(request):
     global variants
     global encoded_data
     encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
-    kmeans = KMeans(n_clusters=cohort_number) # Can add in random_state=1 to ensure that you will always get the same result.
+    kmeans = KMeans(n_clusters=cohort_number, random_state=42) # Can add in random_state=1 to ensure that you will always get the same result.
     global cohorts
     cohorts = kmeans.fit_predict(encoded_data)
     encoded_data['Cluster'] = cohorts

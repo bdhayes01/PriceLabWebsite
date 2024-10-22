@@ -26,9 +26,15 @@ function color_code(container){
 
         // Loop through cohorts to check for a variant at this position
         for (let key in curr_cohorts){
-            if (cohort_variants[key][i + 1]){
+            let varis_amount = cohort_variants[key][i + 1];
+            if (varis_amount){
                 top_char_span.style.backgroundColor = curr_cohorts[key];
                 top_char_span.title += `Cohort ${parseInt(key) + 1} has variant at position ${i + 1};\t`;
+                if(varis_amount < 1){
+                    top_char_span.style.border = "solid";
+                    top_char_span.style.borderColor = curr_cohorts[key];
+                    top_char_span.style.opacity = varis_amount;
+                }
             }
         }
         container.appendChild(top_char_span);
@@ -82,9 +88,15 @@ function createHeatmap() {
         let cohort_variants_set = new Set();
         for (const member of cohorts[i]) {
             for (const key in variants[member]) {
-                cohort_variants_set.add(sequence[parseInt(key) - 1] + " " + key + " " + variants[member][key] + ',\t');
+                cohort_variants_set.add(`${sequence[parseInt(key) - 1]} ${key} ${variants[member][key]},\t`);
             }
         }
+        cohort_variants_set = Array.from(cohort_variants_set)
+            .sort((a, b) => {
+            const numA = parseInt(a.split(' ')[1]);
+            const numB = parseInt(b.split(' ')[1]);
+            return numA - numB;
+        });
         for(let item of cohort_variants_set){
             entered = true;
             span.innerHTML += item
@@ -177,10 +189,10 @@ function make_cohort_variants(){
         for (let indiv of cohort){
             for (let variation in variants[indiv]){
                 if (varis[variation]){
-                    varis[variation] = varis[variation] + 1;
+                    varis[variation] = varis[variation] + 1/cohort.length;
                 }
                 else{
-                    varis[variation] = 1;
+                    varis[variation] = 1/cohort.length;
                 }
             }
         }
