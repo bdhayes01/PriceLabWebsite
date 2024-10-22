@@ -23,18 +23,23 @@ function color_code(container){
         const top_char_span = document.createElement('span');
         top_char_span.textContent = sequence[i];
         top_char_span.style.display = i < 2000 ? 'inline' : 'none';  // Show only the first 50 chars initially
+        top_char_span.style.backgroundColor = null;
 
         // Loop through cohorts to check for a variant at this position
         for (let key in curr_cohorts){
             let varis_amount = cohort_variants[key][i + 1];
             if (varis_amount){
-                top_char_span.style.backgroundColor = curr_cohorts[key];
-                top_char_span.title += `Cohort ${parseInt(key) + 1} has variant at position ${i + 1};\t`;
-                if(varis_amount < 1){
+                if (top_char_span.style.backgroundColor !== ""){
+                    top_char_span.style.backgroundColor = "white";
                     top_char_span.style.border = "solid";
-                    top_char_span.style.borderColor = curr_cohorts[key];
-                    top_char_span.style.opacity = varis_amount;
+                    top_char_span.style.borderColor = "black";
+                } else {
+                    top_char_span.style.backgroundColor = curr_cohorts[key];
+                    if(varis_amount < 1){
+                        top_char_span.style.opacity = (.5 + parseFloat(varis_amount)/2).toString();
+                    }
                 }
+                top_char_span.title += `Cohort ${parseInt(key) + 1} has variant at position ${i + 1};\t`;
             }
         }
         container.appendChild(top_char_span);
