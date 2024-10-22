@@ -123,9 +123,8 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         numeric_columns = [str(col) for col in numeric_columns]
         encoded_data3 = encoded_data.reindex(numeric_columns, axis=1)
 
-        # Make figsize based on number of encoded_data3.columns and rows. Ask JC
+        #TODO: Make figsize based on number of encoded_data3.columns and rows. Ask JC
 
-        # encoded_data2 = encoded_data.reindex(sorted(encoded_data.drop('Cluster', axis=1).columns.astype(int)), axis=1)
         g = sns.clustermap(encoded_data3, row_linkage=linked, col_cluster=False,
                        cmap='Blues', figsize=(12, 9), cbar_pos=None)
         plt.title("Heatmap with Hierarchical clustering dendrogram. Blue represents a variant.")
