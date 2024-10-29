@@ -26,20 +26,24 @@ function color_code(container){
         top_char_span.style.backgroundColor = null;
 
         // Loop through cohorts to check for a variant at this position
-        for (let key in curr_cohorts){
-            let varis_amount = cohorts_variants[key][i + 1];
+        for (let cohort in curr_cohorts){
+            let varis_amount = cohorts_variants[cohort][i + 1];
             if (varis_amount){
-                if (top_char_span.style.backgroundColor !== ""){
+                if (top_char_span.style.backgroundColor !== "" || top_char_span.style.textDecorationStyle !== ""){
                     top_char_span.style.backgroundColor = "white";
                     top_char_span.style.border = "solid";
                     top_char_span.style.borderColor = "black";
                 } else {
-                    top_char_span.style.backgroundColor = curr_cohorts[key];
-                    if(varis_amount < 1){
-                        top_char_span.style.opacity = (.5 + parseFloat(varis_amount)/2).toString();
+                    if(varis_amount[1] < 1){
+                        top_char_span.style.textDecorationThickness = "4px";
+                        top_char_span.style.textDecorationLine = "underline";
+                        top_char_span.style.textDecorationColor = curr_cohorts[cohort];
+                    }else{
+                        top_char_span.style.backgroundColor = curr_cohorts[cohort];
+                        top_char_span.style.color = "white";
                     }
                 }
-                top_char_span.title += `Cohort ${parseInt(key) + 1} has variant at position ${i + 1};\t`;
+                top_char_span.title += `Cohort ${parseInt(cohort) + 1} has ${Math.round(parseFloat(varis_amount[1]) * 100)} percent penetrance at position ${i + 1};\t`;
             }
         }
         container.appendChild(top_char_span);
