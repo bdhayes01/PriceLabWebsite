@@ -22,7 +22,7 @@ function color_code(container){
     for (let i = 0; i < sequence.length; i++) {
         const top_char_span = document.createElement('span');
         top_char_span.textContent = sequence[i];
-        top_char_span.style.display = i < 2000 ? 'inline' : 'none';  // Show only the first 50 chars initially
+        top_char_span.style.display = i < 2000 ? 'inline' : 'none';  // Show only the first 2000 chars initially
         top_char_span.style.backgroundColor = null;
 
         // Loop through cohorts to check for a variant at this position
@@ -97,29 +97,62 @@ function createHeatmap() {
 
         span.innerHTML += "Variations: ";
         let entered = false;
+        let x = cohorts_variants[i];
 
-        let cohort_variants_set = new Set();
-        for (const member of cohorts[i]) {
-            for (const key in variants[member]) {
-                cohort_variants_set.add(`${sequence[parseInt(key) - 1]} ${key} ${variants[member][key]},\t`);
+
+        for (const position in cohorts_variants[i]){
+            let variant_span = document.createElement('span');
+            variant_span.innerHTML = `${sequence[parseInt(position) - 1]} ${position} ${cohorts_variants[i][position][2]},\t`
+            for(let mut in cohorts_variants[i][position][0]){
+                for(let indiv of cohorts_variants[i][position][0][mut]){
+                    variant_span.title += `${indiv} has mutation ${mut}\n`
+                    entered = true;
+                }
             }
-        }
-        cohort_variants_set = Array.from(cohort_variants_set)
-            .sort((a, b) => {
-            const numA = parseInt(a.split(' ')[1]);
-            const numB = parseInt(b.split(' ')[1]);
-            return numA - numB;
-        });
-        for(let item of cohort_variants_set){
-            entered = true;
-            span.innerHTML += item
+             span.appendChild(variant_span);
         }
         if(!entered){
             span.innerHTML += "None."
         }
         else{
-            span.innerHTML = span.innerHTML.slice(0, -2);
+            let element = span.lastElementChild;
+            element.innerHTML = element.innerHTML.slice(0, -2);
         }
+
+
+
+        // // let cohort_variants_set = new Set();
+        // for (const member of cohorts[i]) {
+        //     for (const key in variants[member]) {
+        //         cohort_variants_set.add(`${sequence[parseInt(key) - 1]} ${key} ${variants[member][key]},\t`);
+        //     }
+        // }
+        // cohort_variants_set = Array.from(cohort_variants_set)
+        //     .sort((a, b) => {
+        //     const numA = parseInt(a.split(' ')[1]);
+        //     const numB = parseInt(b.split(' ')[1]);
+        //     return numA - numB;
+        // });
+        // for(let item of cohort_variants_set){
+        //     const char_span = document.createElement('span');
+        //     char_span.textContent = item;
+        //
+        //
+        //
+        //     char_span.title += "nothing";
+        //
+        //
+        //
+        //     span.appendChild(char_span);
+        //     entered = true;
+        //     // span.innerHTML += item
+        // }
+        // if(!entered){
+        //     span.innerHTML += "None."
+        // }
+        // else{
+        //     span.innerHTML = span.innerHTML.slice(0, -2);
+        // }
         span.className = 'normal';
         sequenceContainer.appendChild(cohort_container);
         sequenceContainer.appendChild(span);
@@ -221,6 +254,16 @@ function make_cohort_variants(){
                     positional_variants[variants[indiv][position]] = [indiv];
                     cohort_variants[position] = [positional_variants, 1/cohort.length];
                 }
+                let max_char = "Z";
+                let max_num = -1;
+                for(let mut in cohort_variants[position][0]){
+                    let length_mutations = cohort_variants[position][0][mut].length;
+                    if(length_mutations > max_num){
+                        max_num = length_mutations;
+                        max_char = mut;
+                    }
+                }
+                cohort_variants[position].push(max_char);
             }
         }
         cohorts_variants[c] = cohort_variants;
