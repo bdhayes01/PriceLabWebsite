@@ -3,7 +3,7 @@ let cohortColors = ['red', 'blue', 'yellow', 'purple'];
 let sequence = null;
 let cohorts = null;
 let variants = null;
-let cohort_variants = null;
+let cohorts_variants = null;
 let expanded = false;
 
 
@@ -27,7 +27,7 @@ function color_code(container){
 
         // Loop through cohorts to check for a variant at this position
         for (let key in curr_cohorts){
-            let varis_amount = cohort_variants[key][i + 1];
+            let varis_amount = cohorts_variants[key][i + 1];
             if (varis_amount){
                 if (top_char_span.style.backgroundColor !== ""){
                     top_char_span.style.backgroundColor = "white";
@@ -187,21 +187,35 @@ function make_cohorts(){
 }
 
 function make_cohort_variants(){
-    cohort_variants = {}
+    cohorts_variants = {};
     for (let c in cohorts){
-        let varis = {};
+        let cohort_variants = {};
         let cohort = cohorts[c];
         for (let indiv of cohort){
-            for (let variation in variants[indiv]){
-                if (varis[variation]){
-                    varis[variation] = varis[variation] + 1/cohort.length;
+            for (let position in variants[indiv]){
+                if(cohort_variants[position]){
+
+                    //Adds to the percentage of the cohort with variant in the position
+                    cohort_variants[position][1] = cohort_variants[position][1] + 1/cohort.length;
+
+                    let positional_variants = cohort_variants[position][0];
+                    if(positional_variants[variants[indiv][position]]){
+                        //Appends to the list of individuals with this specific mutation in the cohort.
+                        positional_variants[variants[indiv][position]].push(indiv);
+                    }
+                    else{
+                        // Adds a new variant at this position
+                        positional_variants[variants[indiv][position]] = [indiv];
+                    }
                 }
                 else{
-                    varis[variation] = 1/cohort.length;
+                    let positional_variants = {};
+                    positional_variants[variants[indiv][position]] = [indiv];
+                    cohort_variants[position] = [positional_variants, 1/cohort.length];
                 }
             }
         }
-        cohort_variants[c] = varis;
+        cohorts_variants[c] = cohort_variants;
     }
 }
 
