@@ -43,7 +43,7 @@ function color_code(container){
                         top_char_span.style.color = "white";
                     }
                 }
-                top_char_span.title += `Cohort ${parseInt(cohort) + 1} has ${Math.round(parseFloat(varis_amount[1]) * 100)} percent penetrance at position ${i + 1};\t`;
+                top_char_span.title += `Cohort ${parseInt(cohort) + 1} has ${Math.round(parseFloat(varis_amount[1]) * 100)}% penetrance at position ${i + 1};\t`;
             }
         }
         container.appendChild(top_char_span);
