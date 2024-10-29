@@ -29,21 +29,25 @@ function color_code(container){
         for (let cohort in curr_cohorts){
             let varis_amount = cohorts_variants[cohort][i + 1];
             if (varis_amount){
-                if (top_char_span.style.backgroundColor !== "" || top_char_span.style.textDecorationStyle !== ""){
+                if (top_char_span.style.backgroundColor !== "" || top_char_span.style.backgroundImage !== ""){
+                    top_char_span.style.backgroundImage = ""
+                    top_char_span.style.color = "black";
                     top_char_span.style.backgroundColor = "white";
                     top_char_span.style.border = "solid";
                     top_char_span.style.borderColor = "black";
                 } else {
                     if(varis_amount[1] < 1){
-                        top_char_span.style.textDecorationThickness = "4px";
-                        top_char_span.style.textDecorationLine = "underline";
-                        top_char_span.style.textDecorationColor = curr_cohorts[cohort];
+                        top_char_span.style.backgroundImage = `linear-gradient(to bottom right, ${curr_cohorts[cohort]}, white)`
+                        // top_char_span.style.textShadow = `1px 1px ${curr_cohorts[cohort]}`
+                        // top_char_span.style.textDecorationThickness = "4px";
+                        // top_char_span.style.textDecorationLine = "underline overline";
+                        // top_char_span.style.textDecorationColor = curr_cohorts[cohort];
                     }else{
                         top_char_span.style.backgroundColor = curr_cohorts[cohort];
                         top_char_span.style.color = "white";
                     }
                 }
-                top_char_span.title += `Cohort ${parseInt(cohort) + 1} has ${Math.round(parseFloat(varis_amount[1]) * 100)}% penetrance at position ${i + 1};\t`;
+                top_char_span.title += `Cohort ${parseInt(cohort) + 1} has ${Math.round(parseFloat(varis_amount[1]) * 100)}% mutation penetrance at position ${i + 1};\t`;
             }
         }
         container.appendChild(top_char_span);
