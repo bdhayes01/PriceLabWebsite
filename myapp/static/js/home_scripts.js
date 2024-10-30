@@ -164,7 +164,7 @@ function renderSequenceList() {
     const json = sequence_json;  // Access from global variable
     const seqList = document.getElementById('sequence-list');
 
-    if (json.Sequence.length > 0) { //TODO: Check if this works with no valid json
+    if (json.Sequence) {
         seqList.innerHTML = '';  // Clear previous results
         sequence = json.Sequence;
         variants = json.Variants;
@@ -173,7 +173,7 @@ function renderSequenceList() {
             seqList.appendChild(heatmap);
         }
     } else {
-        seqList.innerHTML = '<li>No results found.</li>';
+        seqList.innerHTML = '<li>No results found. Last valid search displayed.</li>';
     }
 }
 

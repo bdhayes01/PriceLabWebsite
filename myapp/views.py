@@ -103,6 +103,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
     global variants
     global encoded_data
     plt.clf()
+    figuresize = (12, 7)
 
     if cohorts is None:
         all_items = set(item for sublist in variants.values() for item in sublist)
@@ -114,7 +115,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         dist_matrix = pdist(binary_matrix.values, metric='jaccard')
 
         linked = linkage(dist_matrix, method='ward')
-        plt.figure(figsize=(10, 7))
+        plt.figure(figsize=figuresize)
         dendrogram(linked)
     else:
         linked = linkage(encoded_data.drop('Cluster', axis=1), method='ward')
@@ -126,7 +127,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         #TODO: Make figsize based on number of encoded_data3.columns and rows. Ask JC
 
         g = sns.clustermap(encoded_data3, row_linkage=linked, col_cluster=False,
-                       cmap='Blues', figsize=(12, 9), cbar_pos=None)
+                       cmap='Blues', figsize=figuresize, cbar_pos=None)
         plt.title("Heatmap with Hierarchical clustering dendrogram. Blue represents a variant.")
         cluster_colors = sns.color_palette("husl", len(cohorts))
         ax = g.ax_heatmap
