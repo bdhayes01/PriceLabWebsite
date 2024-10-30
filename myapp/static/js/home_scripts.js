@@ -1,5 +1,5 @@
 let curr_cohorts = {};
-let cohortColors = ['red', 'blue', 'yellow', 'purple'];
+let cohortColors = ['red', 'blue', 'green', 'purple'];
 let sequence = null;
 let cohorts = null;
 let variants = null;
@@ -283,17 +283,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show the modal when the help button is clicked
     helpButton.onclick = function() {
-        if(modal.style.display === "none"){
+        if(modal.style.display === ""){
             modal.style.display = 'block';
         }else{
-            modal.style.display = 'none';
+            modal.style.display = "";
         }
     };
 
     // Close the modal when clicking outside the content
     window.onclick = function(event) {
         if (event.target !== helpButton) {
-            modal.style.display = 'none';
+            modal.style.display = "";
         }
     };
 });
