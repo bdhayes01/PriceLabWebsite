@@ -36,7 +36,7 @@ function color_code(container){
                     top_char_span.style.border = "solid";
                     top_char_span.style.borderColor = "black";
                 } else {
-                    if(varis_amount[1] < 1){
+                    if(parseFloat(varis_amount[1]) * 100 < 99){
                         top_char_span.style.backgroundImage = `linear-gradient(to bottom right, ${curr_cohorts[cohort]}, white)`
                         // top_char_span.style.textShadow = `1px 1px ${curr_cohorts[cohort]}`
                         // top_char_span.style.textDecorationThickness = "4px";
