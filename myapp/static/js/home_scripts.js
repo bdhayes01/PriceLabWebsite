@@ -164,7 +164,7 @@ function renderSequenceList() {
     const json = sequence_json;  // Access from global variable
     const seqList = document.getElementById('sequence-list');
 
-    if (json.Sequence) {
+    if (json.Sequence) { //TODO: Github is having issues
         seqList.innerHTML = '';  // Clear previous results
         sequence = json.Sequence;
         variants = json.Variants;
