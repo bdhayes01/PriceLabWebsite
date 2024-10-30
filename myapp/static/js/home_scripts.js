@@ -276,3 +276,24 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('cohort_number').value = savedCohortNumber;
         }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const helpButton = document.getElementById('help-button');
+    const modal = document.getElementById('help-modal');
+
+    // Show the modal when the help button is clicked
+    helpButton.onclick = function() {
+        if(modal.style.display === "none"){
+            modal.style.display = 'block';
+        }else{
+            modal.style.display = 'none';
+        }
+    };
+
+    // Close the modal when clicking outside the content
+    window.onclick = function(event) {
+        if (event.target !== helpButton) {
+            modal.style.display = 'none';
+        }
+    };
+});

@@ -15,3 +15,31 @@ p {
   white-space: normal; /* Allow line breaks */
   word-wrap: break-word; /* Ensure words break if they're too long */
 }
+/* Modal container (hidden by default) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay background */
+}
+
+/* Modal content box */
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    width: 50%;
+    border-radius: 10px;
+}
+
+/*!* Close button (top-right) *!*/
+/*.close-button {*/
+/*    color: black;*/
+/*    float: right;*/
+/*    font-size: 28px;*/
+/*    cursor: pointer;*/
+/*}*/

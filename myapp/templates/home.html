@@ -9,6 +9,20 @@
     <script> const sequence_json = {{ sequence_json|safe }}; </script>
 </head>
 <body>
+    <!-- Help Button -->
+    <button id="help-button">Help</button>
+
+    <!-- Modal Structure -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+{#            <span class="close-button">&times;</span>#}
+            <h2>Instructions</h2>
+            <p>1. Enter the accession number in the search field to search for sequences.</p>
+            <p>2. Click 'Make Cohorts' to generate cohorts based on variants.</p>
+            <p>3. Use the buttons to navigate or upload a new CSV file.</p>
+            <p>4. The dendrogram will update with cohort changes.</p>
+        </div>
+    </div>
     <h1>Enter Accession Number</h1>
 
     <!-- Search Input -->
