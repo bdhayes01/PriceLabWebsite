@@ -103,7 +103,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
     global variants
     global encoded_data
     plt.clf()
-    figuresize = (12, 7)
+    figuresize = (24, 14)
 
     if cohorts is None:
         all_items = set(item for sublist in variants.values() for item in sublist)
