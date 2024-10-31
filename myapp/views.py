@@ -103,9 +103,9 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
     global variants
     global encoded_data
     plt.clf()
-    figuresize = (24, 14)
 
     if cohorts is None:
+        figuresize = (len(variants)/2, len(variants)/4)
         all_items = set(item for sublist in variants.values() for item in sublist)
         binary_matrix = pd.DataFrame(
             [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
@@ -118,14 +118,12 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         plt.figure(figsize=figuresize)
         dendrogram(linked)
     else:
+        figuresize = (len(encoded_data.columns)/4, len(encoded_data))
         linked = linkage(encoded_data.drop('Cluster', axis=1), method='ward')
 
         numeric_columns = sorted([int(col) for col in encoded_data.columns if col != 'Cluster' and col.isdigit()])
         numeric_columns = [str(col) for col in numeric_columns]
         encoded_data3 = encoded_data.reindex(numeric_columns, axis=1)
-
-        #TODO: Make figsize based on number of encoded_data3.columns and rows. Ask JC
-
         g = sns.clustermap(encoded_data3, row_linkage=linked, col_cluster=False,
                        cmap='Blues', figsize=figuresize, cbar_pos=None)
         plt.title("Heatmap with Hierarchical clustering dendrogram. Blue represents a variant.")
