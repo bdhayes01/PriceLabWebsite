@@ -118,7 +118,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         plt.figure(figsize=figuresize)
         dendrogram(linked)
     else:
-        figuresize = (len(encoded_data.columns)/4, len(encoded_data))
+        figuresize = (len(encoded_data.columns)/4, len(encoded_data)/1.5)
         linked = linkage(encoded_data.drop('Cluster', axis=1), method='ward')
 
         numeric_columns = sorted([int(col) for col in encoded_data.columns if col != 'Cluster' and col.isdigit()])
