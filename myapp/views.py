@@ -85,6 +85,7 @@ def make_cohorts(request):
     encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
     kmeans = KMeans(n_clusters=cohort_number, random_state=42) # Can add in random_state=1 to ensure that you will always get the same result.
     global cohorts
+    # TODO: Address when there are no variants!
     cohorts = kmeans.fit_predict(encoded_data)
     encoded_data['Cluster'] = cohorts
     temp_cohorts = {}
@@ -103,6 +104,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
     global variants
     global encoded_data
     plt.clf()
+        #TODO: Set a minimum figsize
 
     if cohorts is None:
         figuresize = (len(variants)/2, len(variants)/4)
