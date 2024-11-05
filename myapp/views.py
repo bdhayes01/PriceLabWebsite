@@ -105,10 +105,14 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
     global variants
     global encoded_data
     plt.clf()
-        #TODO: Set a minimum figsize
+    minfigsize = (8.0, 6.0)
 
     if cohorts is None:
         figuresize = (len(variants)/2, len(variants)/4)
+        selected_figuresize = (
+            max(minfigsize[0], figuresize[0]),  # Select the larger width
+            max(minfigsize[1], figuresize[1])  # Select the larger height
+        )
         all_items = set(item for sublist in variants.values() for item in sublist)
         binary_matrix = pd.DataFrame(
             [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
@@ -118,17 +122,21 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         dist_matrix = pdist(binary_matrix.values, metric='jaccard')
 
         linked = linkage(dist_matrix, method='ward')
-        plt.figure(figsize=figuresize)
+        plt.figure(figsize=selected_figuresize)
         dendrogram(linked)
     else:
         figuresize = (len(encoded_data.columns)/4, len(encoded_data)/1.5)
+        selected_figuresize = (
+            max(minfigsize[0], figuresize[0]),  # Select the larger width
+            max(minfigsize[1], figuresize[1])  # Select the larger height
+        )
         linked = linkage(encoded_data.drop('Cluster', axis=1), method='ward')
 
         numeric_columns = sorted([int(col) for col in encoded_data.columns if col != 'Cluster' and col.isdigit()])
         numeric_columns = [str(col) for col in numeric_columns]
         encoded_data3 = encoded_data.reindex(numeric_columns, axis=1)
         g = sns.clustermap(encoded_data3, row_linkage=linked, col_cluster=False,
-                       cmap='Blues', figsize=figuresize, cbar_pos=None)
+                       cmap='Blues', figsize=selected_figuresize, cbar_pos=None)
         plt.title("Heatmap with Hierarchical clustering dendrogram. Blue represents a variant.")
         cluster_colors = sns.color_palette("husl", len(cohorts))
         ax = g.ax_heatmap
