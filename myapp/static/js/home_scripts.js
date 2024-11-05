@@ -118,41 +118,6 @@ function createHeatmap() {
             let element = span.lastElementChild;
             element.innerHTML = element.innerHTML.slice(0, -2);
         }
-
-
-
-        // // let cohort_variants_set = new Set();
-        // for (const member of cohorts[i]) {
-        //     for (const key in variants[member]) {
-        //         cohort_variants_set.add(`${sequence[parseInt(key) - 1]} ${key} ${variants[member][key]},\t`);
-        //     }
-        // }
-        // cohort_variants_set = Array.from(cohort_variants_set)
-        //     .sort((a, b) => {
-        //     const numA = parseInt(a.split(' ')[1]);
-        //     const numB = parseInt(b.split(' ')[1]);
-        //     return numA - numB;
-        // });
-        // for(let item of cohort_variants_set){
-        //     const char_span = document.createElement('span');
-        //     char_span.textContent = item;
-        //
-        //
-        //
-        //     char_span.title += "nothing";
-        //
-        //
-        //
-        //     span.appendChild(char_span);
-        //     entered = true;
-        //     // span.innerHTML += item
-        // }
-        // if(!entered){
-        //     span.innerHTML += "None."
-        // }
-        // else{
-        //     span.innerHTML = span.innerHTML.slice(0, -2);
-        // }
         span.className = 'normal';
         sequenceContainer.appendChild(cohort_container);
         sequenceContainer.appendChild(span);
@@ -164,7 +129,7 @@ function renderSequenceList() {
     const json = sequence_json;  // Access from global variable
     const seqList = document.getElementById('sequence-list');
 
-    if (json.Sequence) { //TODO: Github is having issues
+    if (json.Sequence) {
         seqList.innerHTML = '';  // Clear previous results
         sequence = json.Sequence;
         variants = json.Variants;
@@ -172,25 +137,15 @@ function renderSequenceList() {
             const heatmap = createHeatmap();
             seqList.appendChild(heatmap);
         }
+        else if (Object.values(variants).every(dict => Object.keys(dict).length === 0)){
+            let paragraphElement = document.createElement('p');
+            paragraphElement.innerHTML += "No mutations found.";
+            seqList.appendChild(paragraphElement);
+        }
     } else {
         seqList.innerHTML = '<li>No results found. Last valid search displayed.</li>';
     }
 }
-
-// window.onload = function() {
-//     localStorage.removeItem('cohort_number');
-//     const xhr = new XMLHttpRequest();
-//     xhr.open('GET', `clear_cohorts/`, true);
-//         xhr.onload = function () {
-//         if (xhr.status === 200) {
-//             cohorts = null;
-//             renderSequenceList();
-//         } else {
-//             console.error('Failed to clear cohorts:', xhr.status);
-//         }
-//     };
-//     xhr.send();
-// };
 
 window.onload = function() {
     renderSequenceList();

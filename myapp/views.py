@@ -85,19 +85,20 @@ def make_cohorts(request):
     encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
     kmeans = KMeans(n_clusters=cohort_number, random_state=42) # Can add in random_state=1 to ensure that you will always get the same result.
     global cohorts
-    # TODO: Address when there are no variants!
-    cohorts = kmeans.fit_predict(encoded_data)
-    encoded_data['Cluster'] = cohorts
-    temp_cohorts = {}
-    for indiv, coh in zip(variants.keys(), cohorts):
-        if coh in temp_cohorts:
-            temp_cohorts[coh].append(indiv)
-        else:
-            temp_cohorts[coh] = [indiv]
-    cohorts = [temp_cohorts[num] for num in sorted(temp_cohorts.keys())]
-
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
-
+    try:
+        cohorts = kmeans.fit_predict(encoded_data)
+        encoded_data['Cluster'] = cohorts
+        temp_cohorts = {}
+        for indiv, coh in zip(variants.keys(), cohorts):
+            if coh in temp_cohorts:
+                temp_cohorts[coh].append(indiv)
+            else:
+                temp_cohorts[coh] = [indiv]
+        cohorts = [temp_cohorts[num] for num in sorted(temp_cohorts.keys())]
+        return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+    except:
+        cohorts = None
+        return JsonResponse({'message': 'Cohorts not created', 'cohorts': cohorts})
 
 def make_dendrogram(request):  # Must always have 'request' else a 500 error.
     global cohorts
