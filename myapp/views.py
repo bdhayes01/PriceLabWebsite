@@ -18,45 +18,45 @@ encoded_data = None
 
 def upload_csv(request):
     message = None  # Initialize message
-    if request.method == 'POST':
-        # Check if the user has uploaded a file
-        if 'file' in request.FILES:
-            files = request.FILES.getlist('file')
-            for file in files:
-                # Parse the uploaded Excel file using pandas
-                df = pd.read_csv(file)
+    if 'file' in request.FILES:
+        files = request.FILES.getlist('file')
+        for file in files:
+            # Parse the uploaded Excel file using pandas
+            df = pd.read_csv(file)
 
-                file_name = os.path.splitext(file.name)[0]
-                individual = file_name.split('-')[1]
+            file_name = os.path.splitext(file.name)[0]
+            individual = file_name.split('-')[1]
 
-                for _, row in df.iterrows():
+            for _, row in df.iterrows():
 
-                    variants_str = row.get('Variants', '{}')
-                    variants = {individual: {}}
-                    if isinstance(variants_str, str):
-                        varis = variants_str.split('],')
-                        for i in range(len(varis)):
-                            integer_variants = re.findall(r'\d+', varis[i])[0]
-                            peptide_variants = re.findall(r'[a-zA-Z]+', varis[i])
-                            peptide_variants = [str(ch) for ch in peptide_variants]
-                            variants[individual][integer_variants] = peptide_variants
-                    sequence, created = Sequence_and_CHalf.objects.get_or_create(
-                        Accession=row['Accession'],
-                        defaults={'Variants': variants},
-                        Sequence=row['Sequence'])
+                variants_str = row.get('Variants', '{}')
+                variants = {individual: {}}
+                if isinstance(variants_str, str):
+                    varis = variants_str.split('],')
+                    for i in range(len(varis)):
+                        integer_variants = re.findall(r'\d+', varis[i])[0]
+                        peptide_variants = re.findall(r'[a-zA-Z]+', varis[i])
+                        peptide_variants = [str(ch) for ch in peptide_variants]
+                        variants[individual][integer_variants] = peptide_variants
+                sequence, created = Sequence_and_CHalf.objects.get_or_create(
+                    Accession=row['Accession'],
+                    defaults={'Variants': variants},
+                    Sequence=row['Sequence'])
 
-                    if not created:
-                        sequence.Variants.update(variants)
-                        sequence.save()
+                if not created:
+                    sequence.Variants.update(variants)
+                    sequence.save()
 
-            message = "File(s) uploaded and parsed successfully."  # Set success message
-        else:
-            message = "No file uploaded."
-
-    return render(request, 'upload_csv.html', {'message': message})
+        message = "File(s) uploaded and parsed successfully."  # Set success message
+    else:
+        message = "No file uploaded."
+    return message
 
 
 def home(request):
+    message = None
+    if request.method == 'POST':
+        message = upload_csv(request)
     query = request.GET.get('q', '')
     if query:
         sequence = Sequence_and_CHalf.objects.filter(Accession__exact=query).first()
@@ -73,6 +73,8 @@ def home(request):
             })
     else:
         sequence_json = json.dumps({})
+    if message:
+        return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query, 'message': message})
     return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
 
 
