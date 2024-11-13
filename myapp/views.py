@@ -21,37 +21,65 @@ def upload_csv(request):
     if 'file' in request.FILES:
         files = request.FILES.getlist('file')
         for file in files:
-            # Parse the uploaded Excel file using pandas
-            df = pd.read_csv(file)
+            message = "File(s) uploaded and parsed successfully."  # Set success message
 
             file_name = os.path.splitext(file.name)[0]
-            individual = file_name.split('-')[1]
+            # Separates the files based on which ones they are. Each function then parses.
+            # May need to adjust based on future file name changes/ format changes.
 
-            for _, row in df.iterrows():
-
-                variants_str = row.get('Variants', '{}')
-                variants = {individual: {}}
-                if isinstance(variants_str, str):
-                    varis = variants_str.split('],')
-                    for i in range(len(varis)):
-                        integer_variants = re.findall(r'\d+', varis[i])[0]
-                        peptide_variants = re.findall(r'[a-zA-Z]+', varis[i])
-                        peptide_variants = [str(ch) for ch in peptide_variants]
-                        variants[individual][integer_variants] = peptide_variants
-                sequence, created = Sequence_and_CHalf.objects.get_or_create(
-                    Accession=row['Accession'],
-                    defaults={'Variants': variants},
-                    Sequence=row['Sequence'])
-
-                if not created:
-                    sequence.Variants.update(variants)
-                    sequence.save()
-
-        message = "File(s) uploaded and parsed successfully."  # Set success message
+            if "visual" in file_name:
+                upload_visual_outputs(file)
+            elif "Sites" in file_name:
+                upload_c_half(file)
+            elif "Masterlist" in file_name:
+                upload_metadata(file)
+            else:
+                message = "No valid file uploaded."
     else:
         message = "No file uploaded."
     return message
 
+def upload_visual_outputs(file):
+    # Parse the uploaded Excel file using pandas
+    df = pd.read_csv(file)
+
+    individual = os.path.splitext(file.name)[0].split('-')[1]
+
+    for _, row in df.iterrows():
+
+        variants_str = row.get('Variants', '{}')
+        variants = {individual: {}}
+        if isinstance(variants_str, str):
+            varis = variants_str.split('],')
+            for i in range(len(varis)):
+                integer_variants = re.findall(r'\d+', varis[i])[0]
+                peptide_variants = re.findall(r'[a-zA-Z]+', varis[i])
+                peptide_variants = [str(ch) for ch in peptide_variants]
+                variants[individual][integer_variants] = peptide_variants
+        sequence, created = Sequence_and_CHalf.objects.get_or_create(
+            Accession=row['Accession'],
+            defaults={'Variants': variants},
+            Sequence=row['Sequence'])
+
+        if not created:
+            sequence.Variants.update(variants)
+            sequence.save()
+    return
+
+def upload_c_half(file):
+    return
+
+def upload_metadata(file):
+    df = pd.read_csv(file)
+    for _, row in df.iterrows():
+        individual = row['Condition']
+        disease = row['Disease']
+        age = row['Age']
+        sex = row['Sex']
+        bmi = row['BMI']
+        drug = row['Drug']
+
+    return
 
 def home(request):
     message = None
