@@ -1,7 +1,7 @@
 import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from .models import Sequence
+from .models import Sequence_and_CHalf, Metadata
 import os, re, json
 from scipy.spatial.distance import pdist
 from scipy.cluster.hierarchy import linkage, dendrogram
@@ -40,7 +40,7 @@ def upload_csv(request):
                             peptide_variants = re.findall(r'[a-zA-Z]+', varis[i])
                             peptide_variants = [str(ch) for ch in peptide_variants]
                             variants[individual][integer_variants] = peptide_variants
-                    sequence, created = Sequence.objects.get_or_create(
+                    sequence, created = Sequence_and_CHalf.objects.get_or_create(
                         Accession=row['Accession'],
                         defaults={'Variants': variants},
                         Sequence=row['Sequence'])
@@ -59,17 +59,16 @@ def upload_csv(request):
 def home(request):
     query = request.GET.get('q', '')
     if query:
-        sequence = Sequence.objects.filter(Accession__exact=query).first()
+        sequence = Sequence_and_CHalf.objects.filter(Accession__exact=query).first()
     else:
         # sequence = Sequence.objects.first()
-        sequence = Sequence.objects.filter(Accession__exact="Q8WZ42|TITIN_HUMAN").first()
+        sequence = Sequence_and_CHalf.objects.filter(Accession__exact="Q8WZ42|TITIN_HUMAN").first()
     if sequence:
         global variants
         variants = sequence.Variants
         sequence_json = json.dumps({
                 'Accession': sequence.Accession,
                 'Variants': sequence.Variants,
-                'Cohorts': sequence.Cohorts,
                 'Sequence': sequence.Sequence
             })
     else:
