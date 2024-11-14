@@ -69,17 +69,20 @@ def upload_visual_outputs(file):
 def upload_c_half(file):
     return
 
+
 def upload_metadata(file):
     df = pd.read_csv(file)
     for _, row in df.iterrows():
         individual = row['Condition']
-        disease = row['Disease']
-        age = row['Age']
-        sex = row['Sex']
-        bmi = row['BMI']
-        drug = row['Drug']
-
+        disease = (True if row['Disease'] == 1 else False)
+        age = int(row['Age'])
+        sex = ("m" if row['Sex'] == 1 else "f")  # TODO: Ask Chad if this is right
+        bmi = float(row['BMI'])
+        drug = (True if row['Drug'] == 1 else False)
+        meta, create = Metadata.objects.get_or_create(Individual=individual, Disease=disease,
+                                                      Age=age, Sex=sex, BMI=bmi, Drug=drug)
     return
+
 
 def home(request):
     message = None
