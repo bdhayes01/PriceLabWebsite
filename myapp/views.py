@@ -79,7 +79,6 @@ def upload_metadata(file):
         sex = (True if row['Drug'] == 1 else False)  # TODO: Ask Chad which is M&F.
         bmi = float(row['BMI'])
         drug = (True if row['Drug'] == 1 else False)
-        print(individual, disease, age, sex, bmi, drug)
         meta, create = Metadata.objects.get_or_create(Individual=individual, Disease=disease,
                                                       Age=age, Sex=sex, BMI=bmi, Drug=drug)
     return
