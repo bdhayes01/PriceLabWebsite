@@ -9,7 +9,7 @@ class Sequence_and_CHalf(models.Model):
 class Metadata(models.Model):
     Individual = models.CharField(max_length=3)
     Age = models.IntegerField()
-    Disease = models.BinaryField()
-    Sex = models.BinaryField()
-    Drug = models.BinaryField()
+    Disease = models.BooleanField()
+    Sex = models.BooleanField()
+    Drug = models.BooleanField()
     BMI = models.FloatField()
