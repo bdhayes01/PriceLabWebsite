@@ -27,7 +27,7 @@
 
     <!-- Search Input -->
 
-    <label for="search">Search by Accession number:</label>
+    <label for="search">Search for protein by Accession number:</label>
     <input type="text" id="search" placeholder="Q8WZ42|TITIN_HUMAN" value="{{ query }}">
     <button onclick="searchSequence()">Search</button>
 
@@ -35,7 +35,7 @@
     <ul id="sequence-list">
         <!-- This list will be dynamically populated by JavaScript -->
     </ul>
-{#    <img src="{% url 'make_dendrogram' %}" alt="Dendrogram"> TODO: Remove this comment once there is data. #}
+{#    <img src="{% url 'make_dendrogram' %}" alt="Dendrogram">#}
 
     <br><br>
     <label for="cohort_number">How many cohorts? (between 1 and 10):</label>

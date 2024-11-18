@@ -42,9 +42,7 @@ def upload_csv(request):
 def upload_visual_outputs(file):
     # Parse the uploaded Excel file using pandas
     df = pd.read_csv(file)
-
     individual = os.path.splitext(file.name)[0].split('-')[1]
-
     for _, row in df.iterrows():
 
         variants_str = row.get('Variants', '{}')
@@ -58,15 +56,37 @@ def upload_visual_outputs(file):
                 variants[individual][integer_variants] = peptide_variants
         sequence, created = Sequence_and_CHalf.objects.get_or_create(
             Accession=row['Accession'],
-            defaults={'Variants': variants},
-            Sequence=row['Sequence'])
+            defaults={'Variants': variants, 'CHalf': {}, 'Sequence': row['Sequence']}
+        )
 
         if not created:
             sequence.Variants.update(variants)
+            sequence.Sequence = row.get('Sequence', '')
             sequence.save()
     return
 
 def upload_c_half(file):
+    df = pd.read_csv(file)
+    individual = os.path.splitext(file.name)[0].split()[0]
+    curr_accession = df.get('Accession')[0]
+    c_half_vals = {individual: {}}
+    for _, row in df.iterrows():
+        accession = row.get('Accession')
+        if accession != curr_accession:
+            seq_chalf, created = Sequence_and_CHalf.objects.get_or_create(
+                Accession=curr_accession,
+                defaults={'Variants': {}, 'CHalf': c_half_vals, 'Sequence': ""}
+            )
+            if not created:
+                seq_chalf.CHalf.update(c_half_vals)
+                seq_chalf.save()
+            curr_accession = accession
+            c_half_vals = {individual: {}}
+        c_half = row.get('trim_CHalf')
+        error = row.get('trim_CHalf_ConfidenceInterval')
+        position = row.get('Residue Number')
+        c_half_vals[individual][position] = (c_half, error)
+
     return
 
 
