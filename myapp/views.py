@@ -220,13 +220,16 @@ def make_c_half_graph(request):
         global chalf
         for key, value in chalf.items():
             for k, v in value.items():
-                x_values.append(k)
+                x_values.append(round(float(k)))
                 y_values.append(v[0])
                 errors.append(v[1])
 
+        sorted_data = sorted(zip(x_values, y_values, errors), key=lambda x: x[0])  # Sort by x_values
+        x_values, y_values, errors = zip(*sorted_data)  # Unpack the sorted data
+
         plt.figure(figsize=(10, 6))
         plt.errorbar(x_values, y_values, yerr=errors, fmt='o', capsize=5, label='Data with error bars')
-        plt.title("Error Bar Graph")
+        plt.title("C-Half values for selected protein")
         plt.xlabel("Residues")
         plt.ylabel("C-Half")
         plt.grid(True)
@@ -240,7 +243,5 @@ def make_c_half_graph(request):
 
         # Return the image as an HTTP response
         return HttpResponse(buffer, content_type='image/png')
-
-    #TODO: Fix errors and sort graph
 
 
