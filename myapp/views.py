@@ -75,19 +75,19 @@ def upload_c_half(file):
     for _, row in df.iterrows():
         accession = row.get('Accession')
         if accession != curr_accession:
-            seq_chalf, created = CHalf.objects.get_or_create(
+            chalf, created = CHalf.objects.get_or_create(
                 Accession=curr_accession,
                 defaults={'CHalf': c_half_vals}
             )
             if not created:
-                seq_chalf.CHalf.update(c_half_vals)
-                seq_chalf.save()
+                chalf.CHalf.update(c_half_vals)
+                chalf.save()
             curr_accession = accession
             c_half_vals = {individual: {}}
-        c_half = row.get('trim_CHalf')
+        chalf = row.get('trim_CHalf')
         error = row.get('trim_CHalf_ConfidenceInterval')
         position = row.get('Residue Number')
-        c_half_vals[individual][position] = (c_half, error)
+        c_half_vals[individual][position] = (chalf, error)
 
     return
 
