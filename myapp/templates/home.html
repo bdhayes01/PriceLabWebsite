@@ -15,7 +15,6 @@
     <!-- Modal Structure -->
     <div id="help-modal" class="modal">
         <div class="modal-content">
-{#            <span class="close-button">&times;</span>#}
 {#            TODO: Fix the help module #}
             <h2>Instructions</h2>
             <p>1. Enter the accession number in the search field to search for sequences.</p>
@@ -43,9 +42,6 @@
     </select>
     <br><br>
 
-
-{#    <img>#}
-
     <!-- Container for displaying the sequence list dynamically with JavaScript -->
     <ul id="sequence-list">
         <!-- This list will be dynamically populated by JavaScript -->
@@ -57,13 +53,15 @@
     <input type="number" id="cohort_number" name="quantity" placeholder="1" value="{{ cohort_query }}" min="1" max="10">
     <button onclick="make_cohorts()">Make Cohorts</button>
 
-    <h2>Upload Visual Output File(s)</h2>
 
+
+        <br><br><br><br><br><br>
+
+    <h2>Upload Visual Output File(s)</h2>
     <!-- Display success or error message -->
     {% if message %}
         <p style="color: green;">{{ message }}</p>
     {% endif %}
-
     <!-- Form to upload the Excel file -->
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
