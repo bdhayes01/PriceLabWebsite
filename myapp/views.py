@@ -15,6 +15,7 @@ global variants, cohorts, encoded_data, chalf
 variants = {}
 cohorts = None
 encoded_data = None
+chalf = None
 
 def upload_csv(request):
     message = None  # Initialize message
@@ -107,28 +108,26 @@ def upload_metadata(file):
 
 
 def home(request):
-    #TODO: Make this return the c-half, not the variants
     message = None
     if request.method == 'POST':
         message = upload_csv(request)
     query = request.GET.get('q', '')
     if query:
-        sequence = Sequence.objects.filter(Accession__exact=query).first()
+        c = CHalf.objects.filter(Accession__exact=query).first()
     else:
-        sequence = Sequence.objects.filter(Accession__exact="Q8WZ42|TITIN_HUMAN").first()
-    if sequence:
-        global variants
-        variants = sequence.Variants
-        sequence_json = json.dumps({
-                'Accession': sequence.Accession,
-                'Variants': sequence.Variants,
-                'Sequence': sequence.Sequence
+        c = CHalf.objects.filter(Accession__exact="Q8WZ42|TITIN_HUMAN").first()
+    if c:
+        global chalf
+        chalf = c.CHalf
+        chalf_json = json.dumps({
+                'Accession': c.Accession,
+                'CHalf': c.CHalf
             })
     else:
-        sequence_json = json.dumps({})
+        chalf_json = json.dumps({})
     if message:
-        return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query, 'message': message})
-    return render(request, 'home.html', {'sequence_json': sequence_json, 'query': query})
+        return render(request, 'home.html', {'sequence_json': chalf_json, 'query': query, 'message': message})
+    return render(request, 'home.html', {'sequence_json': chalf_json, 'query': query})
 
 
 def make_cohorts(request):
@@ -153,6 +152,7 @@ def make_cohorts(request):
     except:
         cohorts = None
         return JsonResponse({'message': 'Cohorts not created', 'cohorts': cohorts})
+
 
 def make_dendrogram(request):  # Must always have 'request' else a 500 error.
     global cohorts
@@ -213,5 +213,34 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
 
 def make_c_half_graph(request):
     plt.clf()
+    if cohorts is None:
+        x_values = []
+        y_values = []
+        errors = []
+        global chalf
+        for key, value in chalf.items():
+            for k, v in value.items():
+                x_values.append(k)
+                y_values.append(v[0])
+                errors.append(v[1])
+
+        plt.figure(figsize=(10, 6))
+        plt.errorbar(x_values, y_values, yerr=errors, fmt='o', capsize=5, label='Data with error bars')
+        plt.title("Error Bar Graph")
+        plt.xlabel("Residues")
+        plt.ylabel("C-Half")
+        plt.grid(True)
+        # plt.legend()
+        plt.tight_layout()
+
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        plt.close()
+        buffer.seek(0)
+
+        # Return the image as an HTTP response
+        return HttpResponse(buffer, content_type='image/png')
+
+    #TODO: Fix errors and sort graph
 
 

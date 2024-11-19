@@ -126,7 +126,7 @@ function createHeatmap() {
 }
 
 function renderSequenceList() {
-    const json = sequence_json;  // Access from global variable
+    const json = chalf_json;  // Access from global variable
     const seqList = document.getElementById('sequence-list');
 
     if (json.Sequence) {
