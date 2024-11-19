@@ -225,13 +225,6 @@ function make_cohort_variants(){
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-        let savedCohortNumber = localStorage.getItem('cohort_number');
-        if (savedCohortNumber) {
-            document.getElementById('cohort_number').value = savedCohortNumber;
-        }
-});
-
 document.addEventListener('DOMContentLoaded', function() {
     const helpButton = document.getElementById('help-button');
     const modal = document.getElementById('help-modal');
@@ -252,3 +245,67 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const dropdown = document.getElementById("independent_variable");
+    const dynamicContent = document.getElementById("dynamic-content");
+
+    dropdown.addEventListener("change", () => {
+        const selectedValue = dropdown.value;
+
+        // Clear any existing content
+        dynamicContent.innerHTML = "";
+
+        // Update HTML based on the selected value
+        switch (selectedValue) {
+            case "age":
+                dynamicContent.innerHTML = `
+                    <h3>Age Module</h3>
+                    <p>Provide additional details related to Age.</p>
+                    <input type="number" placeholder="Enter age range">
+                `;
+                break;
+            case "bmi":
+                dynamicContent.innerHTML = `
+                    <h3>BMI Module</h3>
+                    <p>Provide additional details related to BMI.</p>
+                    <input type="text" placeholder="Enter BMI range">
+                `;
+                break;
+            case "mutations":
+                dynamicContent.innerHTML = `
+                    <h3>Mutations Module</h3>
+                    <p>Configure mutations or view details here.</p>
+                    <textarea placeholder="Enter mutations data"></textarea>
+                `;
+                break;
+            case "sex":
+                dynamicContent.innerHTML = `
+                    <br>
+                    <button onclick="make_the_cohorts('sex')">GO</button>
+                `;
+                break;
+            default:
+                dynamicContent.innerHTML = `<p>Select an option to view details.</p>`;
+        }
+    });
+});
+
+
+function make_the_cohorts(dt){
+
+    let cohort_number = 2;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `make_cohorts2/?cohort_number=${cohort_number}&datatype=${dt}`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+        } else {
+            console.error('Error making cohorts:', xhr.status);
+        }
+    };
+    xhr.send();
+
+
+}

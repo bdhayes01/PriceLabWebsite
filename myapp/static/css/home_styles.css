@@ -36,10 +36,13 @@ p {
     border-radius: 10px;
 }
 
-/*!* Close button (top-right) *!*/
-/*.close-button {*/
-/*    color: black;*/
-/*    float: right;*/
-/*    font-size: 28px;*/
-/*    cursor: pointer;*/
-/*}*/
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+    position: absolute;
+    margin-left: 20px; /* Adjust as needed to position it next to the dropdown */
+}
+

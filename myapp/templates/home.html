@@ -40,6 +40,16 @@
         <option value="mutations">Mutations</option>
         <option value="sex">Sex</option>
     </select>
+
+    <div id="dynamic-content"></div>
+    <br>
+    <div id="lists"></div>
+
+{#        <label for="cohort_number">How many cohorts? (between 1 and 10):</label>#}
+{#        <input type="number" id="cohort_number" name="quantity" placeholder="1" value="{{ cohort_query }}" min="1" max="10">#}
+{#        <button onclick="make_cohorts()">Make Cohorts</button>#}
+
+
     <br><br>
 
     <!-- Container for displaying the sequence list dynamically with JavaScript -->
@@ -47,15 +57,7 @@
         <!-- This list will be dynamically populated by JavaScript -->
     </ul>
 
-
-    <br><br>
-    <label for="cohort_number">How many cohorts? (between 1 and 10):</label>
-    <input type="number" id="cohort_number" name="quantity" placeholder="1" value="{{ cohort_query }}" min="1" max="10">
-    <button onclick="make_cohorts()">Make Cohorts</button>
-
-
-
-        <br><br><br><br><br><br>
+    <br><br><br><br><br><br>
 
     <h2>Upload Visual Output File(s)</h2>
     <!-- Display success or error message -->

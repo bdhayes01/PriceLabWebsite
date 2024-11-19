@@ -17,6 +17,7 @@ cohorts = None
 encoded_data = None
 chalf = None
 
+
 def upload_csv(request):
     message = None  # Initialize message
     if 'file' in request.FILES:
@@ -120,9 +121,9 @@ def home(request):
         global chalf
         chalf = c.CHalf
         chalf_json = json.dumps({
-                'Accession': c.Accession,
-                'CHalf': c.CHalf
-            })
+            'Accession': c.Accession,
+            'CHalf': c.CHalf
+        })
     else:
         chalf_json = json.dumps({})
     if message:
@@ -131,12 +132,13 @@ def home(request):
 
 
 def make_cohorts(request):
-    cohort_number = int(request.GET.get('cohort_number', 1)) # Default to 1 if not provided
+    cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
     mlb = MultiLabelBinarizer()
     global variants
     global encoded_data
     encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
-    kmeans = KMeans(n_clusters=cohort_number, random_state=42) # Can add in random_state=1 to ensure that you will always get the same result.
+    kmeans = KMeans(n_clusters=cohort_number,
+                    random_state=42)  # Can add in random_state=1 to ensure that you will always get the same result.
     global cohorts
     try:
         cohorts = kmeans.fit_predict(encoded_data)
@@ -162,7 +164,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
     minfigsize = (8.0, 6.0)
 
     if cohorts is None:
-        figuresize = (len(variants)/2, len(variants)/4)
+        figuresize = (len(variants) / 2, len(variants) / 4)
         selected_figuresize = (
             max(minfigsize[0], figuresize[0]),  # Select the larger width
             max(minfigsize[1], figuresize[1])  # Select the larger height
@@ -179,7 +181,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         plt.figure(figsize=selected_figuresize)
         dendrogram(linked)
     else:
-        figuresize = (len(encoded_data.columns)/4, len(encoded_data)/1.5)
+        figuresize = (len(encoded_data.columns) / 4, len(encoded_data) / 1.5)
         selected_figuresize = (
             max(minfigsize[0], figuresize[0]),  # Select the larger width
             max(minfigsize[1], figuresize[1])  # Select the larger height
@@ -190,7 +192,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
         numeric_columns = [str(col) for col in numeric_columns]
         encoded_data3 = encoded_data.reindex(numeric_columns, axis=1)
         g = sns.clustermap(encoded_data3, row_linkage=linked, col_cluster=False,
-                       cmap='Blues', figsize=selected_figuresize, cbar_pos=None)
+                           cmap='Blues', figsize=selected_figuresize, cbar_pos=None)
         plt.title("Heatmap with Hierarchical clustering dendrogram. Blue represents a variant.")
         cluster_colors = sns.color_palette("husl", len(cohorts))
         ax = g.ax_heatmap
@@ -210,6 +212,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
 
     # Return the image as an HTTP response
     return HttpResponse(buffer, content_type='image/png')
+
 
 def make_c_half_graph(request):
     plt.clf()
@@ -245,3 +248,8 @@ def make_c_half_graph(request):
         return HttpResponse(buffer, content_type='image/png')
 
 
+def make_cohorts2(request):  # TODO: Rename this
+    cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
+    datatype = str(request.GET.get('datatype', None))
+
+    return
