@@ -126,8 +126,8 @@ def home(request):
     else:
         chalf_json = json.dumps({})
     if message:
-        return render(request, 'home.html', {'sequence_json': chalf_json, 'query': query, 'message': message})
-    return render(request, 'home.html', {'sequence_json': chalf_json, 'query': query})
+        return render(request, 'home.html', {'chalf_json': chalf_json, 'query': query, 'message': message})
+    return render(request, 'home.html', {'chalf_json': chalf_json, 'query': query})
 
 
 def make_cohorts(request):
