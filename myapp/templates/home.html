@@ -29,6 +29,21 @@
     <input type="text" id="search" placeholder="Q8WZ42|TITIN_HUMAN" value="{{ query }}">
     <button onclick="searchSequence()">Search</button>
     <img src="{% url 'make_c_half_graph' %}" alt="CHalf">
+    <br><br>
+
+    <label for="independent_variable">Choose what you would like to group by:</label>
+    <select id="independent_variable" name="independent_variable">
+        <option value="" disabled selected>--Choose an option--</option>
+        <option value="age">Age</option>
+        <option value="bmi">BMI</option>
+        <option value="disease">Disease</option>
+        <option value="drug">Drug</option>
+        <option value="mutations">Mutations</option>
+        <option value="sex">Sex</option>
+    </select>
+    <br><br>
+
+
 {#    <img>#}
 
     <!-- Container for displaying the sequence list dynamically with JavaScript -->
