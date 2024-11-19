@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Sequence_and_CHalf, Metadata
+from .models import Sequence, Metadata, CHalf
 
-admin.site.register(Sequence_and_CHalf)
+admin.site.register(Sequence)
 admin.site.register(Metadata)
+admin.site.register(CHalf)

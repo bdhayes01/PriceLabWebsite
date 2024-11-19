@@ -1,7 +1,7 @@
 import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from .models import Sequence_and_CHalf, Metadata
+from .models import Sequence, Metadata, CHalf
 import os, re, json
 from scipy.spatial.distance import pdist
 from scipy.cluster.hierarchy import linkage, dendrogram
@@ -11,7 +11,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
 import seaborn as sns
 
-global variants, cohorts, encoded_data
+global variants, cohorts, encoded_data, chalf
 variants = {}
 cohorts = None
 encoded_data = None
@@ -39,6 +39,7 @@ def upload_csv(request):
         message = "No file uploaded."
     return message
 
+
 def upload_visual_outputs(file):
     # Parse the uploaded Excel file using pandas
     df = pd.read_csv(file)
@@ -54,9 +55,9 @@ def upload_visual_outputs(file):
                 peptide_variants = re.findall(r'[a-zA-Z]+', varis[i])
                 peptide_variants = [str(ch) for ch in peptide_variants]
                 variants[individual][integer_variants] = peptide_variants
-        sequence, created = Sequence_and_CHalf.objects.get_or_create(
+        sequence, created = Sequence.objects.get_or_create(
             Accession=row['Accession'],
-            defaults={'Variants': variants, 'CHalf': {}, 'Sequence': row['Sequence']}
+            defaults={'Variants': variants, 'Sequence': row['Sequence']}
         )
 
         if not created:
@@ -64,6 +65,7 @@ def upload_visual_outputs(file):
             sequence.Sequence = row.get('Sequence', '')
             sequence.save()
     return
+
 
 def upload_c_half(file):
     df = pd.read_csv(file)
@@ -73,9 +75,9 @@ def upload_c_half(file):
     for _, row in df.iterrows():
         accession = row.get('Accession')
         if accession != curr_accession:
-            seq_chalf, created = Sequence_and_CHalf.objects.get_or_create(
+            seq_chalf, created = CHalf.objects.get_or_create(
                 Accession=curr_accession,
-                defaults={'Variants': {}, 'CHalf': c_half_vals, 'Sequence': ""}
+                defaults={'CHalf': c_half_vals}
             )
             if not created:
                 seq_chalf.CHalf.update(c_half_vals)
@@ -105,15 +107,15 @@ def upload_metadata(file):
 
 
 def home(request):
+    #TODO: Make this return the c-half, not the variants
     message = None
     if request.method == 'POST':
         message = upload_csv(request)
     query = request.GET.get('q', '')
     if query:
-        sequence = Sequence_and_CHalf.objects.filter(Accession__exact=query).first()
+        sequence = Sequence.objects.filter(Accession__exact=query).first()
     else:
-        # sequence = Sequence.objects.first()
-        sequence = Sequence_and_CHalf.objects.filter(Accession__exact="Q8WZ42|TITIN_HUMAN").first()
+        sequence = Sequence.objects.filter(Accession__exact="Q8WZ42|TITIN_HUMAN").first()
     if sequence:
         global variants
         variants = sequence.Variants
@@ -208,3 +210,8 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
 
     # Return the image as an HTTP response
     return HttpResponse(buffer, content_type='image/png')
+
+def make_c_half_graph(request):
+    plt.clf()
+
+

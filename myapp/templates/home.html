@@ -16,6 +16,7 @@
     <div id="help-modal" class="modal">
         <div class="modal-content">
 {#            <span class="close-button">&times;</span>#}
+{#            TODO: Fix the help module #}
             <h2>Instructions</h2>
             <p>1. Enter the accession number in the search field to search for sequences.</p>
             <p>2. Click 'Make Cohorts' to generate cohorts based on variants.</p>
@@ -24,18 +25,16 @@
         </div>
     </div>
     <h1>Enter Accession Number</h1>
-
-    <!-- Search Input -->
-
     <label for="search">Search for protein by Accession number:</label>
     <input type="text" id="search" placeholder="Q8WZ42|TITIN_HUMAN" value="{{ query }}">
     <button onclick="searchSequence()">Search</button>
+    <img>
 
     <!-- Container for displaying the sequence list dynamically with JavaScript -->
     <ul id="sequence-list">
         <!-- This list will be dynamically populated by JavaScript -->
     </ul>
-{#    <img src="{% url 'make_dendrogram' %}" alt="Dendrogram">#}
+{#    <img src="{% url 'make_dendrogram' %}" alt="Dendrogram">  #}
 
     <br><br>
     <label for="cohort_number">How many cohorts? (between 1 and 10):</label>
