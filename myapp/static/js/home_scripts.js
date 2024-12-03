@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case "sex":
                 dynamicContent.innerHTML = `
                     <br>
-                    <button onclick="make_the_cohorts('sex')">GO</button>
+                    <button onclick="make_sex_cohorts()">Make Cohorts</button>
                 `;
                 break;
             default:
@@ -292,20 +292,61 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function make_the_cohorts(dt){
+function make_sex_cohorts(){
 
     let cohort_number = 2;
 
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_cohorts2/?cohort_number=${cohort_number}&datatype=${dt}`, true);
+    xhr.open('GET', `make_cohorts2/?cohort_number=${cohort_number}&datatype=sex`, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
+            cohorts = response.cohorts;
+            populate_cohort_list(cohorts, "sex")
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
     };
     xhr.send();
+}
 
+function populate_cohort_list(cohorts, dt){
+    let element = document.getElementById("dynamic-content")
+    element.innerHTML = '';  // Clear previous results
+    if(cohorts === null){
+        element.innerHTML = '<li>No Cohorts Made.</li>';
+    }
+    else {
+        if (dt === "sex"){
+            // let paragraphElement = document.createElement('p');
+            for (let i = 0; i < 2; i++) {
+                let cohort_container = document.createElement('div');
+                const individuals = document.createElement('h3');
+                if(i===0){
+                    individuals.textContent += "Male Cohort:\t";
+                    for(let indiv of cohorts[0]){
+                        individuals.textContent += `${indiv},\t`
+                    }
+                }else{
+                    individuals.textContent += "Female Cohort:\t";
+                    for(let indiv of cohorts[1]){
+                        individuals.textContent += `${indiv},\t`
+                    }
+                }
+                individuals.textContent = individuals.textContent.slice(0, -2);
 
+                cohort_container.appendChild(individuals);
+                cohort_container.style.display = 'flex';
+                cohort_container.style.justifyContent = 'flex-start';
+                cohort_container.style.alignItems = 'center';
+                element.appendChild(cohort_container);
+            }
+        }
+    }
+    bust_cache()
+}
+
+function bust_cache(){
+    const img = document.querySelector("img[alt='CHalf']");
+    img.src = img.src + '?' + new Date().getTime();
 }

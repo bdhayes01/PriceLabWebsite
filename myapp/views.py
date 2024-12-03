@@ -12,13 +12,13 @@ from sklearn.cluster import KMeans
 import seaborn as sns
 
 global variants, cohorts, encoded_data, chalf
-variants = {}
+# variants = {}
 cohorts = None
-encoded_data = None
+# encoded_data = None
 chalf = None
 
 
-def upload_csv(request):
+def upload_file(request):
     message = None  # Initialize message
     if 'file' in request.FILES:
         files = request.FILES.getlist('file')
@@ -111,7 +111,7 @@ def upload_metadata(file):
 def home(request):
     message = None
     if request.method == 'POST':
-        message = upload_csv(request)
+        message = upload_file(request)
     query = request.GET.get('q', '')
     if query:
         c = CHalf.objects.filter(Accession__exact=query).first()
@@ -246,10 +246,24 @@ def make_c_half_graph(request):
 
         # Return the image as an HTTP response
         return HttpResponse(buffer, content_type='image/png')
+    else: # A cohort has been created
+        #TODO: Start here. Figure out the DT, and then make the image.
+        return
+
+
 
 
 def make_cohorts2(request):  # TODO: Rename this
+    global cohorts
     cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
     datatype = str(request.GET.get('datatype', None))
+    if datatype is None:
+        return
+    elif datatype == "sex":
+        metadata = Metadata.objects.all()
+        male_cohort = [meta.Individual for meta in metadata if meta.Sex]
+        female_cohort = [meta.Individual for meta in metadata if not meta.Sex]
+        cohorts = [male_cohort, female_cohort]
+        return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
 
     return
