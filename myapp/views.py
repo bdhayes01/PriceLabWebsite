@@ -257,9 +257,10 @@ def make_c_half_graph(request):
 
         for indiv, value in chalf.items():
             for k, v in value.items():
-                x_values[colors[0] if indiv in cohorts[0] else colors[1]].append(round(float(k)))
-                y_values[colors[0] if indiv in cohorts[0] else colors[1]].append(v[0])
-                errors[colors[0] if indiv in cohorts[0] else colors[1]].append(v[1])
+                color = colors[0] if indiv in cohorts[0] else colors[1]
+                x_values[color].append(round(float(k)))
+                y_values[color].append(v[0])
+                errors[color].append(v[1])
         plt.figure(figsize=(10, 6))
         for color in colors:
             sorted_data = sorted(zip(x_values[color], y_values[color], errors[color]),
