@@ -10,8 +10,9 @@ import io
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
 import seaborn as sns
+from collections import defaultdict
 
-global variants, cohorts, encoded_data, chalf
+global variants, cohorts, encoded_data, chalf, dt
 # variants = {}
 cohorts = None
 # encoded_data = None
@@ -216,6 +217,7 @@ def make_dendrogram(request):  # Must always have 'request' else a 500 error.
 
 def make_c_half_graph(request):
     plt.clf()
+    global dt, chalf, cohorts
     if cohorts is None:
         x_values = []
         y_values = []
@@ -246,9 +248,39 @@ def make_c_half_graph(request):
 
         # Return the image as an HTTP response
         return HttpResponse(buffer, content_type='image/png')
-    else: # A cohort has been created
-        #TODO: Start here. Figure out the DT, and then make the image.
-        return
+    else:
+        x_values = defaultdict(list)
+        y_values = defaultdict(list)
+        errors = defaultdict(list)
+        colors = ["blue", "pink"]
+
+
+        for indiv, value in chalf.items():
+            for k, v in value.items():
+                x_values[colors[0] if indiv in cohorts[0] else colors[1]].append(round(float(k)))
+                y_values[colors[0] if indiv in cohorts[0] else colors[1]].append(v[0])
+                errors[colors[0] if indiv in cohorts[0] else colors[1]].append(v[1])
+        plt.figure(figsize=(10, 6))
+        for color in colors:
+            sorted_data = sorted(zip(x_values[color], y_values[color], errors[color]),
+                                 key=lambda x: x[0])  # Sort by x_values
+            sorted_x, sorted_y, sorted_errors = zip(*sorted_data)  # Use separate variables to unpack sorted data
+            plt.errorbar(sorted_x, sorted_y, yerr=sorted_errors, fmt='o', capsize=5, label=f'Data ({color})',
+                         color=color)
+        plt.title("C-Half values for selected protein")
+        plt.xlabel("Residues")
+        plt.ylabel("C-Half")
+        plt.grid(True)
+        # plt.legend()
+        plt.tight_layout()
+
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        plt.close()
+        buffer.seek(0)
+
+        # Return the image as an HTTP response
+        return HttpResponse(buffer, content_type='image/png')
 
 
 
@@ -257,6 +289,7 @@ def make_cohorts2(request):  # TODO: Rename this
     global cohorts
     cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
     datatype = str(request.GET.get('datatype', None))
+    dt = datatype
     if datatype is None:
         return
     elif datatype == "sex":
