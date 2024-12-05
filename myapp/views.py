@@ -10,7 +10,7 @@ import io
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
 import seaborn as sns
-from collections import defaultdict
+from .Datatypes import Sex as sex
 
 global variants, cohorts, encoded_data, chalf, dt
 # variants = {}
@@ -249,41 +249,8 @@ def make_c_half_graph(request):
         # Return the image as an HTTP response
         return HttpResponse(buffer, content_type='image/png')
     else:
-        x_values = defaultdict(list)
-        y_values = defaultdict(list)
-        errors = defaultdict(list)
-        colors = ["blue", "pink"]
-
-
-        for indiv, value in chalf.items():
-            for k, v in value.items():
-                color = colors[0] if indiv in cohorts[0] else colors[1]
-                x_values[color].append(round(float(k)))
-                y_values[color].append(v[0])
-                errors[color].append(v[1])
-        plt.figure(figsize=(10, 6))
-        for color in colors:
-            sorted_data = sorted(zip(x_values[color], y_values[color], errors[color]),
-                                 key=lambda x: x[0])  # Sort by x_values
-            sorted_x, sorted_y, sorted_errors = zip(*sorted_data)  # Use separate variables to unpack sorted data
-            plt.errorbar(sorted_x, sorted_y, yerr=sorted_errors, fmt='o', capsize=5, label=f'Data ({color})',
-                         color=color)
-        plt.title("C-Half values for selected protein")
-        plt.xlabel("Residues")
-        plt.ylabel("C-Half")
-        plt.grid(True)
-        # plt.legend()
-        plt.tight_layout()
-
-        buffer = io.BytesIO()
-        plt.savefig(buffer, format='png')
-        plt.close()
-        buffer.seek(0)
-
-        # Return the image as an HTTP response
-        return HttpResponse(buffer, content_type='image/png')
-
-
+        if dt == "sex":
+            return sex.make_graph_sex(chalf, cohorts)
 
 
 def make_cohorts2(request):  # TODO: Rename this
@@ -293,11 +260,12 @@ def make_cohorts2(request):  # TODO: Rename this
     dt = datatype
     if datatype is None:
         return
-    elif datatype == "sex":
-        metadata = Metadata.objects.all()
-        male_cohort = [meta.Individual for meta in metadata if meta.Sex]
-        female_cohort = [meta.Individual for meta in metadata if not meta.Sex]
-        cohorts = [male_cohort, female_cohort]
-        return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
 
     return
+
+
+def make_sex_cohorts(request):
+    global cohorts, chalf, dt
+    dt = "sex"
+    cohorts = sex.make_sex_cohort(chalf)
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
