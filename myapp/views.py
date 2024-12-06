@@ -10,7 +10,7 @@ import io
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
 import seaborn as sns
-from .Datatypes import Sex as sex
+from .Datatypes import Sex, Disease
 
 global variants, cohorts, encoded_data, chalf, dt
 # variants = {}
@@ -250,22 +250,31 @@ def make_c_half_graph(request):
         return HttpResponse(buffer, content_type='image/png')
     else:
         if dt == "sex":
-            return sex.make_graph_sex(chalf, cohorts)
+            return Sex.make_graph_sex(chalf, cohorts)
+        if dt == "disease":
+            return Disease.make_graph_disease(chalf, cohorts)
 
 
-def make_cohorts2(request):  # TODO: Rename this
-    global cohorts
-    cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
-    datatype = str(request.GET.get('datatype', None))
-    dt = datatype
-    if datatype is None:
-        return
-
-    return
+# def make_cohorts2(request):  # TODO: Rename this
+#     global cohorts
+#     cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
+#     datatype = str(request.GET.get('datatype', None))
+#     dt = datatype
+#     if datatype is None:
+#         return
+#
+#     return
 
 
 def make_sex_cohorts(request):
     global cohorts, chalf, dt
     dt = "sex"
-    cohorts = sex.make_sex_cohort(chalf)
+    cohorts = Sex.make_sex_cohort()
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+
+
+def make_disease_cohorts(request):
+    global cohorts, chalf, dt
+    dt = "disease"
+    cohorts = Disease.make_disease_cohort()
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})

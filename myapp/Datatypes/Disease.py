@@ -5,18 +5,18 @@ from django.http import HttpResponse
 import io
 
 
-def make_sex_cohort():
+def make_disease_cohort():
     metadata = Metadata.objects.all()
-    male_cohort = [meta.Individual for meta in metadata if meta.Sex]
-    female_cohort = [meta.Individual for meta in metadata if not meta.Sex]
-    return [male_cohort, female_cohort]
+    diseased_cohort = [meta.Individual for meta in metadata if meta.Disease]
+    undiseased_cohort = [meta.Individual for meta in metadata if not meta.Disease]
+    return [diseased_cohort, undiseased_cohort]
 
 
-def make_graph_sex(chalf, cohorts):
+def make_graph_disease(chalf, cohorts):
     x_values = defaultdict(list)
     y_values = defaultdict(list)
     errors = defaultdict(list)
-    colors = ["blue", "pink"]
+    colors = ["orange", "blue"]
 
     for indiv, value in chalf.items():
         for k, v in value.items():

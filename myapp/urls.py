@@ -10,5 +10,7 @@ urlpatterns = [
     # path('clear_cohorts/', views.clear_cohorts, name='clear_cohorts'),
     path('dendrogram/', views.make_dendrogram, name='make_dendrogram'),
     path('make_sex_cohorts/', views.make_sex_cohorts, name='make_sex_cohorts'),
-    path('make_cohorts2/', views.make_cohorts2, name='make_cohorts2')
+    path('make_disease_cohorts/', views.make_disease_cohorts, name='make_disease_cohorts')
+    # ,
+    # path('make_cohorts2/', views.make_cohorts2, name='make_cohorts2')
 ]

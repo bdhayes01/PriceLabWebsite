@@ -272,6 +272,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="text" placeholder="Enter BMI range">
                 `;
                 break;
+            case "disease":
+                dynamicContent.innerHTML = `
+                    <br>
+                    <button onclick="make_disease_cohorts()">Make Cohorts Based On Disease Status</button>
+                `;
+                break;
             case "mutations":
                 dynamicContent.innerHTML = `
                     <h3>Mutations Module</h3>
@@ -282,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case "sex":
                 dynamicContent.innerHTML = `
                     <br>
-                    <button onclick="make_sex_cohorts()">Make Cohorts</button>
+                    <button onclick="make_sex_cohorts()">Make Cohorts Based On Sex</button>
                 `;
                 break;
             default:
@@ -290,6 +296,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+function bust_cache(){
+    const img = document.querySelector("img[alt='CHalf']");
+    img.src = img.src + '?' + new Date().getTime();
+}
 
 
 function make_sex_cohorts(){
@@ -299,7 +310,7 @@ function make_sex_cohorts(){
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
-            populate_cohort_list_sex(cohorts)
+            populate_cohort_list_sex()
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
@@ -339,7 +350,49 @@ function populate_cohort_list_sex(){
     bust_cache();
 }
 
-function bust_cache(){
-    const img = document.querySelector("img[alt='CHalf']");
-    img.src = img.src + '?' + new Date().getTime();
+function make_disease_cohorts(){
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `make_disease_cohorts`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            cohorts = response.cohorts;
+            populate_cohort_list_disease()
+        } else {
+            console.error('Error making cohorts:', xhr.status);
+        }
+    };
+    xhr.send();
+}
+
+function populate_cohort_list_disease(){
+    let element = document.getElementById("dynamic-content")
+    element.innerHTML = '';  // Clear previous results
+    if(cohorts === null){
+        element.innerHTML = '<li>No Cohorts Made.</li>';
+        return;
+    }
+    for (let i = 0; i < 2; i++) {
+        let cohort_container = document.createElement('div');
+        const individuals = document.createElement('h3');
+        if(i===0){
+            individuals.textContent += "Diseased Cohort:\t";
+            for(let indiv of cohorts[0]){
+                individuals.textContent += `${indiv},\t`
+            }
+        }else{
+            individuals.textContent += "Undiseased Cohort:\t";
+            for(let indiv of cohorts[1]){
+                individuals.textContent += `${indiv},\t`
+            }
+        }
+        individuals.textContent = individuals.textContent.slice(0, -2);
+
+        cohort_container.appendChild(individuals);
+        cohort_container.style.display = 'flex';
+        cohort_container.style.justifyContent = 'flex-start';
+        cohort_container.style.alignItems = 'center';
+        element.appendChild(cohort_container);
+    }
+    bust_cache();
 }
