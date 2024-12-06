@@ -10,7 +10,7 @@ import io
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
 import seaborn as sns
-from .Datatypes import Sex, Disease, Drug
+from .Datatypes import Sex, Disease, Drug, Age
 
 global variants, cohorts, encoded_data, chalf, dt
 # variants = {}
@@ -286,4 +286,11 @@ def make_drug_cohorts(request):
     global cohorts, chalf, dt
     dt = "drug"
     cohorts = Drug.make_drug_cohort()
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+
+def make_age_cohorts(request):
+    global cohorts, chalf, dt
+    cohort_number = int(request.GET.get('cohort_number', 1))
+    dt = "age"
+    cohorts = Age.make_age_cohort(cohort_number)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})

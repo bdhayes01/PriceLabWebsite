@@ -260,9 +260,9 @@ document.addEventListener("DOMContentLoaded", () => {
         switch (selectedValue) {
             case "age":
                 dynamicContent.innerHTML = `
-                    <h3>Age Module</h3>
-                    <p>Provide additional details related to Age.</p>
-                    <input type="number" placeholder="Enter age range">
+                    <p>Group into cohorts by age. Choose the number of cohorts.</p>
+                    <input type="number" placeholder="Number of Cohorts" id="age_cohort_number">
+                    <button onclick="make_age_cohorts()">Make Cohorts</button>
                 `;
                 break;
             case "bmi":
@@ -440,6 +440,48 @@ function populate_cohort_list_drug(){
         }
         individuals.textContent = individuals.textContent.slice(0, -2);
 
+        cohort_container.appendChild(individuals);
+        cohort_container.style.display = 'flex';
+        cohort_container.style.justifyContent = 'flex-start';
+        cohort_container.style.alignItems = 'center';
+        element.appendChild(cohort_container);
+    }
+    bust_cache();
+}
+
+function make_age_cohorts(){
+    var cohortNumber = document.getElementById("age_cohort_number").value;
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `make_age_cohorts/?cohort_number=${cohortNumber}`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            cohorts = response.cohorts;
+            populate_cohort_list_age()
+        } else {
+            console.error('Error making cohorts:', xhr.status);
+        }
+    };
+    xhr.send();
+}
+
+function populate_cohort_list_age(){
+    let element = document.getElementById("dynamic-content");
+    element.innerHTML = '';  // Clear previous results
+    if(cohorts === null){
+        element.innerHTML = '<li>No Cohorts Made.</li>';
+        return;
+    }
+    cohortNum = document.getElementById("age_cohort_number").value;
+    for (let i = 0; i < cohortNum; i++) {
+        let cohort_container = document.createElement('div');
+        const individuals = document.createElement('h3');
+        individuals.textContent += `Cohort ${i + 1}:\t`;
+        for(let indiv of cohorts[i]){
+                individuals.textContent += `${indiv},\t`
+            }
+
+        individuals.textContent = individuals.textContent.slice(0, -2);
         cohort_container.appendChild(individuals);
         cohort_container.style.display = 'flex';
         cohort_container.style.justifyContent = 'flex-start';
