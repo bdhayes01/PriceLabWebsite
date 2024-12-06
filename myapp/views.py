@@ -255,6 +255,8 @@ def make_c_half_graph(request):
             return Disease.make_graph_disease(chalf, cohorts)
         elif dt == "drug":
             return Drug.make_graph_drug(chalf, cohorts)
+        elif dt == "age":
+            return Age.make_graph_age(chalf, cohorts)
 
 
 # def make_cohorts2(request):  # TODO: Rename this
@@ -288,9 +290,11 @@ def make_drug_cohorts(request):
     cohorts = Drug.make_drug_cohort()
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
 
+
 def make_age_cohorts(request):
     global cohorts, chalf, dt
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "age"
     cohorts = Age.make_age_cohort(cohort_number)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+

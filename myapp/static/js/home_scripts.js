@@ -450,7 +450,10 @@ function populate_cohort_list_drug(){
 }
 
 function make_age_cohorts(){
-    var cohortNumber = document.getElementById("age_cohort_number").value;
+    if (document.getElementById("age_cohort_number").value === null){
+        return;
+    }
+    let cohortNumber = parseInt(document.getElementById("age_cohort_number").value);
     const xhr = new XMLHttpRequest();
     xhr.open('GET', `make_age_cohorts/?cohort_number=${cohortNumber}`, true);
     xhr.onload = function() {
@@ -466,14 +469,15 @@ function make_age_cohorts(){
 }
 
 function populate_cohort_list_age(){
+    let cohortNumber = parseInt(document.getElementById("age_cohort_number").value);
+    //The above line needs to be executed before we delete the innerHTML of dynamic-content
     let element = document.getElementById("dynamic-content");
     element.innerHTML = '';  // Clear previous results
     if(cohorts === null){
         element.innerHTML = '<li>No Cohorts Made.</li>';
         return;
     }
-    cohortNum = document.getElementById("age_cohort_number").value;
-    for (let i = 0; i < cohortNum; i++) {
+    for (let i = 0; i < cohortNumber; i++) {
         let cohort_container = document.createElement('div');
         const individuals = document.createElement('h3');
         individuals.textContent += `Cohort ${i + 1}:\t`;
