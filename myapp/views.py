@@ -10,7 +10,7 @@ import io
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
 import seaborn as sns
-from .Datatypes import Sex, Disease
+from .Datatypes import Sex, Disease, Drug
 
 global variants, cohorts, encoded_data, chalf, dt
 # variants = {}
@@ -101,7 +101,7 @@ def upload_metadata(file):
         individual = row['Condition']
         disease = (True if row['Disease'] == 1 else False)
         age = int(row['Age'])
-        sex = (True if row['Drug'] == 1 else False)  # 1 represents male
+        sex = (True if row['Sex'] == 1 else False)  # 1 represents male
         bmi = float(row['BMI'])
         drug = (True if row['Drug'] == 1 else False)
         meta, create = Metadata.objects.get_or_create(Individual=individual, Disease=disease,
@@ -251,8 +251,10 @@ def make_c_half_graph(request):
     else:
         if dt == "sex":
             return Sex.make_graph_sex(chalf, cohorts)
-        if dt == "disease":
+        elif dt == "disease":
             return Disease.make_graph_disease(chalf, cohorts)
+        elif dt == "drug":
+            return Drug.make_graph_drug(chalf, cohorts)
 
 
 # def make_cohorts2(request):  # TODO: Rename this
@@ -277,4 +279,11 @@ def make_disease_cohorts(request):
     global cohorts, chalf, dt
     dt = "disease"
     cohorts = Disease.make_disease_cohort()
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+
+
+def make_drug_cohorts(request):
+    global cohorts, chalf, dt
+    dt = "drug"
+    cohorts = Drug.make_drug_cohort()
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})

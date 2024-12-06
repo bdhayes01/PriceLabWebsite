@@ -278,6 +278,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button onclick="make_disease_cohorts()">Make Cohorts Based On Disease Status</button>
                 `;
                 break;
+            case "drug":
+                dynamicContent.innerHTML = `
+                    <br>
+                    <button onclick="make_drug_cohorts()">Make Cohorts Based On Drug Status</button>
+                `;
+                break;
             case "mutations":
                 dynamicContent.innerHTML = `
                     <h3>Mutations Module</h3>
@@ -301,7 +307,6 @@ function bust_cache(){
     const img = document.querySelector("img[alt='CHalf']");
     img.src = img.src + '?' + new Date().getTime();
 }
-
 
 function make_sex_cohorts(){
     const xhr = new XMLHttpRequest();
@@ -382,6 +387,53 @@ function populate_cohort_list_disease(){
             }
         }else{
             individuals.textContent += "Undiseased Cohort:\t";
+            for(let indiv of cohorts[1]){
+                individuals.textContent += `${indiv},\t`
+            }
+        }
+        individuals.textContent = individuals.textContent.slice(0, -2);
+
+        cohort_container.appendChild(individuals);
+        cohort_container.style.display = 'flex';
+        cohort_container.style.justifyContent = 'flex-start';
+        cohort_container.style.alignItems = 'center';
+        element.appendChild(cohort_container);
+    }
+    bust_cache();
+}
+
+function make_drug_cohorts(){
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `make_drug_cohorts`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            cohorts = response.cohorts;
+            populate_cohort_list_drug()
+        } else {
+            console.error('Error making cohorts:', xhr.status);
+        }
+    };
+    xhr.send();
+}
+
+function populate_cohort_list_drug(){
+    let element = document.getElementById("dynamic-content")
+    element.innerHTML = '';  // Clear previous results
+    if(cohorts === null){
+        element.innerHTML = '<li>No Cohorts Made.</li>';
+        return;
+    }
+    for (let i = 0; i < 2; i++) {
+        let cohort_container = document.createElement('div');
+        const individuals = document.createElement('h3');
+        if(i===0){
+            individuals.textContent += "Taking Drug Cohort:\t";
+            for(let indiv of cohorts[0]){
+                individuals.textContent += `${indiv},\t`
+            }
+        }else{
+            individuals.textContent += "Not Taking Drug Cohort:\t";
             for(let indiv of cohorts[1]){
                 individuals.textContent += `${indiv},\t`
             }
