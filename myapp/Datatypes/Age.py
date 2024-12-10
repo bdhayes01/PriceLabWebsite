@@ -34,7 +34,8 @@ def make_graph_age(chalf, cohorts):
 
     for indiv, value in chalf.items():
         for k, v in value.items():
-            color = colors[0] if indiv in cohorts[0] else colors[1]
+            cohort_index = next((i for i, cohort in enumerate(cohorts) if indiv in cohort), None)
+            color = colors[cohort_index] if cohort_index is not None else "#FFFFFF"
             x_values[color].append(round(float(k)))
             y_values[color].append(v[0])
             errors[color].append(v[1])
