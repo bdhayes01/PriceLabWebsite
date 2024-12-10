@@ -23,14 +23,14 @@ def make_age_cohort(cohort_number):
         else:
             temp_cohorts[coh] = [indiv]
     cohorts = [temp_cohorts[num] for num in sorted(temp_cohorts.keys())]
-    return cohorts
+    colors = generate_random_colors(len(cohorts))
+    return cohorts, colors
 
 
-def make_graph_age(chalf, cohorts):
+def make_graph_age(chalf, cohorts, colors):
     x_values = defaultdict(list)
     y_values = defaultdict(list)
     errors = defaultdict(list)
-    colors = generate_random_colors(len(cohorts))
 
     for indiv, value in chalf.items():
         for k, v in value.items():

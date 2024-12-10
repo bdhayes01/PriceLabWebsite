@@ -12,7 +12,7 @@ from sklearn.cluster import KMeans
 import seaborn as sns
 from .Datatypes import Sex, Disease, Drug, Age, BMI
 
-global variants, cohorts, encoded_data, chalf, dt
+global variants, cohorts, encoded_data, chalf, dt, cohort_colors
 # variants = {}
 cohorts = None
 # encoded_data = None
@@ -256,9 +256,9 @@ def make_c_half_graph(request):
         elif dt == "drug":
             return Drug.make_graph_drug(chalf, cohorts)
         elif dt == "age":
-            return Age.make_graph_age(chalf, cohorts)
+            return Age.make_graph_age(chalf, cohorts, cohort_colors)
         elif dt == "bmi":
-            return BMI.make_graph_bmi(chalf, cohorts)
+            return BMI.make_graph_bmi(chalf, cohorts, cohort_colors)
 
 
 # def make_cohorts2(request):  # TODO: Rename this
@@ -294,17 +294,17 @@ def make_drug_cohorts(request):
 
 
 def make_age_cohorts(request):
-    global cohorts, chalf, dt
+    global cohorts, chalf, dt, cohort_colors
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "age"
-    cohorts = Age.make_age_cohort(cohort_number)
+    cohorts, cohort_colors = Age.make_age_cohort(cohort_number)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
 
 
 def make_bmi_cohorts(request):
-    global cohorts, chalf, dt
+    global cohorts, chalf, dt, cohort_colors
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "bmi"
-    cohorts = BMI.make_bmi_cohort(cohort_number)
+    cohorts, cohort_colors = BMI.make_bmi_cohort(cohort_number)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
 
