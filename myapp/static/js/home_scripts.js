@@ -1,8 +1,9 @@
 let curr_cohorts = {};
-let cohortColors = ['red', 'blue', 'green', 'purple'];
+// let cohortColors = ['red', 'blue', 'green', 'purple'];
 let sequence = null;
 let cohorts = null;
 let variants = null;
+let cohort_colors = null;
 let cohorts_variants = null;
 let expanded = false;
 
@@ -315,6 +316,7 @@ function make_sex_cohorts(){
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
+            cohort_colors = response.cohort_colors;
             populate_cohort_list_sex()
         } else {
             console.error('Error making cohorts:', xhr.status);
@@ -345,7 +347,7 @@ function populate_cohort_list_sex(){
             }
         }
         individuals.textContent = individuals.textContent.slice(0, -2);
-
+        individuals.style.backgroundColor = cohort_colors[i];
         cohort_container.appendChild(individuals);
         cohort_container.style.display = 'flex';
         cohort_container.style.justifyContent = 'flex-start';
@@ -362,6 +364,7 @@ function make_disease_cohorts(){
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
+            cohort_colors = response.cohort_colors;
             populate_cohort_list_disease()
         } else {
             console.error('Error making cohorts:', xhr.status);
@@ -392,7 +395,7 @@ function populate_cohort_list_disease(){
             }
         }
         individuals.textContent = individuals.textContent.slice(0, -2);
-
+        individuals.style.backgroundColor = cohort_colors[i];
         cohort_container.appendChild(individuals);
         cohort_container.style.display = 'flex';
         cohort_container.style.justifyContent = 'flex-start';
@@ -409,6 +412,7 @@ function make_drug_cohorts(){
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
+            cohort_colors = response.cohort_colors;
             populate_cohort_list_drug()
         } else {
             console.error('Error making cohorts:', xhr.status);
@@ -439,7 +443,7 @@ function populate_cohort_list_drug(){
             }
         }
         individuals.textContent = individuals.textContent.slice(0, -2);
-
+        individuals.style.backgroundColor = cohort_colors[i];
         cohort_container.appendChild(individuals);
         cohort_container.style.display = 'flex';
         cohort_container.style.justifyContent = 'flex-start';
@@ -460,6 +464,7 @@ function make_age_cohorts(){
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
+            cohort_colors = response.cohort_colors;
             populate_cohort_list_age()
         } else {
             console.error('Error making cohorts:', xhr.status);
@@ -486,6 +491,7 @@ function populate_cohort_list_age(){
             }
 
         individuals.textContent = individuals.textContent.slice(0, -2);
+        individuals.style.backgroundColor = cohort_colors[i];
         cohort_container.appendChild(individuals);
         cohort_container.style.display = 'flex';
         cohort_container.style.justifyContent = 'flex-start';
@@ -506,6 +512,7 @@ function make_bmi_cohorts(){
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
+            cohort_colors = response.cohort_colors;
             populate_cohort_list_bmi()
         } else {
             console.error('Error making cohorts:', xhr.status);
@@ -532,6 +539,7 @@ function populate_cohort_list_bmi(){
             }
 
         individuals.textContent = individuals.textContent.slice(0, -2);
+        individuals.style.backgroundColor = cohort_colors[i];
         cohort_container.appendChild(individuals);
         cohort_container.style.display = 'flex';
         cohort_container.style.justifyContent = 'flex-start';

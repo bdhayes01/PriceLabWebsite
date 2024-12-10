@@ -9,14 +9,13 @@ def make_drug_cohort():
     metadata = Metadata.objects.all()
     with_drug_cohort = [meta.Individual for meta in metadata if meta.Drug]
     no_drug_cohort = [meta.Individual for meta in metadata if not meta.Drug]
-    return [with_drug_cohort, no_drug_cohort]
+    return [with_drug_cohort, no_drug_cohort], ["yellow", "red"]
 
 
-def make_graph_drug(chalf, cohorts):
+def make_graph_drug(chalf, cohorts, colors):
     x_values = defaultdict(list)
     y_values = defaultdict(list)
     errors = defaultdict(list)
-    colors = ["black", "red"]
 
     for indiv, value in chalf.items():
         for k, v in value.items():

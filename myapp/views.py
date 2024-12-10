@@ -250,11 +250,11 @@ def make_c_half_graph(request):
         return HttpResponse(buffer, content_type='image/png')
     else:
         if dt == "sex":
-            return Sex.make_graph_sex(chalf, cohorts)
+            return Sex.make_graph_sex(chalf, cohorts, cohort_colors)
         elif dt == "disease":
-            return Disease.make_graph_disease(chalf, cohorts)
+            return Disease.make_graph_disease(chalf, cohorts, cohort_colors)
         elif dt == "drug":
-            return Drug.make_graph_drug(chalf, cohorts)
+            return Drug.make_graph_drug(chalf, cohorts, cohort_colors)
         elif dt == "age":
             return Age.make_graph_age(chalf, cohorts, cohort_colors)
         elif dt == "bmi":
@@ -273,24 +273,24 @@ def make_c_half_graph(request):
 
 
 def make_sex_cohorts(request):
-    global cohorts, chalf, dt
+    global cohorts, chalf, dt, cohort_colors
     dt = "sex"
-    cohorts = Sex.make_sex_cohort()
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+    cohorts, cohort_colors = Sex.make_sex_cohort()
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
 
 
 def make_disease_cohorts(request):
-    global cohorts, chalf, dt
+    global cohorts, chalf, dt, cohort_colors
     dt = "disease"
-    cohorts = Disease.make_disease_cohort()
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+    cohorts, cohort_colors = Disease.make_disease_cohort()
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
 
 
 def make_drug_cohorts(request):
-    global cohorts, chalf, dt
+    global cohorts, chalf, dt, cohort_colors
     dt = "drug"
-    cohorts = Drug.make_drug_cohort()
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+    cohorts, cohort_colors = Drug.make_drug_cohort()
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
 
 
 def make_age_cohorts(request):
@@ -298,7 +298,7 @@ def make_age_cohorts(request):
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "age"
     cohorts, cohort_colors = Age.make_age_cohort(cohort_number)
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
 
 
 def make_bmi_cohorts(request):
@@ -306,5 +306,5 @@ def make_bmi_cohorts(request):
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "bmi"
     cohorts, cohort_colors = BMI.make_bmi_cohort(cohort_number)
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
 
