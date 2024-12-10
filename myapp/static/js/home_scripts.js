@@ -267,9 +267,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
             case "bmi":
                 dynamicContent.innerHTML = `
-                    <h3>BMI Module</h3>
-                    <p>Provide additional details related to BMI.</p>
-                    <input type="text" placeholder="Enter BMI range">
+                    <p>Group into cohorts by BMI. Choose the number of cohorts.</p>
+                    <input type="number" placeholder="Number of Cohorts" id="bmi_cohort_number">
+                    <button onclick="make_bmi_cohorts()">Make Cohorts</button>
                 `;
                 break;
             case "disease":
@@ -470,6 +470,52 @@ function make_age_cohorts(){
 
 function populate_cohort_list_age(){
     let cohortNumber = parseInt(document.getElementById("age_cohort_number").value);
+    //The above line needs to be executed before we delete the innerHTML of dynamic-content
+    let element = document.getElementById("dynamic-content");
+    element.innerHTML = '';  // Clear previous results
+    if(cohorts === null){
+        element.innerHTML = '<li>No Cohorts Made.</li>';
+        return;
+    }
+    for (let i = 0; i < cohortNumber; i++) {
+        let cohort_container = document.createElement('div');
+        const individuals = document.createElement('h3');
+        individuals.textContent += `Cohort ${i + 1}:\t`;
+        for(let indiv of cohorts[i]){
+                individuals.textContent += `${indiv},\t`
+            }
+
+        individuals.textContent = individuals.textContent.slice(0, -2);
+        cohort_container.appendChild(individuals);
+        cohort_container.style.display = 'flex';
+        cohort_container.style.justifyContent = 'flex-start';
+        cohort_container.style.alignItems = 'center';
+        element.appendChild(cohort_container);
+    }
+    bust_cache();
+}
+
+function make_bmi_cohorts(){
+    if (document.getElementById("bmi_cohort_number").value === null){
+        return;
+    }
+    let cohortNumber = parseInt(document.getElementById("bmi_cohort_number").value);
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `make_bmi_cohorts/?cohort_number=${cohortNumber}`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            cohorts = response.cohorts;
+            populate_cohort_list_bmi()
+        } else {
+            console.error('Error making cohorts:', xhr.status);
+        }
+    };
+    xhr.send();
+}
+
+function populate_cohort_list_bmi(){
+    let cohortNumber = parseInt(document.getElementById("bmi_cohort_number").value);
     //The above line needs to be executed before we delete the innerHTML of dynamic-content
     let element = document.getElementById("dynamic-content");
     element.innerHTML = '';  // Clear previous results

@@ -10,7 +10,7 @@ import io
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
 import seaborn as sns
-from .Datatypes import Sex, Disease, Drug, Age
+from .Datatypes import Sex, Disease, Drug, Age, BMI
 
 global variants, cohorts, encoded_data, chalf, dt
 # variants = {}
@@ -257,6 +257,8 @@ def make_c_half_graph(request):
             return Drug.make_graph_drug(chalf, cohorts)
         elif dt == "age":
             return Age.make_graph_age(chalf, cohorts)
+        elif dt == "bmi":
+            return BMI.make_graph_bmi(chalf, cohorts)
 
 
 # def make_cohorts2(request):  # TODO: Rename this
@@ -296,5 +298,13 @@ def make_age_cohorts(request):
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "age"
     cohorts = Age.make_age_cohort(cohort_number)
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
+
+
+def make_bmi_cohorts(request):
+    global cohorts, chalf, dt
+    cohort_number = int(request.GET.get('cohort_number', 1))
+    dt = "bmi"
+    cohorts = BMI.make_bmi_cohort(cohort_number)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
 
