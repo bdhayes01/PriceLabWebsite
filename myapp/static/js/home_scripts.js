@@ -148,9 +148,9 @@ function renderSequenceList() {
     }
 }
 
-window.onload = function() {
-    renderSequenceList();
-};
+// window.onload = function() {
+//      renderSequenceList();
+// };
 function map_cohort(cohort){
     let c = parseInt(cohort);
     if(curr_cohorts.hasOwnProperty(c)){
@@ -160,7 +160,7 @@ function map_cohort(cohort){
     else if(Object.keys(curr_cohorts).length < 4){
         curr_cohorts[c] = cohortColors.pop();
     }
-    renderSequenceList();
+    // renderSequenceList();
 }
 
 function make_cohorts(){
@@ -175,7 +175,7 @@ function make_cohorts(){
             const dendrogramImage = document.querySelector("img[alt='Dendrogram']");
             dendrogramImage.src = dendrogramImage.src + '?' + new Date().getTime();  // Cache-busting
             make_cohort_variants();
-            renderSequenceList();
+            // renderSequenceList();
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
@@ -295,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case "sex":
                 dynamicContent.innerHTML = `
                     <br>
-                    <button onclick="make_sex_cohorts()">Make Cohorts Based On Sex</button>
+                    <button onclick="make_sex_cohorts(\`make_sex_cohorts\`)">Make Cohorts Based On Sex</button>
                 `;
                 break;
             default:
@@ -309,52 +309,20 @@ function bust_cache(){
     img.src = img.src + '?' + new Date().getTime();
 }
 
-function make_sex_cohorts(){
+function make_sex_cohorts(url){
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_sex_cohorts`, true);
+    xhr.open('GET', url, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
             cohort_colors = response.cohort_colors;
-            populate_cohort_list_sex()
+            display_cohorts();
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
     };
     xhr.send();
-}
-
-function populate_cohort_list_sex(){
-    let element = document.getElementById("dynamic-content")
-    element.innerHTML = '';  // Clear previous results
-    if(cohorts === null){
-        element.innerHTML = '<li>No Cohorts Made.</li>';
-        return;
-    }
-    for (let i = 0; i < 2; i++) {
-        let cohort_container = document.createElement('div');
-        const individuals = document.createElement('h3');
-        if(i===0){
-            individuals.textContent += "Male Cohort:\t";
-            for(let indiv of cohorts[0]){
-                individuals.textContent += `${indiv},\t`
-            }
-        }else{
-            individuals.textContent += "Female Cohort:\t";
-            for(let indiv of cohorts[1]){
-                individuals.textContent += `${indiv},\t`
-            }
-        }
-        individuals.textContent = individuals.textContent.slice(0, -2);
-        individuals.style.backgroundColor = cohort_colors[i];
-        cohort_container.appendChild(individuals);
-        cohort_container.style.display = 'flex';
-        cohort_container.style.justifyContent = 'flex-start';
-        cohort_container.style.alignItems = 'center';
-        element.appendChild(cohort_container);
-    }
-    bust_cache();
 }
 
 function make_disease_cohorts(){
@@ -365,44 +333,12 @@ function make_disease_cohorts(){
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
             cohort_colors = response.cohort_colors;
-            populate_cohort_list_disease()
+            display_cohorts();
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
     };
     xhr.send();
-}
-
-function populate_cohort_list_disease(){
-    let element = document.getElementById("dynamic-content")
-    element.innerHTML = '';  // Clear previous results
-    if(cohorts === null){
-        element.innerHTML = '<li>No Cohorts Made.</li>';
-        return;
-    }
-    for (let i = 0; i < 2; i++) {
-        let cohort_container = document.createElement('div');
-        const individuals = document.createElement('h3');
-        if(i===0){
-            individuals.textContent += "Diseased Cohort:\t";
-            for(let indiv of cohorts[0]){
-                individuals.textContent += `${indiv},\t`
-            }
-        }else{
-            individuals.textContent += "Undiseased Cohort:\t";
-            for(let indiv of cohorts[1]){
-                individuals.textContent += `${indiv},\t`
-            }
-        }
-        individuals.textContent = individuals.textContent.slice(0, -2);
-        individuals.style.backgroundColor = cohort_colors[i];
-        cohort_container.appendChild(individuals);
-        cohort_container.style.display = 'flex';
-        cohort_container.style.justifyContent = 'flex-start';
-        cohort_container.style.alignItems = 'center';
-        element.appendChild(cohort_container);
-    }
-    bust_cache();
 }
 
 function make_drug_cohorts(){
@@ -413,44 +349,12 @@ function make_drug_cohorts(){
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
             cohort_colors = response.cohort_colors;
-            populate_cohort_list_drug()
+            display_cohorts();
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
     };
     xhr.send();
-}
-
-function populate_cohort_list_drug(){
-    let element = document.getElementById("dynamic-content")
-    element.innerHTML = '';  // Clear previous results
-    if(cohorts === null){
-        element.innerHTML = '<li>No Cohorts Made.</li>';
-        return;
-    }
-    for (let i = 0; i < 2; i++) {
-        let cohort_container = document.createElement('div');
-        const individuals = document.createElement('h3');
-        if(i===0){
-            individuals.textContent += "Taking Drug Cohort:\t";
-            for(let indiv of cohorts[0]){
-                individuals.textContent += `${indiv},\t`
-            }
-        }else{
-            individuals.textContent += "Not Taking Drug Cohort:\t";
-            for(let indiv of cohorts[1]){
-                individuals.textContent += `${indiv},\t`
-            }
-        }
-        individuals.textContent = individuals.textContent.slice(0, -2);
-        individuals.style.backgroundColor = cohort_colors[i];
-        cohort_container.appendChild(individuals);
-        cohort_container.style.display = 'flex';
-        cohort_container.style.justifyContent = 'flex-start';
-        cohort_container.style.alignItems = 'center';
-        element.appendChild(cohort_container);
-    }
-    bust_cache();
 }
 
 function make_age_cohorts(){
@@ -465,40 +369,12 @@ function make_age_cohorts(){
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
             cohort_colors = response.cohort_colors;
-            populate_cohort_list_age()
+            display_cohorts();
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
     };
     xhr.send();
-}
-
-function populate_cohort_list_age(){
-    let cohortNumber = parseInt(document.getElementById("age_cohort_number").value);
-    //The above line needs to be executed before we delete the innerHTML of dynamic-content
-    let element = document.getElementById("dynamic-content");
-    element.innerHTML = '';  // Clear previous results
-    if(cohorts === null){
-        element.innerHTML = '<li>No Cohorts Made.</li>';
-        return;
-    }
-    for (let i = 0; i < cohortNumber; i++) {
-        let cohort_container = document.createElement('div');
-        const individuals = document.createElement('h3');
-        individuals.textContent += `Cohort ${i + 1}:\t`;
-        for(let indiv of cohorts[i]){
-                individuals.textContent += `${indiv},\t`
-            }
-
-        individuals.textContent = individuals.textContent.slice(0, -2);
-        individuals.style.backgroundColor = cohort_colors[i];
-        cohort_container.appendChild(individuals);
-        cohort_container.style.display = 'flex';
-        cohort_container.style.justifyContent = 'flex-start';
-        cohort_container.style.alignItems = 'center';
-        element.appendChild(cohort_container);
-    }
-    bust_cache();
 }
 
 function make_bmi_cohorts(){
@@ -513,7 +389,7 @@ function make_bmi_cohorts(){
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
             cohort_colors = response.cohort_colors;
-            populate_cohort_list_bmi()
+            display_cohorts();
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
@@ -521,9 +397,8 @@ function make_bmi_cohorts(){
     xhr.send();
 }
 
-function populate_cohort_list_bmi(){
-    let cohortNumber = parseInt(document.getElementById("bmi_cohort_number").value);
-    //The above line needs to be executed before we delete the innerHTML of dynamic-content
+function display_cohorts(){
+    let cohortNumber = cohorts.length;
     let element = document.getElementById("dynamic-content");
     element.innerHTML = '';  // Clear previous results
     if(cohorts === null){
@@ -533,13 +408,13 @@ function populate_cohort_list_bmi(){
     for (let i = 0; i < cohortNumber; i++) {
         let cohort_container = document.createElement('div');
         const individuals = document.createElement('h3');
-        individuals.textContent += `Cohort ${i + 1}:\t`;
-        for(let indiv of cohorts[i]){
-                individuals.textContent += `${indiv},\t`
-            }
+        individuals.innerHTML += `<span style="background-color: ${cohort_colors[i]};">Cohort ${i + 1}:\t`;
 
-        individuals.textContent = individuals.textContent.slice(0, -2);
-        individuals.style.backgroundColor = cohort_colors[i];
+        for(let indiv of cohorts[i]){
+                individuals.innerHTML += `<span style="background-color: white;">${indiv},\t`;
+        }
+
+        individuals.innerHTML = individuals.innerHTML.slice(0, -9) + '</span>';
         cohort_container.appendChild(individuals);
         cohort_container.style.display = 'flex';
         cohort_container.style.justifyContent = 'flex-start';
