@@ -51,7 +51,7 @@ def make_graph_age(chalf, cohorts):
     plt.xlabel("Residues")
     plt.ylabel("C-Half")
     plt.grid(True)
-    # plt.legend()
+    plt.legend([f"Cohort {i + 1}" for i in range(len(cohorts))])
     plt.tight_layout()
 
     buffer = io.BytesIO()

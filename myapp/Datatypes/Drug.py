@@ -37,7 +37,7 @@ def make_graph_drug(chalf, cohorts):
     plt.xlabel("Residues")
     plt.ylabel("C-Half")
     plt.grid(True)
-    # plt.legend()
+    plt.legend(["Taking drug", "Not taking drug"])
     plt.tight_layout()
 
     buffer = io.BytesIO()

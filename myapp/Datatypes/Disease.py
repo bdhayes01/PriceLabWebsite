@@ -37,7 +37,7 @@ def make_graph_disease(chalf, cohorts):
     plt.xlabel("Residues")
     plt.ylabel("C-Half")
     plt.grid(True)
-    # plt.legend()
+    plt.legend(["With disease", "Without disease"])
     plt.tight_layout()
 
     buffer = io.BytesIO()

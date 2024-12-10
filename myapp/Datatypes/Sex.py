@@ -37,7 +37,7 @@ def make_graph_sex(chalf, cohorts):
     plt.xlabel("Residues")
     plt.ylabel("C-Half")
     plt.grid(True)
-    # plt.legend()
+    plt.legend(["Male", "Female"])
     plt.tight_layout()
 
     buffer = io.BytesIO()
