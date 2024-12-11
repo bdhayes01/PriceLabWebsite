@@ -380,3 +380,7 @@ function display_cohorts(){
     }
     bust_cache();
 }
+
+function reset_filters(){
+    return;
+}
