@@ -15,11 +15,8 @@ from sklearn.cluster import KMeans
 import seaborn as sns
 from .Datatypes import Sex, Disease, Drug, Age, BMI
 
-global variants, cohorts, encoded_data, chalf, dt, cohort_colors
-# variants = {}
+global variants, cohorts, encoded_data, chalf, dt, cohort_colors, original_chalf
 cohorts = None
-# encoded_data = None
-chalf = None
 
 
 def upload_file(request):
@@ -122,7 +119,8 @@ def home(request):
     else:
         c = CHalf.objects.filter(Accession__exact="P02768|ALBU_HUMAN").first()
     if c:
-        global chalf
+        global chalf, original_chalf
+        original_chalf = c.CHalf
         chalf = c.CHalf
         chalf_json = json.dumps({
             'Accession': c.Accession,
@@ -335,3 +333,8 @@ def make_bmi_cohorts(request):
     cohorts, cohort_colors = BMI.make_bmi_cohort(cohort_number)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
 
+
+def reset_filters(request):
+    global chalf, original_chalf
+    chalf = original_chalf
+    return JsonResponse({'message': 'Successfully reset filters'})
