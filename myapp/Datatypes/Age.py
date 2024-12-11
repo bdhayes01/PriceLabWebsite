@@ -27,6 +27,9 @@ def make_age_cohort(cohort_number):
     colors = generate_random_colors(len(cohorts))
     return cohorts, colors
 
+def generate_categories():
+
+    return []
 
 def make_graph_age(chalf, cohorts, colors):
     x_values = defaultdict(list)

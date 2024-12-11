@@ -301,21 +301,24 @@ def make_sex_cohorts(request):
     global cohorts, chalf, dt, cohort_colors
     dt = "sex"
     cohorts, cohort_colors = Sex.make_sex_cohort()
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
+                         'cohort_colors': cohort_colors, 'categories': ["Male", "Female"]})
 
 
 def make_disease_cohorts(request):
     global cohorts, chalf, dt, cohort_colors
     dt = "disease"
     cohorts, cohort_colors = Disease.make_disease_cohort()
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
+                         'cohort_colors': cohort_colors, 'categories': ["With disease", "Without disease"]})
 
 
 def make_drug_cohorts(request):
     global cohorts, chalf, dt, cohort_colors
     dt = "drug"
     cohorts, cohort_colors = Drug.make_drug_cohort()
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
+                         'cohort_colors': cohort_colors, 'categories': ["Taking drug", "Not taking drug"]})
 
 
 def make_age_cohorts(request):
@@ -323,7 +326,8 @@ def make_age_cohorts(request):
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "age"
     cohorts, cohort_colors = Age.make_age_cohort(cohort_number)
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
+                         'cohort_colors': cohort_colors, 'categories': ["None"]})
 
 
 def make_bmi_cohorts(request):
@@ -331,7 +335,8 @@ def make_bmi_cohorts(request):
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "bmi"
     cohorts, cohort_colors = BMI.make_bmi_cohort(cohort_number)
-    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts, 'cohort_colors': cohort_colors})
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
+                         'cohort_colors': cohort_colors, 'categories': ["None"]})
 
 
 def reset_filters(request):

@@ -330,7 +330,8 @@ function call_make_cohorts(url){
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
             cohort_colors = response.cohort_colors;
-            display_cohorts();
+            categories = response.categories;
+            display_cohorts(categories);
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
@@ -354,7 +355,7 @@ function make_bmi_cohorts(){
     call_make_cohorts(`make_bmi_cohorts/?cohort_number=${cohortNumber}`);
 }
 
-function display_cohorts(){
+function display_cohorts(categories){
     let cohortNumber = cohorts.length;
     let element = document.getElementById("dynamic-content");
     element.innerHTML = '';  // Clear previous results
@@ -365,7 +366,8 @@ function display_cohorts(){
     for (let i = 0; i < cohortNumber; i++) {
         let cohort_container = document.createElement('div');
         const individuals = document.createElement('h3');
-        individuals.innerHTML += `<span style="background-color: ${cohort_colors[i]};">Cohort ${i + 1}:\t`;
+
+        individuals.innerHTML += `<span style="background-color: ${cohort_colors[i]};">${categories[i]} cohort:\t`;
 
         for(let indiv of cohorts[i]){
                 individuals.innerHTML += `<span style="background-color: white;">${indiv},\t`;
