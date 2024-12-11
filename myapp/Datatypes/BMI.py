@@ -24,7 +24,24 @@ def make_bmi_cohort(cohort_number):
             temp_cohorts[coh] = [indiv]
     cohorts = [temp_cohorts[num] for num in sorted(temp_cohorts.keys())]
     colors = generate_random_colors(len(cohorts))
-    return cohorts, colors
+    categories = generate_categories(cohorts, bmi['BMI'])
+    categories = [f"{val[0]} - {val[1]}" for val in categories]
+    return cohorts, colors, categories
+
+def generate_categories(cohorts, ages):
+    categories = []
+    i = 0
+    for cohort in cohorts:
+        minmax = [200, -1]
+        for indiv in cohort:
+            age = ages[i]
+            if age < minmax[0]:
+                minmax[0] = age
+            if age > minmax[1]:
+                minmax[1] = age
+            i += 1
+        categories.append(minmax)
+    return categories
 
 
 def make_graph_bmi(chalf, cohorts, colors):

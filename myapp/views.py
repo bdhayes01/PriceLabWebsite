@@ -325,18 +325,18 @@ def make_age_cohorts(request):
     global cohorts, chalf, dt, cohort_colors
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "age"
-    cohorts, cohort_colors = Age.make_age_cohort(cohort_number)
+    cohorts, cohort_colors, categories = Age.make_age_cohort(cohort_number)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
-                         'cohort_colors': cohort_colors, 'categories': ["None"]})
+                         'cohort_colors': cohort_colors, 'categories': categories})
 
 
 def make_bmi_cohorts(request):
     global cohorts, chalf, dt, cohort_colors
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "bmi"
-    cohorts, cohort_colors = BMI.make_bmi_cohort(cohort_number)
+    cohorts, cohort_colors, categories = BMI.make_bmi_cohort(cohort_number)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
-                         'cohort_colors': cohort_colors, 'categories': ["None"]})
+                         'cohort_colors': cohort_colors, 'categories': categories})
 
 
 def reset_filters(request):
