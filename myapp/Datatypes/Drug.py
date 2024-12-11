@@ -13,7 +13,7 @@ def make_drug_cohort():
     return [with_drug_cohort, no_drug_cohort], ["yellow", "red"]
 
 
-def make_graph_drug(chalf, cohorts, colors):
+def make_graph_drug(chalf, cohorts, colors, categories):
     x_values = defaultdict(list)
     y_values = defaultdict(list)
     errors = defaultdict(list)
@@ -37,7 +37,7 @@ def make_graph_drug(chalf, cohorts, colors):
     plt.xlabel("Residues")
     plt.ylabel("C-Half")
     plt.grid(True)
-    plt.legend(["Taking drug", "Not taking drug"])
+    plt.legend(categories)
     plt.tight_layout()
 
     buffer = io.BytesIO()

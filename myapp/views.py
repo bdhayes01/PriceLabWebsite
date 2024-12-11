@@ -15,7 +15,7 @@ from sklearn.cluster import KMeans
 import seaborn as sns
 from .Datatypes import Sex, Disease, Drug, Age, BMI
 
-global variants, cohorts, encoded_data, chalf, dt, cohort_colors, original_chalf
+global variants, cohorts, encoded_data, chalf, dt, cohort_colors, original_chalf, categories
 cohorts = None
 
 
@@ -223,15 +223,15 @@ def make_c_half_graph(request):
         return make_basic_graph()
     else:
         if dt == "sex":
-            return Sex.make_graph_sex(chalf, cohorts, cohort_colors)
+            return Sex.make_graph_sex(chalf, cohorts, cohort_colors, categories)
         elif dt == "disease":
-            return Disease.make_graph_disease(chalf, cohorts, cohort_colors)
+            return Disease.make_graph_disease(chalf, cohorts, cohort_colors, categories)
         elif dt == "drug":
-            return Drug.make_graph_drug(chalf, cohorts, cohort_colors)
+            return Drug.make_graph_drug(chalf, cohorts, cohort_colors, categories)
         elif dt == "age":
-            return Age.make_graph_age(chalf, cohorts, cohort_colors)
+            return Age.make_graph_age(chalf, cohorts, cohort_colors, categories)
         elif dt == "bmi":
-            return BMI.make_graph_bmi(chalf, cohorts, cohort_colors)
+            return BMI.make_graph_bmi(chalf, cohorts, cohort_colors, categories)
 
 
 def make_basic_graph():
@@ -298,31 +298,34 @@ def aggregate_data(data):
 
 
 def make_sex_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors
+    global cohorts, chalf, dt, cohort_colors, categories
     dt = "sex"
+    categories = ["Male", "Female"]
     cohorts, cohort_colors = Sex.make_sex_cohort()
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
-                         'cohort_colors': cohort_colors, 'categories': ["Male", "Female"]})
+                         'cohort_colors': cohort_colors, 'categories': categories})
 
 
 def make_disease_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors
+    global cohorts, chalf, dt, cohort_colors, categories
     dt = "disease"
+    categories = ["With disease", "Without disease"]
     cohorts, cohort_colors = Disease.make_disease_cohort()
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
-                         'cohort_colors': cohort_colors, 'categories': ["With disease", "Without disease"]})
+                         'cohort_colors': cohort_colors, 'categories': categories})
 
 
 def make_drug_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors
+    global cohorts, chalf, dt, cohort_colors, categories
     dt = "drug"
+    categories = ["Taking drug", "Not taking drug"]
     cohorts, cohort_colors = Drug.make_drug_cohort()
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
-                         'cohort_colors': cohort_colors, 'categories': ["Taking drug", "Not taking drug"]})
+                         'cohort_colors': cohort_colors, 'categories': categories})
 
 
 def make_age_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors
+    global cohorts, chalf, dt, cohort_colors, categories
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "age"
     cohorts, cohort_colors, categories = Age.make_age_cohort(cohort_number)
@@ -331,7 +334,7 @@ def make_age_cohorts(request):
 
 
 def make_bmi_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors
+    global cohorts, chalf, dt, cohort_colors, categories
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "bmi"
     cohorts, cohort_colors, categories = BMI.make_bmi_cohort(cohort_number)

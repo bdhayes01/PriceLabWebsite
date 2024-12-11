@@ -12,7 +12,7 @@ def make_sex_cohort():
     return [male_cohort, female_cohort], ["blue", "pink"]
 
 
-def make_graph_sex(chalf, cohorts, colors):
+def make_graph_sex(chalf, cohorts, colors, categories):
     x_values = defaultdict(list)
     y_values = defaultdict(list)
     errors = defaultdict(list)
@@ -37,7 +37,7 @@ def make_graph_sex(chalf, cohorts, colors):
     plt.xlabel("Residues")
     plt.ylabel("C-Half")
     plt.grid(True)
-    plt.legend(["Male", "Female"])
+    plt.legend(categories)
     plt.tight_layout()
 
     buffer = io.BytesIO()

@@ -13,7 +13,7 @@ def make_disease_cohort():
     return [diseased_cohort, undiseased_cohort], ["orange", "blue"]
 
 
-def make_graph_disease(chalf, cohorts, colors):
+def make_graph_disease(chalf, cohorts, colors, categories):
     x_values = defaultdict(list)
     y_values = defaultdict(list)
     errors = defaultdict(list)
@@ -37,7 +37,7 @@ def make_graph_disease(chalf, cohorts, colors):
     plt.xlabel("Residues")
     plt.ylabel("C-Half")
     plt.grid(True)
-    plt.legend(["With disease", "Without disease"])
+    plt.legend(categories)
     plt.tight_layout()
 
     buffer = io.BytesIO()

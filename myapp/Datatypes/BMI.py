@@ -32,9 +32,9 @@ def generate_categories(cohorts, ages):
     categories = []
     i = 0
     for cohort in cohorts:
-        minmax = [200, -1]
+        minmax = [200.0, -1.0]
         for indiv in cohort:
-            age = ages[i]
+            age = ages.get(indiv)
             if age < minmax[0]:
                 minmax[0] = age
             if age > minmax[1]:
@@ -44,7 +44,7 @@ def generate_categories(cohorts, ages):
     return categories
 
 
-def make_graph_bmi(chalf, cohorts, colors):
+def make_graph_bmi(chalf, cohorts, colors, categories):
     x_values = defaultdict(list)
     y_values = defaultdict(list)
     errors = defaultdict(list)
@@ -69,7 +69,7 @@ def make_graph_bmi(chalf, cohorts, colors):
     plt.xlabel("Residues")
     plt.ylabel("C-Half")
     plt.grid(True)
-    plt.legend([f"Cohort {i + 1}" for i in range(len(cohorts))])
+    plt.legend(categories)
     plt.tight_layout()
 
     buffer = io.BytesIO()
