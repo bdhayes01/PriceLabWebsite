@@ -226,46 +226,39 @@ function make_cohort_variants(){
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const helpButton = document.getElementById('help-button');
-    const modal = document.getElementById('help-modal');
+    const helpModal = document.getElementById('help-modal');
 
-    // Show the modal when the help button is clicked
-    helpButton.onclick = function() {
-        if(modal.style.display === ""){
-            modal.style.display = 'block';
-        }else{
-            modal.style.display = "";
-        }
-    };
-
-    // Close the modal when clicking outside the content
-    window.onclick = function(event) {
-        if (event.target !== helpButton) {
-            modal.style.display = "";
-        }
-    };
-});
-
-document.addEventListener('DOMContentLoaded', function (){
     const filterButton = document.getElementById('filter-button');
-    const modal = document.getElementById('filter-modal');
-    // Show the modal when the filter button is clicked
-    filterButton.onclick = function() {
-        if(modal.style.display === ""){
-            modal.style.display = 'block';
-        }else{
-            modal.style.display = "";
-        }
+    const filterModal = document.getElementById('filter-modal');
+
+    // Toggle the display of the help modal
+    helpButton.onclick = function () {
+        helpModal.style.display = helpModal.style.display === "block" ? "none" : "block";
     };
 
-    // Close the modal when clicking outside the content
-    window.onclick = function(event) {
-        if (event.target !== filterButton) {
-            modal.style.display = "";
-        }
+    // Toggle the display of the filter modal
+    filterButton.onclick = function () {
+        filterModal.style.display = filterModal.style.display === "block" ? "none" : "block";
     };
+
+    // Close the help modal if clicking outside
+    window.addEventListener('click', function (event) {
+        if (event.target === helpModal) {
+            helpModal.style.display = "none";
+        }
+    });
+
+    // Close the filter modal if clicking outside
+    window.addEventListener('click', function (event) {
+        if (event.target === filterModal) {
+            filterModal.style.display = "none";
+        }
+    });
 });
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const dropdown = document.getElementById("independent_variable");
