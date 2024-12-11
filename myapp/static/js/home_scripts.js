@@ -276,13 +276,13 @@ document.addEventListener("DOMContentLoaded", () => {
             case "disease":
                 dynamicContent.innerHTML = `
                     <br>
-                    <button onclick="make_disease_cohorts()">Make Cohorts Based On Disease Status</button>
+                    <button onclick="call_make_cohorts(\`make_disease_cohorts\`)">Make Cohorts Based On Disease Status</button>
                 `;
                 break;
             case "drug":
                 dynamicContent.innerHTML = `
                     <br>
-                    <button onclick="make_drug_cohorts()">Make Cohorts Based On Drug Status</button>
+                    <button onclick="call_make_cohorts(\`make_drug_cohorts\`)">Make Cohorts Based On Drug Status</button>
                 `;
                 break;
             case "mutations":
@@ -295,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case "sex":
                 dynamicContent.innerHTML = `
                     <br>
-                    <button onclick="make_sex_cohorts(\`make_sex_cohorts\`)">Make Cohorts Based On Sex</button>
+                    <button onclick="call_make_cohorts(\`make_sex_cohorts\`)">Make Cohorts Based On Sex</button>
                 `;
                 break;
             default:
@@ -309,41 +309,9 @@ function bust_cache(){
     img.src = img.src + '?' + new Date().getTime();
 }
 
-function make_sex_cohorts(url){
+function call_make_cohorts(url){
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            cohorts = response.cohorts;
-            cohort_colors = response.cohort_colors;
-            display_cohorts();
-        } else {
-            console.error('Error making cohorts:', xhr.status);
-        }
-    };
-    xhr.send();
-}
-
-function make_disease_cohorts(){
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_disease_cohorts`, true);
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            cohorts = response.cohorts;
-            cohort_colors = response.cohort_colors;
-            display_cohorts();
-        } else {
-            console.error('Error making cohorts:', xhr.status);
-        }
-    };
-    xhr.send();
-}
-
-function make_drug_cohorts(){
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_drug_cohorts`, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
@@ -362,19 +330,7 @@ function make_age_cohorts(){
         return;
     }
     let cohortNumber = parseInt(document.getElementById("age_cohort_number").value);
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_age_cohorts/?cohort_number=${cohortNumber}`, true);
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            cohorts = response.cohorts;
-            cohort_colors = response.cohort_colors;
-            display_cohorts();
-        } else {
-            console.error('Error making cohorts:', xhr.status);
-        }
-    };
-    xhr.send();
+    call_make_cohorts(`make_age_cohorts/?cohort_number=${cohortNumber}`);
 }
 
 function make_bmi_cohorts(){
@@ -382,19 +338,7 @@ function make_bmi_cohorts(){
         return;
     }
     let cohortNumber = parseInt(document.getElementById("bmi_cohort_number").value);
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_bmi_cohorts/?cohort_number=${cohortNumber}`, true);
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            cohorts = response.cohorts;
-            cohort_colors = response.cohort_colors;
-            display_cohorts();
-        } else {
-            console.error('Error making cohorts:', xhr.status);
-        }
-    };
-    xhr.send();
+    call_make_cohorts(`make_bmi_cohorts/?cohort_number=${cohortNumber}`);
 }
 
 function display_cohorts(){
