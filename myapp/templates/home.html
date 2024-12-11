@@ -3,7 +3,7 @@
 <html>
 <head>
     <link rel="icon" href="{% static 'images/image_jc.ico' %}" type="image/x-icon">
-    <title>Sequence List</title>
+    <title>C-Half values</title>
     <script src="{% static 'js/home_scripts.js' %}" defer></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_styles.css' %}">
 {#    <script> const chalf_json = {{ chalf_json|safe }}; </script>#}
@@ -40,6 +40,14 @@
         <option value="mutations">Mutations</option>
         <option value="sex">Sex</option>
     </select>
+
+    <button id="filter-button">Filter</button>
+        <!-- Modal Structure -->
+    <div id="filter-modal" class="modal">
+        <div class="modal-content">
+            <h2>Filters</h2>
+        </div>
+    </div>
 
     <div id="dynamic-content"></div>
     <br>

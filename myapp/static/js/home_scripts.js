@@ -247,6 +247,26 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 
+document.addEventListener('DOMContentLoaded', function (){
+    const filterButton = document.getElementById('filter-button');
+    const modal = document.getElementById('filter-modal');
+    // Show the modal when the filter button is clicked
+    filterButton.onclick = function() {
+        if(modal.style.display === ""){
+            modal.style.display = 'block';
+        }else{
+            modal.style.display = "";
+        }
+    };
+
+    // Close the modal when clicking outside the content
+    window.onclick = function(event) {
+        if (event.target !== filterButton) {
+            modal.style.display = "";
+        }
+    };
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const dropdown = document.getElementById("independent_variable");
     const dynamicContent = document.getElementById("dynamic-content");
