@@ -1,3 +1,6 @@
+import math
+from collections import defaultdict
+
 import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -232,6 +235,7 @@ def make_c_half_graph(request):
         elif dt == "bmi":
             return BMI.make_graph_bmi(chalf, cohorts, cohort_colors)
 
+
 def make_basic_graph():
     x_values = []
     y_values = []
@@ -244,10 +248,7 @@ def make_basic_graph():
             errors.append(v[1])
 
     sorted_data = sorted(zip(x_values, y_values, errors), key=lambda x: x[0])  # Sort by x_values
-
-
-    x_values, y_values, errors = zip(*sorted_data)  # Unpack the sorted data
-
+    x_values, y_values, errors = zip(*aggregate_data(sorted_data))
 
     plt.figure(figsize=(10, 6))
     plt.errorbar(x_values, y_values, yerr=errors, fmt='o', capsize=5, label='Data with error bars')
@@ -275,6 +276,27 @@ def make_basic_graph():
 #         return
 #
 #     return
+
+
+def aggregate_data(data):
+    grouped_data = defaultdict(list)
+    for identifier, value, error in data:
+        grouped_data[identifier].append((value, error))
+
+    aggregated_data = []
+    for identifier, entries in grouped_data.items():
+        values = [x[0] for x in entries]
+        errors = [x[1] for x in entries]
+
+        # Compute mean value
+        mean_value = sum(values) / len(values)
+
+        # Compute aggregated error (root-mean-square in this example)
+        rms_error = math.sqrt(sum(e ** 2 for e in errors) / len(errors))
+
+        aggregated_data.append((identifier, mean_value, rms_error))
+    aggregated_data.sort(key=lambda x: x[0])
+    return aggregated_data
 
 
 def make_sex_cohorts(request):

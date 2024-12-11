@@ -6,7 +6,7 @@ import io
 from sklearn.cluster import KMeans
 import pandas as pd
 import random
-
+import myapp.views as views
 
 def make_bmi_cohort(cohort_number):
     metadata = Metadata.objects.all()
@@ -45,7 +45,7 @@ def make_graph_bmi(chalf, cohorts, colors):
             continue
         sorted_data = sorted(zip(x_values[color], y_values[color], errors[color]),
                              key=lambda x: x[0])  # Sort by x_values
-        sorted_x, sorted_y, sorted_errors = zip(*sorted_data)  # Use separate variables to unpack sorted data
+        sorted_x, sorted_y, sorted_errors = zip(*views.aggregate_data(sorted_data))  # Use separate variables to unpack sorted data
         plt.errorbar(sorted_x, sorted_y, yerr=sorted_errors, fmt='o', capsize=5, label=f'Data ({color})',
                      color=color)
     plt.title("C-Half values for selected protein")

@@ -3,7 +3,7 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 from django.http import HttpResponse
 import io
-
+import myapp.views as views
 
 def make_sex_cohort():
     metadata = Metadata.objects.all()
@@ -17,7 +17,6 @@ def make_graph_sex(chalf, cohorts, colors):
     y_values = defaultdict(list)
     errors = defaultdict(list)
 
-
     for indiv, value in chalf.items():
         for k, v in value.items():
             color = colors[0] if indiv in cohorts[0] else colors[1]
@@ -30,8 +29,9 @@ def make_graph_sex(chalf, cohorts, colors):
             continue
         sorted_data = sorted(zip(x_values[color], y_values[color], errors[color]),
                              key=lambda x: x[0])  # Sort by x_values
-        sorted_x, sorted_y, sorted_errors = zip(*sorted_data)  # Use separate variables to unpack sorted data
-        plt.errorbar(sorted_x, sorted_y, yerr=sorted_errors, fmt='o', capsize=5, label=f'Data ({color})',
+        # sorted_x, sorted_y, sorted_errors = zip(*sorted_data)  # Use separate variables to unpack sorted data
+        x, y, err = zip(*views.aggregate_data(sorted_data))
+        plt.errorbar(x, y, yerr=err, fmt='o', capsize=5, label=f'Data ({color})',
                      color=color)
     plt.title("C-Half values for selected protein")
     plt.xlabel("Residues")
