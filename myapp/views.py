@@ -117,7 +117,7 @@ def home(request):
     if query:
         c = CHalf.objects.filter(Accession__exact=query).first()
     else:
-        c = CHalf.objects.filter(Accession__exact="Q8WZ42|TITIN_HUMAN").first()
+        c = CHalf.objects.filter(Accession__exact="P02768|ALBU_HUMAN").first()
     if c:
         global chalf
         chalf = c.CHalf
@@ -219,35 +219,7 @@ def make_c_half_graph(request):
     plt.clf()
     global dt, chalf, cohorts
     if cohorts is None:
-        x_values = []
-        y_values = []
-        errors = []
-        global chalf
-        for key, value in chalf.items():
-            for k, v in value.items():
-                x_values.append(round(float(k)))
-                y_values.append(v[0])
-                errors.append(v[1])
-
-        sorted_data = sorted(zip(x_values, y_values, errors), key=lambda x: x[0])  # Sort by x_values
-        x_values, y_values, errors = zip(*sorted_data)  # Unpack the sorted data
-
-        plt.figure(figsize=(10, 6))
-        plt.errorbar(x_values, y_values, yerr=errors, fmt='o', capsize=5, label='Data with error bars')
-        plt.title("C-Half values for selected protein")
-        plt.xlabel("Residues")
-        plt.ylabel("C-Half")
-        plt.grid(True)
-        # plt.legend()
-        plt.tight_layout()
-
-        buffer = io.BytesIO()
-        plt.savefig(buffer, format='png')
-        plt.close()
-        buffer.seek(0)
-
-        # Return the image as an HTTP response
-        return HttpResponse(buffer, content_type='image/png')
+        return make_basic_graph()
     else:
         if dt == "sex":
             return Sex.make_graph_sex(chalf, cohorts, cohort_colors)
@@ -260,6 +232,39 @@ def make_c_half_graph(request):
         elif dt == "bmi":
             return BMI.make_graph_bmi(chalf, cohorts, cohort_colors)
 
+def make_basic_graph():
+    x_values = []
+    y_values = []
+    errors = []
+    global chalf
+    for key, value in chalf.items():
+        for k, v in value.items():
+            x_values.append(round(float(k)))
+            y_values.append(v[0])
+            errors.append(v[1])
+
+    sorted_data = sorted(zip(x_values, y_values, errors), key=lambda x: x[0])  # Sort by x_values
+
+
+    x_values, y_values, errors = zip(*sorted_data)  # Unpack the sorted data
+
+
+    plt.figure(figsize=(10, 6))
+    plt.errorbar(x_values, y_values, yerr=errors, fmt='o', capsize=5, label='Data with error bars')
+    plt.title("C-Half values for selected protein")
+    plt.xlabel("Residues")
+    plt.ylabel("C-Half")
+    plt.grid(True)
+    # plt.legend()
+    plt.tight_layout()
+
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
+    buffer.seek(0)
+
+    # Return the image as an HTTP response
+    return HttpResponse(buffer, content_type='image/png')
 
 # def make_cohorts2(request):  # TODO: Rename this
 #     global cohorts
