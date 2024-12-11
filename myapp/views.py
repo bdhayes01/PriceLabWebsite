@@ -1,6 +1,6 @@
 import math
 from collections import defaultdict
-
+import statistics
 import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -285,14 +285,10 @@ def aggregate_data(data):
     for identifier, entries in grouped_data.items():
         values = [x[0] for x in entries]
         errors = [x[1] for x in entries]
+        y = statistics.median(values)
+        err = (0.0 if len(errors) < 2 else statistics.stdev(errors))
 
-        # Compute mean value
-        mean_value = sum(values) / len(values)
-
-        # Compute aggregated error (root-mean-square in this example)
-        rms_error = math.sqrt(sum(e ** 2 for e in errors) / len(errors))
-
-        aggregated_data.append((identifier, mean_value, rms_error))
+        aggregated_data.append((identifier, y, err))
     aggregated_data.sort(key=lambda x: x[0])
     return aggregated_data
 
