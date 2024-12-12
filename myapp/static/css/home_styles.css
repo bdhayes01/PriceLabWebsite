@@ -19,6 +19,7 @@ p {
 .modal {
     display: none;
     position: fixed;
+    justify-content: center;
     z-index: 1;
     left: 0;
     top: 0;
@@ -46,3 +47,21 @@ p {
     margin-left: 20px; /* Adjust as needed to position it next to the dropdown */
 }
 
+/* Modal content box */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    width: 50%;
+    border-radius: 10px;
+    justify-content: center;
+}
+
+.modal .columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Adjust the gap as needed */
+}
+
+.modal .column {
+    flex: 1;
+} /* Makes both columns take up equal space */
