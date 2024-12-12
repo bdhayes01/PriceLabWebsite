@@ -384,5 +384,7 @@ function display_cohorts(categories){
 }
 
 function reset_filters(){
-    return;
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'reset_filters/', true);
+    xhr.send();
 }
