@@ -258,7 +258,63 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const dropdown = document.getElementById("filter_to_add");
+    const dynamic_content = document.getElementById("filter-dropdown-content");
 
+    dropdown.addEventListener("change", () => {
+        const selected_filter = dropdown.value;
+        dynamic_content.innerHTML = "";
+
+        switch (selected_filter){
+            case "age":
+                dynamic_content.innerHTML = `
+                <p>Filter the cohort based on age:</p>
+                <label for="minAge">Minimum Age:</label>
+                <input type="range" id="minAge" name="minAge" min="0" max="100" value="1" oninput="updateRange()">
+                <span id="minAgeValue">1</span>
+                <br>
+                
+                <label for="minAge">Maximum Age:</label>
+                <input type="range" id="maxAge" name="maxAge" min="0" max="100" value="99" oninput="updateRange()">
+                <span id="maxAgeValue">99</span>
+                <br>
+                
+                <button onclick="filter_age()">Filter</button>
+                `;
+                break
+            case "bmi":
+                dynamic_content.innerHTML = `
+                <p>Filter the cohort based on BMI:</p>
+                <label for="minBMI">Minimum BMI:</label>
+                <input type="range" id="minbmi" name="minbmi" min="0" max="100" value="1" step=".1" oninput="updateRange()">
+                <span id="minAgeValue">1</span>
+                <br>
+                
+                <label for="minAge">Maximum Age:</label>
+                <input type="range" id="maxAge" name="maxAge" min="0" max="100" value="99" step=".1" oninput="updateRange()">
+                <span id="maxAgeValue">99</span>
+                <br>
+                
+                <button onclick="filter_bmi()">Filter</button>
+                `;
+                break
+        }
+    });
+
+});
+
+function updateRange() {
+    const minAge = document.getElementById('minAge').value;
+    const maxAge = document.getElementById('maxAge').value;
+
+    document.getElementById('minAgeValue').textContent = minAge;
+    document.getElementById('maxAgeValue').textContent = maxAge;
+}
+
+function filter_age(){
+    return
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const dropdown = document.getElementById("independent_variable");
