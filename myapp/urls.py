@@ -13,8 +13,9 @@ urlpatterns = [
     path('make_drug_cohorts/', views.make_drug_cohorts, name='make_drug_cohorts'),
     path('make_age_cohorts/', views.make_age_cohorts, name='make_age_cohorts'),
     path('make_bmi_cohorts/', views.make_bmi_cohorts, name='make_bmi_cohorts'),
+    path('make_disease_cohorts/', views.make_disease_cohorts, name='make_disease_cohorts'),
     path('reset_filters/', views.reset_filters, name='reset_filters'),
-    path('make_disease_cohorts/', views.make_disease_cohorts, name='make_disease_cohorts')
+    path('filter_age/', views.filter_age, name='filter_age')
     # ,
     # path('make_cohorts2/', views.make_cohorts2, name='make_cohorts2')
 ]

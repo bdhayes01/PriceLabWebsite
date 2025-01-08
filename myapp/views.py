@@ -342,3 +342,19 @@ def reset_filters(request):
     global chalf, original_chalf
     chalf = original_chalf
     return JsonResponse({'message': 'Successfully reset filters'})
+
+
+def filter_age(request):
+    global chalf
+    min_age = request.GET.get('min_age')
+    max_age = request.GET.get('max_age')
+
+    # Convert to integers if necessary
+    min_age = int(min_age) if min_age else None
+    max_age = int(max_age) if max_age else None
+
+    for key in list(chalf.keys()):
+        meta = Metadata.objects.get(Individual=key)
+        if meta.Age > max_age or meta.Age < min_age:
+            del chalf[key]
+    return JsonResponse({'message': 'Successfully filtered by age'})

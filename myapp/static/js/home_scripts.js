@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span id="minAgeValue">1</span>
                 <br>
                 
-                <label for="minAge">Maximum Age:</label>
+                <label for="maxAge">Maximum Age:</label>
                 <input type="range" id="maxAge" name="maxAge" min="0" max="100" value="99" oninput="updateRange()">
                 <span id="maxAgeValue">99</span>
                 <br>
@@ -313,7 +313,13 @@ function updateRange() {
 }
 
 function filter_age(){
-    return
+    const minAge = document.getElementById('minAge').value;
+    const maxAge = document.getElementById('maxAge').value;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `filter_age/?min_age=${minAge}&max_age=${maxAge}`, true);
+    xhr.send();
+
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -444,3 +450,5 @@ function reset_filters(){
     xhr.open('GET', 'reset_filters/', true);
     xhr.send();
 }
+
+//TODO: Use the filtered data by recalling the used functions (like make_??_cohorts, bust_cache, etc...).
