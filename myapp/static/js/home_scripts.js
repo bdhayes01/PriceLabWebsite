@@ -320,6 +320,10 @@ function filter_age(){
     xhr.open('GET', `filter_age/?min_age=${minAge}&max_age=${maxAge}`, true);
     xhr.send();
 
+    let element = document.getElementById('curr-filters');
+    let paragraphElement = document.createElement('p');
+    paragraphElement.innerHTML += `Age filtered from ${minAge} to ${maxAge}`;
+    element.appendChild(paragraphElement);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -449,6 +453,8 @@ function reset_filters(){
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'reset_filters/', true);
     xhr.send();
+    let element = document.getElementById('curr-filters');
+    element.innerHTML = '';
 }
 
 //TODO: Use the filtered data by recalling the used functions (like make_??_cohorts, bust_cache, etc...).
