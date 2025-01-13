@@ -6,6 +6,8 @@ let variants = null;
 let cohort_colors = null;
 let cohorts_variants = null;
 let expanded = false;
+let last_cohort_call;
+// let last_
 
 
 function searchSequence() {
@@ -254,6 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('click', function (event) {
         if (event.target === filterModal) {
             filterModal.style.display = "none";
+            last_cohort_call();
         }
     });
 });
@@ -396,7 +399,7 @@ function call_make_cohorts(url){
             const response = JSON.parse(xhr.responseText);
             cohorts = response.cohorts;
             cohort_colors = response.cohort_colors;
-            categories = response.categories;
+            let categories = response.categories;
             display_cohorts(categories);
         } else {
             console.error('Error making cohorts:', xhr.status);
@@ -411,6 +414,7 @@ function make_age_cohorts(){
     }
     let cohortNumber = parseInt(document.getElementById("age_cohort_number").value);
     call_make_cohorts(`make_age_cohorts/?cohort_number=${cohortNumber}`);
+    last_cohort_call = () => call_make_cohorts(`make_age_cohorts/?cohort_number=${cohortNumber}`);
 }
 
 function make_bmi_cohorts(){
@@ -419,6 +423,7 @@ function make_bmi_cohorts(){
     }
     let cohortNumber = parseInt(document.getElementById("bmi_cohort_number").value);
     call_make_cohorts(`make_bmi_cohorts/?cohort_number=${cohortNumber}`);
+    last_cohort_call = () => call_make_cohorts(`make_bmi_cohorts/?cohort_number=${cohortNumber}`);
 }
 
 function display_cohorts(categories){
