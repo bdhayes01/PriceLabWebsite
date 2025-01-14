@@ -15,7 +15,7 @@ from sklearn.cluster import KMeans
 import seaborn as sns
 from .Datatypes import Sex, Disease, Drug, Age, BMI
 
-global variants, cohorts, encoded_data, chalf, dt, cohort_colors, original_chalf, categories
+global variants, cohorts, encoded_data, chalf, dt, cohort_colors, categories, individuals
 cohorts = None
 
 
@@ -119,8 +119,8 @@ def home(request):
     else:
         c = CHalf.objects.filter(Accession__exact="P02768|ALBU_HUMAN").first()
     if c:
-        global chalf, original_chalf
-        original_chalf = c.CHalf
+        global chalf, individuals
+        individuals = Metadata.objects.values_list('Individual', flat=True)
         chalf = c.CHalf
         chalf_json = json.dumps({
             'Accession': c.Accession,
@@ -330,22 +330,22 @@ def make_age_cohorts(request):
 
 
 def make_bmi_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors, categories
+    global cohorts, dt, cohort_colors, categories, individuals
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "bmi"
-    cohorts, cohort_colors, categories = BMI.make_bmi_cohort(cohort_number)
+    cohorts, cohort_colors, categories = BMI.make_bmi_cohort(cohort_number, individuals)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
                          'cohort_colors': cohort_colors, 'categories': categories})
 
 
 def reset_filters(request):
-    global chalf, original_chalf
-    chalf = original_chalf
+    global individuals
+    individuals = Metadata.objects.values_list('Individual', flat=True)
     return JsonResponse({'message': 'Successfully reset filters'})
 
 
 def filter_age(request):
-    global chalf
+    global individuals
     min_age = request.GET.get('min_age')
     max_age = request.GET.get('max_age')
 
@@ -353,8 +353,6 @@ def filter_age(request):
     min_age = int(min_age) if min_age else None
     max_age = int(max_age) if max_age else None
 
-    for key in list(chalf.keys()):
-        meta = Metadata.objects.get(Individual=key)
-        if meta.Age > max_age or meta.Age < min_age:
-            del chalf[key]
+    valid_meta = Metadata.objects.filter(Age__lte=max_age, Age__gte=min_age)
+    individuals = list(valid_meta.values_list('Individual', flat=True))
     return JsonResponse({'message': 'Successfully filtered by age'})

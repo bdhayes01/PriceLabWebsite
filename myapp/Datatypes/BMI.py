@@ -8,8 +8,8 @@ import pandas as pd
 import random
 import myapp.views as views
 
-def make_bmi_cohort(cohort_number):
-    metadata = Metadata.objects.all()
+def make_bmi_cohort(cohort_number, individuals):
+    metadata = Metadata.objects.filter(Individual__in=individuals)
     bmi = {record.Individual: record.BMI for record in metadata}
     bmi = pd.DataFrame({'BMI': list(bmi.values())}, index=bmi.keys())
 
