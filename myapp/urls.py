@@ -17,6 +17,8 @@ urlpatterns = [
     path('reset_filters/', views.reset_filters, name='reset_filters'),
     path('filter_bmi/', views.filter_bmi, name='filter_bmi'),
     path('filter_disease/', views.filter_disease, name='filter_disease'),
+    path('filter_drugs/', views.filter_drugs, name='filter_drugs'),
+    path('filter_sex/', views.filter_sex, name='filter_sex'),
     path('filter_age/', views.filter_age, name='filter_age')
     # ,
     # path('make_cohorts2/', views.make_cohorts2, name='make_cohorts2')

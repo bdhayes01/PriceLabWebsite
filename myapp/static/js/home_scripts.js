@@ -304,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 break
             case "disease":
                 dynamic_content.innerHTML = `
-                <p>Filter the cohort based on disease status:</p>
+                <p>Filter the cohort for disease status:</p>
                 <form>
                 <input type="radio" id="with_disease" name="disease_filter" value="With Disease">
                 <label for="with_disease">With Disease</label>
@@ -313,6 +313,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 </form>
                 <br>
                 <button onclick="filter_disease()">Filter</button>
+                `;
+                break
+            case "drug":
+                dynamic_content.innerHTML = `
+                <p>Filter the cohort for drug use:</p>
+                <form>
+                <input type="radio" id="with_drugs" name="drugs_filter" value="Taking Drugs">
+                <label for="with_drugs">Taking Drugs</label>
+                <input type="radio" id="without_drugs" name="drugs_filter" value="Not Taking Drugs">
+                <label for="without_drugs">Not Taking Drugs</label>
+                </form>
+                <br>
+                <button onclick="filter_drugs()">Filter</button>
+                `;
+                break
+            case "sex":
+                dynamic_content.innerHTML = `
+                <p>Filter the cohort by sex:</p>
+                <form>
+                <input type="radio" id="male" name="sex_filter" value="Male">
+                <label for="male">Filter for Male</label>
+                <input type="radio" id="female" name="sex_filter" value="Female">
+                <label for="female">Filter for Female</label>
+                </form>
+                <br>
+                <button onclick="filter_sex()">Filter</button>
                 `;
                 break
         }
@@ -374,6 +400,52 @@ function filter_disease() {
     let element = document.getElementById('curr-filters');
     let paragraphElement = document.createElement('p');
     paragraphElement.innerHTML += `Filtered by Disease Status: ${diseaseFilter.value}`;
+    element.appendChild(paragraphElement);
+}
+
+function filter_drugs() {
+    // Get the selected radio button value
+    const drugFilter = document.querySelector('input[name="drugs_filter"]:checked');
+
+    if (!drugFilter) {
+        alert("Please select a drug filter option.");
+        return;
+    }
+
+    const filterValue = drugFilter.value === "Taking Drugs" ? "1" : "0";
+
+    // Send the filter to the server
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `filter_drugs/?drug_status=${filterValue}`, true);
+    xhr.send();
+
+    // Update the current filters display
+    let element = document.getElementById('curr-filters');
+    let paragraphElement = document.createElement('p');
+    paragraphElement.innerHTML += `Filtered by Drug Status: ${drugFilter.value}`;
+    element.appendChild(paragraphElement);
+}
+
+function filter_sex() {
+    // Get the selected radio button value
+    const sexFilter = document.querySelector('input[name="sex_filter"]:checked');
+
+    if (!sexFilter) {
+        alert("Please select a sex filter option.");
+        return;
+    }
+
+    const filterValue = sexFilter.value === "Male" ? "1" : "0";
+
+    // Send the filter to the server
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `filter_sex/?sex=${filterValue}`, true);
+    xhr.send();
+
+    // Update the current filters display
+    let element = document.getElementById('curr-filters');
+    let paragraphElement = document.createElement('p');
+    paragraphElement.innerHTML += `Filtered by Sex: ${sexFilter.value}`;
     element.appendChild(paragraphElement);
 }
 

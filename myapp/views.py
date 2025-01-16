@@ -381,6 +381,28 @@ def filter_disease(request):
     filter_individuals(indivs)
     return JsonResponse({'message': 'Successfully filtered by disease'})
 
+def filter_drugs(request):
+    drug_status = request.GET.get('drug_status')  # '1' for With Disease, '0' for Without Disease
+    if drug_status not in ['0', '1']:
+        return JsonResponse({"error": "Invalid drug status"}, status=400)
+
+    # Filter the Metadata model based on disease status
+    valid_meta = Metadata.objects.filter(Drug=drug_status)
+    indivs = list(valid_meta.values_list('Individual', flat=True))
+    filter_individuals(indivs)
+    return JsonResponse({'message': 'Successfully filtered by drug'})
+
+def filter_sex(request):
+    sex_status = request.GET.get('sex')  # '1' for With Disease, '0' for Without Disease
+    if sex_status not in ['0', '1']:
+        return JsonResponse({"error": "Invalid sex status"}, status=400)
+
+    # Filter the Metadata model based on disease status
+    valid_meta = Metadata.objects.filter(Sex=sex_status)
+    indivs = list(valid_meta.values_list('Individual', flat=True))
+    filter_individuals(indivs)
+    return JsonResponse({'message': 'Successfully filtered by sex'})
+
 def filter_individuals(indivs):
     global individuals
 
