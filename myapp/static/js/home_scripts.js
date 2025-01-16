@@ -584,5 +584,3 @@ function reset_filters(){
     let element = document.getElementById('curr-filters');
     element.innerHTML = '';
 }
-
-//TODO: Use the filtered data by recalling the used functions (like make_??_cohorts, bust_cache, etc...).
