@@ -6,8 +6,8 @@ import io
 import myapp.views as views
 
 
-def make_drug_cohort():
-    metadata = Metadata.objects.all()
+def make_drug_cohort(individuals):
+    metadata = Metadata.objects.filter(Individual__in=individuals)
     with_drug_cohort = [meta.Individual for meta in metadata if meta.Drug]
     no_drug_cohort = [meta.Individual for meta in metadata if not meta.Drug]
     return [with_drug_cohort, no_drug_cohort], ["yellow", "red"]

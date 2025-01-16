@@ -480,12 +480,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     <br>
                     <button onclick="call_make_cohorts(\`make_disease_cohorts\`)">Make Cohorts Based On Disease Status</button>
                 `;
+                last_cohort_call = () => call_make_cohorts(`make_disease_cohorts`);
                 break;
             case "drug":
                 dynamicContent.innerHTML = `
                     <br>
                     <button onclick="call_make_cohorts(\`make_drug_cohorts\`)">Make Cohorts Based On Drug Status</button>
                 `;
+                last_cohort_call = () => call_make_cohorts(`make_drug_cohorts`);
                 break;
             case "mutations":
                 dynamicContent.innerHTML = `
@@ -499,6 +501,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <br>
                     <button onclick="call_make_cohorts(\`make_sex_cohorts\`)">Make Cohorts Based On Sex</button>
                 `;
+                last_cohort_call = () => call_make_cohorts(`make_sex_cohorts`);
                 break;
             default:
                 dynamicContent.innerHTML = `<p>Select an option to view details.</p>`;

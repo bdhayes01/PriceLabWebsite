@@ -294,28 +294,28 @@ def aggregate_data(data):
 
 
 def make_sex_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors, categories
+    global cohorts, dt, cohort_colors, categories, individuals
     dt = "sex"
     categories = ["Male", "Female"]
-    cohorts, cohort_colors = Sex.make_sex_cohort()
+    cohorts, cohort_colors = Sex.make_sex_cohort(individuals)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
                          'cohort_colors': cohort_colors, 'categories': categories})
 
 
 def make_disease_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors, categories
+    global cohorts, dt, cohort_colors, categories, individuals
     dt = "disease"
     categories = ["With disease", "Without disease"]
-    cohorts, cohort_colors = Disease.make_disease_cohort()
+    cohorts, cohort_colors = Disease.make_disease_cohort(individuals)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
                          'cohort_colors': cohort_colors, 'categories': categories})
 
 
 def make_drug_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors, categories
+    global cohorts, dt, cohort_colors, categories, individuals
     dt = "drug"
     categories = ["Taking drug", "Not taking drug"]
-    cohorts, cohort_colors = Drug.make_drug_cohort()
+    cohorts, cohort_colors = Drug.make_drug_cohort(individuals)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
                          'cohort_colors': cohort_colors, 'categories': categories})
 

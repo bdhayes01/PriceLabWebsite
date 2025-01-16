@@ -6,8 +6,8 @@ import io
 import myapp.views as views
 
 
-def make_disease_cohort():
-    metadata = Metadata.objects.all()
+def make_disease_cohort(individuals):
+    metadata = Metadata.objects.filter(Individual__in=individuals)
     diseased_cohort = [meta.Individual for meta in metadata if meta.Disease]
     undiseased_cohort = [meta.Individual for meta in metadata if not meta.Disease]
     return [diseased_cohort, undiseased_cohort], ["orange", "blue"]

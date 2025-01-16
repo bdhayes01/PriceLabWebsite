@@ -5,8 +5,8 @@ from django.http import HttpResponse
 import io
 import myapp.views as views
 
-def make_sex_cohort():
-    metadata = Metadata.objects.all()
+def make_sex_cohort(individuals):
+    metadata = Metadata.objects.filter(Individual__in=individuals)
     male_cohort = [meta.Individual for meta in metadata if meta.Sex]
     female_cohort = [meta.Individual for meta in metadata if not meta.Sex]
     return [male_cohort, female_cohort], ["blue", "pink"]
