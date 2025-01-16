@@ -321,10 +321,10 @@ def make_drug_cohorts(request):
 
 
 def make_age_cohorts(request):
-    global cohorts, chalf, dt, cohort_colors, categories
+    global cohorts, dt, cohort_colors, categories, individuals
     cohort_number = int(request.GET.get('cohort_number', 1))
     dt = "age"
-    cohorts, cohort_colors, categories = Age.make_age_cohort(cohort_number)
+    cohorts, cohort_colors, categories = Age.make_age_cohort(cohort_number, individuals)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
                          'cohort_colors': cohort_colors, 'categories': categories})
 
@@ -354,5 +354,18 @@ def filter_age(request):
     max_age = int(max_age) if max_age else None
 
     valid_meta = Metadata.objects.filter(Age__lte=max_age, Age__gte=min_age)
+    individuals = list(valid_meta.values_list('Individual', flat=True))
+    return JsonResponse({'message': 'Successfully filtered by age'})
+
+def filter_bmi(request):
+    global individuals
+    min_bmi = request.GET.get('min_bmi')
+    max_bmi = request.GET.get('max_bmi')
+
+    # Convert to integers if necessary
+    min_bmi = int(min_bmi) if min_bmi else None
+    max_bmi = int(max_bmi) if max_bmi else None
+
+    valid_meta = Metadata.objects.filter(BMI__lte=max_bmi, BMI__gte=min_bmi)
     individuals = list(valid_meta.values_list('Individual', flat=True))
     return JsonResponse({'message': 'Successfully filtered by age'})

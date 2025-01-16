@@ -9,8 +9,8 @@ import random
 import myapp.views as views
 
 
-def make_age_cohort(cohort_number):
-    metadata = Metadata.objects.all()
+def make_age_cohort(cohort_number, individuals):
+    metadata = Metadata.objects.filter(Individual__in=individuals)
     ages = {record.Individual: record.Age for record in metadata}
     ages = pd.DataFrame({'Age': list(ages.values())}, index=ages.keys())
 

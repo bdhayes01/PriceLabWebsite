@@ -273,14 +273,14 @@ document.addEventListener("DOMContentLoaded", () => {
             case "age":
                 dynamic_content.innerHTML = `
                 <p>Filter the cohort based on age:</p>
-                <label for="minAge">Minimum Age:</label>
-                <input type="range" id="minAge" name="minAge" min="0" max="100" value="1" oninput="updateRange()">
-                <span id="minAgeValue">1</span>
+                <label for="min_float">Minimum Age:</label>
+                <input type="range" id="min_float" name="min_float" min="0" max="100" value="1" oninput="updateRange()">
+                <span id="min_float_value">1</span>
                 <br>
                 
-                <label for="maxAge">Maximum Age:</label>
-                <input type="range" id="maxAge" name="maxAge" min="0" max="100" value="99" oninput="updateRange()">
-                <span id="maxAgeValue">99</span>
+                <label for="max_float">Maximum Age:</label>
+                <input type="range" id="max_float" name="max_float" min="0" max="100" value="99" oninput="updateRange()">
+                <span id="max_float_value">99</span>
                 <br>
                 
                 <button onclick="filter_age()">Filter</button>
@@ -289,17 +289,17 @@ document.addEventListener("DOMContentLoaded", () => {
             case "bmi":
                 dynamic_content.innerHTML = `
                 <p>Filter the cohort based on BMI:</p>
-                <label for="minBMI">Minimum BMI:</label>
-                <input type="range" id="minbmi" name="minbmi" min="0" max="100" value="1" step=".1" oninput="updateRange()">
-                <span id="minAgeValue">1</span>
+                <label for="min_float">Minimum BMI:</label>
+                <input type="range" id="min_float" name="min_float" min="0" max="100" value="1" oninput="updateRange()">
+                <span id="min_float_value">1</span>
                 <br>
                 
-                <label for="minAge">Maximum Age:</label>
-                <input type="range" id="maxAge" name="maxAge" min="0" max="100" value="99" step=".1" oninput="updateRange()">
-                <span id="maxAgeValue">99</span>
+                <label for="max_float">Maximum BMI:</label>
+                <input type="range" id="max_float" name="max_float" min="0" max="100" value="99" oninput="updateRange()">
+                <span id="max_float_value">99</span>
                 <br>
                 
-                <button onclick="filter_bmi()">Filter</button>
+                <button onclick="filter_age()">Filter</button>
                 `;
                 break
         }
@@ -308,16 +308,30 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function updateRange() {
-    const minAge = document.getElementById('minAge').value;
-    const maxAge = document.getElementById('maxAge').value;
+    const min_float = document.getElementById('min_float').value;
+    const max_float = document.getElementById('max_float').value;
 
-    document.getElementById('minAgeValue').textContent = minAge;
-    document.getElementById('maxAgeValue').textContent = maxAge;
+    document.getElementById('min_float_value').textContent = min_float;
+    document.getElementById('max_float_value').textContent = max_float;
 }
 
 function filter_age(){
-    const minAge = document.getElementById('minAge').value;
-    const maxAge = document.getElementById('maxAge').value;
+    const minAge = document.getElementById('min_float').value;
+    const maxAge = document.getElementById('max_float').value;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `filter_age/?min_age=${minAge}&max_age=${maxAge}`, true);
+    xhr.send();
+
+    let element = document.getElementById('curr-filters');
+    let paragraphElement = document.createElement('p');
+    paragraphElement.innerHTML += `Age filtered from ${minAge} to ${maxAge}`;
+    element.appendChild(paragraphElement);
+}
+// TODO: Start here
+function filter_bmi(){
+    const minAge = document.getElementById('min_float').value;
+    const maxAge = document.getElementById('max_float').value;
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', `filter_age/?min_age=${minAge}&max_age=${maxAge}`, true);
