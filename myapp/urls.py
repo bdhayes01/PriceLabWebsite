@@ -15,6 +15,7 @@ urlpatterns = [
     path('make_bmi_cohorts/', views.make_bmi_cohorts, name='make_bmi_cohorts'),
     path('make_disease_cohorts/', views.make_disease_cohorts, name='make_disease_cohorts'),
     path('reset_filters/', views.reset_filters, name='reset_filters'),
+    path('filter_bmi/', views.filter_bmi, name='filter_bmi'),
     path('filter_age/', views.filter_age, name='filter_age')
     # ,
     # path('make_cohorts2/', views.make_cohorts2, name='make_cohorts2')

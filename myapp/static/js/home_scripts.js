@@ -299,7 +299,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span id="max_float_value">99</span>
                 <br>
                 
-                <button onclick="filter_age()">Filter</button>
+                <button onclick="filter_bmi()">Filter</button>
+                `;
+                break
+            case "disease":
+                dynamic_content.innerHTML = `
+                <p>Filter the cohort based on disease status:</p>
+                <form>
+                <input type="radio" id="with_disease" name="disease_filter" value="With Disease">
+                <label for="with_disease">With Disease</label>
+                <input type="radio" id="without_disease" name="disease_filter" value="Without Disease">
+                <label for="without_disease">Without Disease</label>
+                </form>
+                <br>
+                <button onclick="filter_disease()">Filter</button>
                 `;
                 break
         }
@@ -328,19 +341,21 @@ function filter_age(){
     paragraphElement.innerHTML += `Age filtered from ${minAge} to ${maxAge}`;
     element.appendChild(paragraphElement);
 }
-// TODO: Start here
 function filter_bmi(){
-    const minAge = document.getElementById('min_float').value;
-    const maxAge = document.getElementById('max_float').value;
+    const minbmi = document.getElementById('min_float').value;
+    const maxbmi = document.getElementById('max_float').value;
 
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `filter_age/?min_age=${minAge}&max_age=${maxAge}`, true);
+    xhr.open('GET', `filter_bmi/?min_bmi=${minbmi}&max_bmi=${maxbmi}`, true);
     xhr.send();
 
     let element = document.getElementById('curr-filters');
     let paragraphElement = document.createElement('p');
-    paragraphElement.innerHTML += `Age filtered from ${minAge} to ${maxAge}`;
+    paragraphElement.innerHTML += `BMI filtered from ${minbmi} to ${maxbmi}`;
     element.appendChild(paragraphElement);
+}
+function filter_disease(){
+
 }
 
 document.addEventListener("DOMContentLoaded", () => {
