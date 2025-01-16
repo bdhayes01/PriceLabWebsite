@@ -354,8 +354,27 @@ function filter_bmi(){
     paragraphElement.innerHTML += `BMI filtered from ${minbmi} to ${maxbmi}`;
     element.appendChild(paragraphElement);
 }
-function filter_disease(){
+function filter_disease() {
+    // Get the selected radio button value
+    const diseaseFilter = document.querySelector('input[name="disease_filter"]:checked');
 
+    if (!diseaseFilter) {
+        alert("Please select a disease filter option.");
+        return;
+    }
+
+    const filterValue = diseaseFilter.value === "With Disease" ? "1" : "0"; // Assuming 1 = With Disease, 0 = Without Disease
+
+    // Send the filter to the server
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `filter_disease/?disease_status=${filterValue}`, true);
+    xhr.send();
+
+    // Update the current filters display
+    let element = document.getElementById('curr-filters');
+    let paragraphElement = document.createElement('p');
+    paragraphElement.innerHTML += `Filtered by Disease Status: ${diseaseFilter.value}`;
+    element.appendChild(paragraphElement);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

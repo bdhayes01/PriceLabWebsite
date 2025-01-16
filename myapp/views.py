@@ -345,7 +345,6 @@ def reset_filters(request):
 
 
 def filter_age(request):
-    global individuals
     min_age = request.GET.get('min_age')
     max_age = request.GET.get('max_age')
 
@@ -354,11 +353,11 @@ def filter_age(request):
     max_age = int(max_age) if max_age else None
 
     valid_meta = Metadata.objects.filter(Age__lte=max_age, Age__gte=min_age)
-    individuals = list(valid_meta.values_list('Individual', flat=True))
+    indivs = list(valid_meta.values_list('Individual', flat=True))
+    filter_individuals(indivs)
     return JsonResponse({'message': 'Successfully filtered by age'})
 
 def filter_bmi(request):
-    global individuals
     min_bmi = request.GET.get('min_bmi')
     max_bmi = request.GET.get('max_bmi')
 
@@ -367,5 +366,30 @@ def filter_bmi(request):
     max_bmi = int(max_bmi) if max_bmi else None
 
     valid_meta = Metadata.objects.filter(BMI__lte=max_bmi, BMI__gte=min_bmi)
-    individuals = list(valid_meta.values_list('Individual', flat=True))
+    indivs = list(valid_meta.values_list('Individual', flat=True))
+    filter_individuals(indivs)
     return JsonResponse({'message': 'Successfully filtered by age'})
+
+def filter_disease(request):
+    disease_status = request.GET.get('disease_status')  # '1' for With Disease, '0' for Without Disease
+    if disease_status not in ['0', '1']:
+        return JsonResponse({"error": "Invalid disease status"}, status=400)
+
+    # Filter the Metadata model based on disease status
+    valid_meta = Metadata.objects.filter(Disease=disease_status)
+    indivs = list(valid_meta.values_list('Individual', flat=True))
+    filter_individuals(indivs)
+    return JsonResponse({'message': 'Successfully filtered by disease'})
+
+def filter_individuals(indivs):
+    global individuals
+
+    individuals_2 = list()
+
+    for indiv in indivs:
+        if indiv in individuals:
+            individuals_2.append(indiv)
+
+    individuals = individuals_2
+    return
+
