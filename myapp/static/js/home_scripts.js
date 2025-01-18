@@ -1,5 +1,4 @@
 let curr_cohorts = {};
-// let cohortColors = ['red', 'blue', 'green', 'purple'];
 let sequence = null;
 let cohorts = null;
 let variants = null;
@@ -7,7 +6,6 @@ let cohort_colors = null;
 let cohorts_variants = null;
 let expanded = false;
 let last_cohort_call;
-// let last_
 
 
 function searchSequence() {
@@ -150,9 +148,6 @@ function renderSequenceList() {
     }
 }
 
-// window.onload = function() {
-//      renderSequenceList();
-// };
 function map_cohort(cohort){
     let c = parseInt(cohort);
     if(curr_cohorts.hasOwnProperty(c)){
@@ -163,26 +158,6 @@ function map_cohort(cohort){
         curr_cohorts[c] = cohortColors.pop();
     }
     // renderSequenceList();
-}
-
-function make_cohorts(){
-    const cohortNumber = document.getElementById('cohort_number').value;
-    localStorage.setItem('cohort_number', cohortNumber);
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_cohorts/?cohort_number=${cohortNumber}`, true);
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            cohorts = response.cohorts;
-            const dendrogramImage = document.querySelector("img[alt='Dendrogram']");
-            dendrogramImage.src = dendrogramImage.src + '?' + new Date().getTime();  // Cache-busting
-            make_cohort_variants();
-            // renderSequenceList();
-        } else {
-            console.error('Error making cohorts:', xhr.status);
-        }
-    };
-    xhr.send();
 }
 
 function make_cohort_variants(){
@@ -491,9 +466,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
             case "mutations":
                 dynamicContent.innerHTML = `
-                    <h3>Mutations Module</h3>
-                    <p>Configure mutations or view details here.</p>
-                    <textarea placeholder="Enter mutations data"></textarea>
+                    <p>Group into cohorts by mutation. Choose the number of cohorts.</p>
+                    <input type="number" placeholder="Number of Cohorts" id="mutation_cohort_number">
+                    <button onclick="make_mutation_cohorts()">Make Cohorts</button>
                 `;
                 break;
             case "sex":
@@ -547,6 +522,27 @@ function make_bmi_cohorts(){
     let cohortNumber = parseInt(document.getElementById("bmi_cohort_number").value);
     call_make_cohorts(`make_bmi_cohorts/?cohort_number=${cohortNumber}`);
     last_cohort_call = () => call_make_cohorts(`make_bmi_cohorts/?cohort_number=${cohortNumber}`);
+}
+
+function make_mutation_cohorts(){
+    const cohortNumber = document.getElementById('mutation_cohort_number').value;
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `make_mutation_cohorts/?cohort_number=${cohortNumber}`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            cohorts = response.cohorts;
+            variants = response.variants; //TODO: Make this value get returned.
+            sequence = response.sequence;
+            bust_cache();
+            make_cohort_variants();
+            // renderSequenceList();
+        } else {
+            console.error('Error making cohorts:', xhr.status);
+        }
+    };
+    xhr.send();
+
 }
 
 function display_cohorts(categories){
