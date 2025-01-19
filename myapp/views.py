@@ -13,9 +13,10 @@ import io
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
 import seaborn as sns
-from .Datatypes import Sex, Disease, Drug, Age, BMI
+from .Datatypes import Sex, Disease, Drug, Age, BMI, Mutation
 
-global variants, cohorts, encoded_data, chalf, dt, cohort_colors, categories, individuals
+# global variants, cohorts, encoded_data, chalf, dt, cohort_colors, categories, individuals
+global cohorts, chalf, dt, cohort_colors, categories, individuals, curr_accession
 cohorts = None
 
 
@@ -115,9 +116,12 @@ def home(request):
         message = upload_file(request)
     query = request.GET.get('q', '')
     if query:
+        global curr_accession
         c = CHalf.objects.filter(Accession__exact=query).first()
+        curr_accession = query
     else:
         c = CHalf.objects.filter(Accession__exact="P02768|ALBU_HUMAN").first()
+        curr_accession = "P02768|ALBU_HUMAN"
     if c:
         global chalf, individuals
         individuals = Metadata.objects.values_list('Individual', flat=True)
@@ -134,28 +138,14 @@ def home(request):
 
 
 def make_mutation_cohorts(request):
+    global curr_accession, cohorts, dt, cohort_colors, categories, individuals
+    dt = "Mutation"
     cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
-    mlb = MultiLabelBinarizer()
-    global variants
-    global encoded_data
-    encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
-    kmeans = KMeans(n_clusters=cohort_number,
-                    random_state=42)  # Can add in random_state=1 to ensure that you will always get the same result.
-    global cohorts
-    try:
-        cohorts = kmeans.fit_predict(encoded_data)
-        encoded_data['Cluster'] = cohorts
-        temp_cohorts = {}
-        for indiv, coh in zip(variants.keys(), cohorts):
-            if coh in temp_cohorts:
-                temp_cohorts[coh].append(indiv)
-            else:
-                temp_cohorts[coh] = [indiv]
-        cohorts = [temp_cohorts[num] for num in sorted(temp_cohorts.keys())]
-        return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts})
-    except:
-        cohorts = None
-        return JsonResponse({'message': 'Cohorts not created', 'cohorts': cohorts})
+    variants = Sequence.objects.filter(Accession__exact=curr_accession)
+    variants = variants.Variants
+    cohorts, cohort_colors, categories = Mutation.make_mutation_cohort(variants, cohort_number, individuals)
+
+
 
 
 # def make_dendrogram(request):  # Must always have 'request' else a 500 error.
@@ -232,6 +222,8 @@ def make_c_half_graph(request):
             return Age.make_graph_age(chalf, cohorts, cohort_colors, categories)
         elif dt == "bmi":
             return BMI.make_graph_bmi(chalf, cohorts, cohort_colors, categories)
+        elif dt == "Mutation":
+            return Mutation.make_graph_mutation(chalf, cohorts, cohort_colors, categories)
 
 
 def make_basic_graph():
