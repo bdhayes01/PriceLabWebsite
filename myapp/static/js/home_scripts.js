@@ -465,11 +465,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 last_cohort_call = () => call_make_cohorts(`make_drug_cohorts`);
                 break;
             case "mutations":
-                dynamicContent.innerHTML = `
-                    <p>Group into cohorts by mutation. Choose the number of cohorts.</p>
-                    <input type="number" placeholder="Number of Cohorts" id="mutation_cohort_number">
-                    <button onclick="make_mutation_cohorts()">Make Cohorts</button>
-                `;
+                // dynamicContent.innerHTML = `
+                //     <p>Group into cohorts by mutation. Choose the number of cohorts.</p>
+                //     <input type="number" placeholder="Number of Cohorts" id="mutation_cohort_number">
+                //     <button onclick="make_mutation_cohorts()">Make Cohorts</button>
+                // `;
+                make_mutation_dendrogram();
                 break;
             case "sex":
                 dynamicContent.innerHTML = `
@@ -524,19 +525,30 @@ function make_bmi_cohorts(){
     last_cohort_call = () => call_make_cohorts(`make_bmi_cohorts/?cohort_number=${cohortNumber}`);
 }
 
+function make_mutation_dendrogram(){
+    const img = document.createElement('img');
+
+
+    img.src = 'https://replace.html'; // Replace with your image URL
+    img.alt = 'Replace';
+    img.width = 150; // Optional: Set the width
+    img.height = 150; // Optional: Set the height
+
+
+    const container = document.getElementById("dynamic-content");
+    container.appendChild(img);
+
+}
+
 function make_mutation_cohorts(){
     const cohortNumber = document.getElementById('mutation_cohort_number').value;
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_mutation_cohorts/?cohort_number=${cohortNumber}`, true);
+    xhr.open('GET', `make_mutation_dendrogram`, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
-            cohorts = response.cohorts;
-            variants = response.variants; //TODO: Make this value get returned.
-            sequence = response.sequence;
             bust_cache();
-            make_cohort_variants();
-            // renderSequenceList();
+            //TODO: Make the image appear, ask for the number of cohorts
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
