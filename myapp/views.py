@@ -141,9 +141,12 @@ def make_mutation_cohorts(request):
     global curr_accession, cohorts, dt, cohort_colors, categories, individuals
     dt = "Mutation"
     cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
-    variants = Sequence.objects.filter(Accession__exact=curr_accession)
-    variants = variants.Variants
+    seq = Sequence.objects.filter(Accession__exact=curr_accession)
+    variants = list(seq.values_list('Variants', flat=True))
     cohorts, cohort_colors, categories = Mutation.make_mutation_cohort(variants, cohort_number, individuals)
+
+    return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
+                         'cohort_colors': cohort_colors, 'categories': categories})
 
 
 
