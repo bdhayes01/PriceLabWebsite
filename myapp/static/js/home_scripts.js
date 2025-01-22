@@ -1,6 +1,6 @@
-let curr_cohorts = {};
-let sequence = null;
-let cohorts = null;
+let cohorts = {};
+// let sequence = null;
+// let cohorts = null;
 let variants = null;
 let cohort_colors = null;
 let cohorts_variants = null;
@@ -15,7 +15,7 @@ function searchSequence() {
     }
 }
 
-function color_code(container){
+function color_code(container, sequence, cohorts){
     const toggleButton = document.createElement('button');
     toggleButton.textContent = "Show More";
     const spans = [];
@@ -27,7 +27,7 @@ function color_code(container){
         top_char_span.style.backgroundColor = null;
 
         // Loop through cohorts to check for a variant at this position
-        for (let cohort in curr_cohorts){
+        for (let cohort in cohorts){
             let varis_amount = cohorts_variants[cohort][i + 1];
             if (varis_amount){
                 if (top_char_span.style.backgroundColor !== "" || top_char_span.style.backgroundImage !== ""){
@@ -38,13 +38,13 @@ function color_code(container){
                     top_char_span.style.borderColor = "black";
                 } else {
                     if(parseFloat(varis_amount[1]) * 100 < 99){
-                        top_char_span.style.backgroundImage = `linear-gradient(to bottom right, ${curr_cohorts[cohort]}, white)`
+                        top_char_span.style.backgroundImage = `linear-gradient(to bottom right, ${cohorts[cohort]}, white)`
                         // top_char_span.style.textShadow = `1px 1px ${curr_cohorts[cohort]}`
                         // top_char_span.style.textDecorationThickness = "4px";
                         // top_char_span.style.textDecorationLine = "underline overline";
                         // top_char_span.style.textDecorationColor = curr_cohorts[cohort];
                     }else{
-                        top_char_span.style.backgroundColor = curr_cohorts[cohort];
+                        top_char_span.style.backgroundColor = cohorts[cohort];
                         top_char_span.style.color = "white";
                     }
                 }
@@ -68,9 +68,9 @@ function color_code(container){
     container.appendChild(toggleButton);  // Add button to the container
 }
 
-function createHeatmap() {
+function createHeatmap(cohorts, cohort_colors, categories, seq, variants) {
     const sequenceContainer = document.createElement('p');
-    color_code(sequenceContainer);
+    color_code(sequenceContainer, seq);
     for (let i = 0; i < cohorts.length; i++) {
         const span = document.createElement('span');
         let cohort_container = document.createElement('div');
@@ -85,8 +85,8 @@ function createHeatmap() {
         cohort_button.textContent = "Map Variants";
         cohort_button.onclick = () => map_cohort(i);
 
-        if (i in curr_cohorts){
-            individuals.style.backgroundColor = curr_cohorts[i];
+        if (i in cohorts){
+            individuals.style.backgroundColor = cohorts[i];
         }
 
         cohort_container.appendChild(individuals);
@@ -135,7 +135,7 @@ function renderSequenceList() {
         sequence = json.Sequence;
         variants = json.Variants;
         if(cohorts !== null){
-            const heatmap = createHeatmap();
+            // const heatmap = createHeatmap();
             seqList.appendChild(heatmap);
         }
         else if (Object.values(variants).every(dict => Object.keys(dict).length === 0)){
@@ -150,12 +150,12 @@ function renderSequenceList() {
 
 function map_cohort(cohort){
     let c = parseInt(cohort);
-    if(curr_cohorts.hasOwnProperty(c)){
-        cohortColors.push(curr_cohorts[c]);
-        delete curr_cohorts[c];
+    if(cohorts.hasOwnProperty(c)){
+        cohortColors.push(cohorts[c]);
+        delete cohorts[c];
     }
-    else if(Object.keys(curr_cohorts).length < 4){
-        curr_cohorts[c] = cohortColors.pop();
+    else if(Object.keys(cohorts).length < 4){
+        cohorts[c] = cohortColors.pop();
     }
     // renderSequenceList();
 }
@@ -465,11 +465,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 last_cohort_call = () => call_make_cohorts(`make_drug_cohorts`);
                 break;
             case "mutations":
-                // dynamicContent.innerHTML = `
-                //     <p>Group into cohorts by mutation. Choose the number of cohorts.</p>
-                //     <input type="number" placeholder="Number of Cohorts" id="mutation_cohort_number">
-                //     <button onclick="make_mutation_cohorts()">Make Cohorts</button>
-                // `;
                 make_mutation_dendrogram();
                 break;
             case "sex":
@@ -540,6 +535,13 @@ function make_mutation_dendrogram(){
             const container = document.getElementById('dynamic-content');
             container.innerHTML = ''; // Clear previous content
             container.appendChild(img);
+            container.innerHTML += `
+            <br>
+            <p>Group into cohorts by mutation. Choose the number of cohorts.</p>
+            <input type="number" placeholder="Number of Cohorts" id="mutation_cohort_number">
+            <button onclick="make_mutation_cohorts()">Make Cohorts</button>
+            `;
+            last_cohort_call = () => make_mutation_cohorts();
         } else {
             console.error('Error fetching dendrogram:', xhr.status);
         }
@@ -551,18 +553,27 @@ function make_mutation_dendrogram(){
 function make_mutation_cohorts(){
     const cohortNumber = document.getElementById('mutation_cohort_number').value;
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_mutation_dendrogram`, true);
+    xhr.open('GET', `make_mutation_cohorts/?cohort_number=${cohortNumber}`, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
-            bust_cache();
-            //TODO: Make the image appear, ask for the number of cohorts
+            display_mutation_cohorts(response.cohorts, response.cohort_colors,
+                response.categories, response.seq, response.variants)
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
     };
     xhr.send();
 
+}
+
+function display_mutation_cohorts(cohorts, cohort_colors, categories, seq, variants){
+    const container = document.getElementById('dynamic-content');
+    container.innerHTML = '';
+    const heatmap = createHeatmap(cohorts, cohort_colors, categories, seq, variants);
+    container.appendChild(heatmap);
+    bust_cache();
+    return;
 }
 
 function display_cohorts(categories){

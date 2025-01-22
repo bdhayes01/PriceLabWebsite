@@ -138,12 +138,11 @@ def make_mutation_cohorts(request):
     global curr_accession, cohorts, dt, cohort_colors, categories, individuals
     dt = "Mutation"
     cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
-    seq = Sequence.objects.filter(Accession__exact=curr_accession)
-    variants = list(seq.values_list('Variants', flat=True))
-    cohorts, cohort_colors, categories = Mutation.make_mutation_cohort(variants, cohort_number, individuals)
+    cohorts, cohort_colors, categories, seq, variants = Mutation.make_mutation_cohort(curr_accession, cohort_number, individuals)
 
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
-                         'cohort_colors': cohort_colors, 'categories': categories})
+                         'cohort_colors': cohort_colors, 'categories': categories,
+                         'sequence': seq, 'variants': variants})
 
 
 def make_mutation_dendrogram(request):  # Must always have 'request' else a 500 error.

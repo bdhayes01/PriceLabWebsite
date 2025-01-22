@@ -14,13 +14,23 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
 import seaborn as sns
 
-def make_mutation_cohort(variants, cohort_number, individuals):
 
-    variants_copy = {}
-    for vari in variants.keys:
-        if vari[0] in individuals:
-            variants_copy[vari] = variants[vari]
-    variants = variants_copy
+def make_mutation_cohort(accession, cohort_number, individuals):
+
+    seq = Sequence.objects.get(Accession__exact=accession)
+    variants = seq.Variants
+    temp_variants = {}
+    for indiv in individuals:
+        if indiv in variants.keys():
+            temp_variants[indiv] = variants[indiv]
+    variants = temp_variants
+    seq = seq.Sequence
+
+    # variants_copy = {}
+    # for vari in variants.keys():
+    #     if vari[0] in individuals:
+    #         variants_copy[vari] = variants[vari]
+    # variants = variants_copy
 
     mlb = MultiLabelBinarizer()
     encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
@@ -37,12 +47,13 @@ def make_mutation_cohort(variants, cohort_number, individuals):
             else:
                 temp_cohorts[coh] = [indiv]
         cohorts = [temp_cohorts[num] for num in sorted(temp_cohorts.keys())]
+        combined_variants = combine_variants(variants, cohorts)
     except:
-        cohorts = None
+        return None
 
     categories = [f"{i}" for i in cohorts]
     colors = generate_random_colors(len(cohorts))
-    return cohorts, colors, categories
+    return cohorts, colors, categories, seq, combined_variants
 
 
 def generate_random_colors(n):
@@ -95,7 +106,6 @@ def make_dendrogram(individuals, curr_accession):
         if indiv in variants.keys():
             temp_variants[indiv] = variants[indiv]
     variants = temp_variants
-    seq = seq.Sequence
 
     plt.clf()
     minfigsize = (8.0, 6.0)
@@ -124,3 +134,8 @@ def make_dendrogram(individuals, curr_accession):
 
     # Return the image as an HTTP response
     return HttpResponse(buffer, content_type='image/png')
+
+def combine_variants(variants, cohorts):
+    combined_variants = {}
+    return combined_variants
+# TODO: Start here
