@@ -1,4 +1,4 @@
-from myapp.models import Metadata
+from myapp.models import Sequence
 from collections import defaultdict
 import matplotlib.pyplot as plt
 from django.http import HttpResponse
@@ -8,6 +8,11 @@ import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
 import random
 import myapp.views as views
+from scipy.spatial.distance import pdist
+from scipy.cluster.hierarchy import linkage, dendrogram
+from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.cluster import KMeans
+import seaborn as sns
 
 def make_mutation_cohort(variants, cohort_number, individuals):
 
@@ -72,6 +77,45 @@ def make_graph_mutation(chalf, cohorts, colors, categories):
     plt.grid(True)
     plt.legend(categories)
     plt.tight_layout()
+
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
+    buffer.seek(0)
+
+    # Return the image as an HTTP response
+    return HttpResponse(buffer, content_type='image/png')
+
+
+def make_dendrogram(individuals, curr_accession):
+    seq = Sequence.objects.get(Accession__exact=curr_accession)
+    variants = seq.Variants
+    temp_variants = {}
+    for indiv in individuals:
+        if indiv in variants.keys():
+            temp_variants[indiv] = variants[indiv]
+    variants = temp_variants
+    seq = seq.Sequence
+
+    plt.clf()
+    minfigsize = (8.0, 6.0)
+
+    figuresize = (len(variants) / 2, len(variants) / 4)
+    selected_figuresize = (
+        max(minfigsize[0], figuresize[0]),  # Select the larger width
+        max(minfigsize[1], figuresize[1])  # Select the larger height
+    )
+    all_items = set(item for sublist in variants.values() for item in sublist)
+    binary_matrix = pd.DataFrame(
+        [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
+        index=list(variants.keys()),
+        columns=list(all_items)
+    )
+    dist_matrix = pdist(binary_matrix.values, metric='jaccard')
+
+    linked = linkage(dist_matrix, method='ward')
+    plt.figure(figsize=selected_figuresize)
+    dendrogram(linked)
 
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')

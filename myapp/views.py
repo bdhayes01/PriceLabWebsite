@@ -6,13 +6,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from .models import Sequence, Metadata, CHalf
 import os, re, json
-from scipy.spatial.distance import pdist
-from scipy.cluster.hierarchy import linkage, dendrogram
+
 import matplotlib.pyplot as plt
 import io
-from sklearn.preprocessing import MultiLabelBinarizer
-from sklearn.cluster import KMeans
-import seaborn as sns
+
 from .Datatypes import Sex, Disease, Drug, Age, BMI, Mutation
 
 # global variants, cohorts, encoded_data, chalf, dt, cohort_colors, categories, individuals
@@ -149,64 +146,10 @@ def make_mutation_cohorts(request):
                          'cohort_colors': cohort_colors, 'categories': categories})
 
 
-
-
 def make_mutation_dendrogram(request):  # Must always have 'request' else a 500 error.
-    global cohorts
-    global variants
-    global encoded_data
-    plt.clf()
-    minfigsize = (8.0, 6.0)
 
-    if cohorts is None:
-        figuresize = (len(variants) / 2, len(variants) / 4)
-        selected_figuresize = (
-            max(minfigsize[0], figuresize[0]),  # Select the larger width
-            max(minfigsize[1], figuresize[1])  # Select the larger height
-        )
-        all_items = set(item for sublist in variants.values() for item in sublist)
-        binary_matrix = pd.DataFrame(
-            [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
-            index=list(variants.keys()),
-            columns=list(all_items)
-        )
-        dist_matrix = pdist(binary_matrix.values, metric='jaccard')
-
-        linked = linkage(dist_matrix, method='ward')
-        plt.figure(figsize=selected_figuresize)
-        dendrogram(linked)
-    else:
-        figuresize = (len(encoded_data.columns) / 4, len(encoded_data) / 1.5)
-        selected_figuresize = (
-            max(minfigsize[0], figuresize[0]),  # Select the larger width
-            max(minfigsize[1], figuresize[1])  # Select the larger height
-        )
-        linked = linkage(encoded_data.drop('Cluster', axis=1), method='ward')
-
-        numeric_columns = sorted([int(col) for col in encoded_data.columns if col != 'Cluster' and col.isdigit()])
-        numeric_columns = [str(col) for col in numeric_columns]
-        encoded_data3 = encoded_data.reindex(numeric_columns, axis=1)
-        g = sns.clustermap(encoded_data3, row_linkage=linked, col_cluster=False,
-                           cmap='Blues', figsize=selected_figuresize, cbar_pos=None)
-        plt.title("Heatmap with Hierarchical clustering dendrogram. Blue represents a variant.")
-        cluster_colors = sns.color_palette("husl", len(cohorts))
-        ax = g.ax_heatmap
-        new_labels = []
-        for label in ax.get_yticklabels():
-            file_name = label.get_text()
-            cluster = encoded_data.loc[file_name, 'Cluster']
-            label.set_color(cluster_colors[cluster])
-            new_labels.append(f"{file_name} ({cluster + 1})")
-        ax.set_yticklabels(new_labels, rotation=0)
-        g.fig.subplots_adjust(left=0, right=0.91, top=1.1, bottom=0.1)
-
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    plt.close()
-    buffer.seek(0)
-
-    # Return the image as an HTTP response
-    return HttpResponse(buffer, content_type='image/png')
+    global individuals, curr_accession
+    return Mutation.make_dendrogram(individuals, curr_accession)
 
 
 def make_c_half_graph(request):

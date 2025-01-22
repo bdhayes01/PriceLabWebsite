@@ -526,18 +526,26 @@ function make_bmi_cohorts(){
 }
 
 function make_mutation_dendrogram(){
-    const img = document.createElement('img');
 
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `make_mutation_dendrogram`, true);
+    xhr.responseType = 'blob';
 
-    img.src = 'https://replace.html'; // Replace with your image URL
-    img.alt = 'Replace';
-    img.width = 150; // Optional: Set the width
-    img.height = 150; // Optional: Set the height
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(xhr.response);
+            img.alt = 'Dendrogram';
 
+            const container = document.getElementById('dynamic-content');
+            container.innerHTML = ''; // Clear previous content
+            container.appendChild(img);
+        } else {
+            console.error('Error fetching dendrogram:', xhr.status);
+        }
+    };
 
-    const container = document.getElementById("dynamic-content");
-    container.appendChild(img);
-
+    xhr.send();
 }
 
 function make_mutation_cohorts(){
