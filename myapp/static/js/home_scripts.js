@@ -3,7 +3,7 @@ let cohorts = {};
 // let cohorts = null;
 let variants = null;
 let cohort_colors = null;
-let cohorts_variants = null;
+// let variants = null;
 let expanded = false;
 let last_cohort_call;
 
@@ -15,7 +15,7 @@ function searchSequence() {
     }
 }
 
-function color_code(container, sequence, cohorts, variations){
+function color_code(container, sequence, cohorts, variations, cohort_colors){
     const toggleButton = document.createElement('button');
     toggleButton.textContent = "Show More";
     const spans = [];
@@ -37,18 +37,18 @@ function color_code(container, sequence, cohorts, variations){
                     top_char_span.style.border = "solid";
                     top_char_span.style.borderColor = "black";
                 } else {
-                    if(parseFloat(varis_amount[1]) * 100 < 99){
-                        top_char_span.style.backgroundImage = `linear-gradient(to bottom right, ${cohorts[cohort]}, white)`;
+                    if(parseInt(varis_amount) < 99){
+                        top_char_span.style.backgroundImage = `linear-gradient(to bottom right, ${cohort_colors[cohort]}, white)`;
                         // top_char_span.style.textShadow = `1px 1px ${curr_cohorts[cohort]}`
                         // top_char_span.style.textDecorationThickness = "4px";
                         // top_char_span.style.textDecorationLine = "underline overline";
                         // top_char_span.style.textDecorationColor = curr_cohorts[cohort];
                     }else{
-                        top_char_span.style.backgroundColor = cohorts[cohort];
+                        top_char_span.style.backgroundColor = cohort_colors[cohort];
                         top_char_span.style.color = "white";
                     }
                 }
-                top_char_span.title += `Cohort ${parseInt(cohort) + 1} has ${Math.round(parseFloat(varis_amount[1]) * 100)}% mutation penetrance at position ${i + 1};\t`;
+                top_char_span.title += `Cohort ${parseInt(cohort) + 1} has ${parseInt(varis_amount)}% mutation penetrance at position ${i + 1};\t`;
             }
         }
         container.appendChild(top_char_span);
@@ -68,9 +68,9 @@ function color_code(container, sequence, cohorts, variations){
     container.appendChild(toggleButton);  // Add button to the container
 }
 
-function createHeatmap(cohorts, cohort_colors, categories, seq, variants) {
+function createHeatmap(cohorts, cohort_colors, categories, sequence, variants) {
     const sequenceContainer = document.createElement('p');
-    color_code(sequenceContainer, seq, cohorts, variants);
+    color_code(sequenceContainer, sequence, cohorts, variants, cohort_colors);
     for (let i = 0; i < cohorts.length; i++) {
         const span = document.createElement('span');
         let cohort_container = document.createElement('div');
@@ -81,72 +81,72 @@ function createHeatmap(cohorts, cohort_colors, categories, seq, variants) {
             individuals.textContent += ',\t' + cohorts[i][j];
         }
         individuals.style.marginRight = '10px';
-        const cohort_button = document.createElement('button');
-        cohort_button.textContent = "Map Variants";
-        cohort_button.onclick = () => map_cohort(i);
+        // const cohort_button = document.createElement('button');
+        // cohort_button.textContent = "Map Variants";
+        // cohort_button.onclick = () => map_cohort(i);
 
-        if (i in cohorts){
-            individuals.style.backgroundColor = cohorts[i];
+        if (i in cohort_colors){
+            individuals.style.backgroundColor = cohort_colors[i];
         }
 
         cohort_container.appendChild(individuals);
-        cohort_container.appendChild(cohort_button);
+        // cohort_container.appendChild(cohort_button);
         cohort_container.style.display = 'flex';
         cohort_container.style.justifyContent = 'flex-start';
 
         cohort_container.style.alignItems = 'center';
 
-        span.innerHTML += "Variations: ";
-        let entered = false;
-        let x = cohorts_variants[i];
-
-
-        for (const position in cohorts_variants[i]){
-            let variant_span = document.createElement('span');
-            variant_span.innerHTML = `${sequence[parseInt(position) - 1]} ${position} ${cohorts_variants[i][position][2]},\t`
-            for(let mut in cohorts_variants[i][position][0]){
-                for(let indiv of cohorts_variants[i][position][0][mut]){
-                    variant_span.title += `${indiv} has mutation ${mut}\n`
-                    entered = true;
-                }
-            }
-             span.appendChild(variant_span);
-        }
-        if(!entered){
-            span.innerHTML += "None."
-        }
-        else{
-            let element = span.lastElementChild;
-            element.innerHTML = element.innerHTML.slice(0, -2);
-        }
-        span.className = 'normal';
+        // span.innerHTML += "Variations: ";
+        // let entered = false;
+        // let x = variants[i];
+        //
+        //
+        // for (const position in variants[i]){
+        //     let variant_span = document.createElement('span');
+        //     variant_span.innerHTML = `${sequence[parseInt(position) - 1]} ${position} ${variants[i][position][2]},\t`
+        //     for(let mut in variants[i][position][0]){
+        //         for(let indiv of variants[i][position][0][mut]){
+        //             variant_span.title += `${indiv} has mutation ${mut}\n`
+        //             entered = true;
+        //         }
+        //     }
+        //      span.appendChild(variant_span);
+        // }
+        // if(!entered){
+        //     span.innerHTML += "None."
+        // }
+        // else{
+        //     let element = span.lastElementChild;
+        //     element.innerHTML = element.innerHTML.slice(0, -2);
+        // }
+        // span.className = 'normal';
         sequenceContainer.appendChild(cohort_container);
         sequenceContainer.appendChild(span);
     }
     return sequenceContainer;
 }
 
-function renderSequenceList() {
-    const json = chalf_json;  // Access from global variable
-    const seqList = document.getElementById('sequence-list');
-
-    if (json.Sequence) {
-        seqList.innerHTML = '';  // Clear previous results
-        sequence = json.Sequence;
-        variants = json.Variants;
-        if(cohorts !== null){
-            // const heatmap = createHeatmap();
-            seqList.appendChild(heatmap);
-        }
-        else if (Object.values(variants).every(dict => Object.keys(dict).length === 0)){
-            let paragraphElement = document.createElement('p');
-            paragraphElement.innerHTML += "No mutations found.";
-            seqList.appendChild(paragraphElement);
-        }
-    } else {
-        seqList.innerHTML = '<li>No results found. Last valid search displayed.</li>';
-    }
-}
+// function renderSequenceList() {
+//     const json = chalf_json;  // Access from global variable
+//     const seqList = document.getElementById('sequence-list');
+//
+//     if (json.Sequence) {
+//         seqList.innerHTML = '';  // Clear previous results
+//         sequence = json.Sequence;
+//         variants = json.Variants;
+//         if(cohorts !== null){
+//             // const heatmap = createHeatmap();
+//             seqList.appendChild(heatmap);
+//         }
+//         else if (Object.values(variants).every(dict => Object.keys(dict).length === 0)){
+//             let paragraphElement = document.createElement('p');
+//             paragraphElement.innerHTML += "No mutations found.";
+//             seqList.appendChild(paragraphElement);
+//         }
+//     } else {
+//         seqList.innerHTML = '<li>No results found. Last valid search displayed.</li>';
+//     }
+// }
 
 function map_cohort(cohort){
     let c = parseInt(cohort);
@@ -160,48 +160,48 @@ function map_cohort(cohort){
     // renderSequenceList();
 }
 
-function make_cohort_variants(){
-    cohorts_variants = {};
-    for (let c in cohorts){
-        let cohort_variants = {};
-        let cohort = cohorts[c];
-        for (let indiv of cohort){
-            for (let position in variants[indiv]){
-                if(cohort_variants[position]){
-
-                    //Adds to the percentage of the cohort with variant in the position
-                    cohort_variants[position][1] = cohort_variants[position][1] + 1/cohort.length;
-
-                    let positional_variants = cohort_variants[position][0];
-                    if(positional_variants[variants[indiv][position]]){
-                        //Appends to the list of individuals with this specific mutation in the cohort.
-                        positional_variants[variants[indiv][position]].push(indiv);
-                    }
-                    else{
-                        // Adds a new variant at this position
-                        positional_variants[variants[indiv][position]] = [indiv];
-                    }
-                }
-                else{
-                    let positional_variants = {};
-                    positional_variants[variants[indiv][position]] = [indiv];
-                    cohort_variants[position] = [positional_variants, 1/cohort.length];
-                }
-                let max_char = "Z";
-                let max_num = -1;
-                for(let mut in cohort_variants[position][0]){
-                    let length_mutations = cohort_variants[position][0][mut].length;
-                    if(length_mutations > max_num){
-                        max_num = length_mutations;
-                        max_char = mut;
-                    }
-                }
-                cohort_variants[position].push(max_char);
-            }
-        }
-        cohorts_variants[c] = cohort_variants;
-    }
-}
+// function make_cohort_variants(){
+//     variants = {};
+//     for (let c in cohorts){
+//         let cohort_variants = {};
+//         let cohort = cohorts[c];
+//         for (let indiv of cohort){
+//             for (let position in variants[indiv]){
+//                 if(cohort_variants[position]){
+//
+//                     //Adds to the percentage of the cohort with variant in the position
+//                     cohort_variants[position][1] = cohort_variants[position][1] + 1/cohort.length;
+//
+//                     let positional_variants = cohort_variants[position][0];
+//                     if(positional_variants[variants[indiv][position]]){
+//                         //Appends to the list of individuals with this specific mutation in the cohort.
+//                         positional_variants[variants[indiv][position]].push(indiv);
+//                     }
+//                     else{
+//                         // Adds a new variant at this position
+//                         positional_variants[variants[indiv][position]] = [indiv];
+//                     }
+//                 }
+//                 else{
+//                     let positional_variants = {};
+//                     positional_variants[variants[indiv][position]] = [indiv];
+//                     cohort_variants[position] = [positional_variants, 1/cohort.length];
+//                 }
+//                 let max_char = "Z";
+//                 let max_num = -1;
+//                 for(let mut in cohort_variants[position][0]){
+//                     let length_mutations = cohort_variants[position][0][mut].length;
+//                     if(length_mutations > max_num){
+//                         max_num = length_mutations;
+//                         max_char = mut;
+//                     }
+//                 }
+//                 cohort_variants[position].push(max_char);
+//             }
+//         }
+//         variants[c] = cohort_variants;
+//     }
+// }
 
 document.addEventListener('DOMContentLoaded', function () {
     const helpButton = document.getElementById('help-button');
@@ -558,7 +558,7 @@ function make_mutation_cohorts(){
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             display_mutation_cohorts(response.cohorts, response.cohort_colors,
-                response.categories, response.seq, response.variants)
+                response.categories, response.sequence, response.variants)
         } else {
             console.error('Error making cohorts:', xhr.status);
         }
@@ -573,7 +573,6 @@ function display_mutation_cohorts(cohorts, cohort_colors, categories, seq, varia
     const heatmap = createHeatmap(cohorts, cohort_colors, categories, seq, variants);
     container.appendChild(heatmap);
     bust_cache();
-    return;
 }
 
 function display_cohorts(categories){
