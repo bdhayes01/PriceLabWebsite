@@ -15,7 +15,7 @@ function searchSequence() {
     }
 }
 
-function color_code(container, sequence, cohorts){
+function color_code(container, sequence, cohorts, variations){
     const toggleButton = document.createElement('button');
     toggleButton.textContent = "Show More";
     const spans = [];
@@ -28,17 +28,17 @@ function color_code(container, sequence, cohorts){
 
         // Loop through cohorts to check for a variant at this position
         for (let cohort in cohorts){
-            let varis_amount = cohorts_variants[cohort][i + 1];
+            let varis_amount = variations[cohort][i + 1];
             if (varis_amount){
                 if (top_char_span.style.backgroundColor !== "" || top_char_span.style.backgroundImage !== ""){
-                    top_char_span.style.backgroundImage = ""
+                    top_char_span.style.backgroundImage = "";
                     top_char_span.style.color = "black";
                     top_char_span.style.backgroundColor = "white";
                     top_char_span.style.border = "solid";
                     top_char_span.style.borderColor = "black";
                 } else {
                     if(parseFloat(varis_amount[1]) * 100 < 99){
-                        top_char_span.style.backgroundImage = `linear-gradient(to bottom right, ${cohorts[cohort]}, white)`
+                        top_char_span.style.backgroundImage = `linear-gradient(to bottom right, ${cohorts[cohort]}, white)`;
                         // top_char_span.style.textShadow = `1px 1px ${curr_cohorts[cohort]}`
                         // top_char_span.style.textDecorationThickness = "4px";
                         // top_char_span.style.textDecorationLine = "underline overline";
@@ -70,7 +70,7 @@ function color_code(container, sequence, cohorts){
 
 function createHeatmap(cohorts, cohort_colors, categories, seq, variants) {
     const sequenceContainer = document.createElement('p');
-    color_code(sequenceContainer, seq);
+    color_code(sequenceContainer, seq, cohorts, variants);
     for (let i = 0; i < cohorts.length; i++) {
         const span = document.createElement('span');
         let cohort_container = document.createElement('div');

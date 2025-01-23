@@ -146,6 +146,6 @@ def combine_variants(variants, cohorts):
                 else:
                     combined_variants[idx][variant] = 1/len(cohort)
         for key in combined_variants[idx].keys():
-            combined_variants[idx][key] = round(combined_variants[idx][key], 2)
+            combined_variants[idx][key] = round(combined_variants[idx][key], 2) * 100
 
     return combined_variants
