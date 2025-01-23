@@ -137,5 +137,15 @@ def make_dendrogram(individuals, curr_accession):
 
 def combine_variants(variants, cohorts):
     combined_variants = {}
+    for idx, cohort in enumerate(cohorts):
+        combined_variants[idx] = {}
+        for indiv in cohort:
+            for variant in variants[indiv].keys():  # This is the index of the mutation
+                if variant in combined_variants[idx]:
+                    combined_variants[idx][variant] = combined_variants[idx][variant] + 1/len(cohort)
+                else:
+                    combined_variants[idx][variant] = 1/len(cohort)
+        for key in combined_variants[idx].keys():
+            combined_variants[idx][key] = round(combined_variants[idx][key], 2)
+
     return combined_variants
-# TODO: Start here
