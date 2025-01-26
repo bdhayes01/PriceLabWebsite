@@ -5,7 +5,7 @@ let variants = null;
 let cohort_colors = null;
 // let variants = null;
 let expanded = false;
-let last_cohort_call;
+let last_cohort_call = () => display_basic_graph();
 
 
 function searchSequence() {
@@ -609,4 +609,11 @@ function reset_filters(){
     xhr.send();
     let element = document.getElementById('curr-filters');
     element.innerHTML = '';
+}
+
+function display_basic_graph(){
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'make_mutation_cohorts/', true);
+    xhr.send();
+    bust_cache();
 }

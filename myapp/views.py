@@ -175,8 +175,10 @@ def make_basic_graph():
     x_values = []
     y_values = []
     errors = []
-    global chalf
+    global chalf, individuals
     for key, value in chalf.items():
+        if key not in individuals:
+            continue
         for k, v in value.items():
             x_values.append(round(float(k)))
             y_values.append(v[0])
@@ -201,16 +203,6 @@ def make_basic_graph():
 
     # Return the image as an HTTP response
     return HttpResponse(buffer, content_type='image/png')
-
-# def make_cohorts2(request):  # TODO: Rename this
-#     global cohorts
-#     cohort_number = int(request.GET.get('cohort_number', 1))  # Default to 1 if not provided
-#     datatype = str(request.GET.get('datatype', None))
-#     dt = datatype
-#     if datatype is None:
-#         return
-#
-#     return
 
 
 def aggregate_data(data):
