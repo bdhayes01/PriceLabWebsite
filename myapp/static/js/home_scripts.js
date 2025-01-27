@@ -482,7 +482,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function bust_cache(){
     const img = document.querySelector("img[alt='CHalf']");
-    img.src = img.src + '?' + new Date().getTime();
+    const baseSrc = img.src.split('?')[0];
+    img.src = baseSrc + '?' + new Date().getTime();
 }
 
 function call_make_cohorts(url){
@@ -550,10 +551,14 @@ function make_mutation_dendrogram(){
     xhr.send();
 }
 
+let mutation_cohort_number = 0;
+
 function make_mutation_cohorts(){
-    const cohortNumber = document.getElementById('mutation_cohort_number').value;
+    if(document.getElementById('mutation_cohort_number')){
+        mutation_cohort_number = document.getElementById('mutation_cohort_number').value;
+    }
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `make_mutation_cohorts/?cohort_number=${cohortNumber}`, true);
+    xhr.open('GET', `make_mutation_cohorts/?cohort_number=${mutation_cohort_number}`, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
