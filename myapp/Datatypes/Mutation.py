@@ -17,7 +17,7 @@ import seaborn as sns
 
 def make_mutation_cohort(accession, cohort_number, individuals):
 
-    seq = Sequence.objects.get(Accession__exact=accession)
+    seq = Sequence.objects.get(Accession__contains=accession)
     variants = seq.Variants
     temp_variants = {}
     for indiv in individuals:
