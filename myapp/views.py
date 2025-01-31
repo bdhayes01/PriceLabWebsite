@@ -116,10 +116,10 @@ def home(request):
     query = request.GET.get('q', '')
     if query:
         global curr_accession
-        c = CHalf.objects.filter(Accession__exact=query).first()
+        c = CHalf.objects.filter(Accession__contains=query).first()
         curr_accession = query
     else:
-        c = CHalf.objects.filter(Accession__exact="P02768|ALBU_HUMAN").first()
+        c = CHalf.objects.filter(Accession__contains="P02768|ALBU_HUMAN").first()
         curr_accession = "P02768|ALBU_HUMAN"
     if c:
         global chalf, individuals
