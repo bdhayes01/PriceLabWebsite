@@ -16,7 +16,6 @@ import seaborn as sns
 
 
 def make_mutation_cohort(accession, cohort_number, individuals):
-
     seq = Sequence.objects.get(Accession__contains=accession)
     variants = seq.Variants
     temp_variants = {}
@@ -25,12 +24,13 @@ def make_mutation_cohort(accession, cohort_number, individuals):
             temp_variants[indiv] = variants[indiv]
     variants = temp_variants
     seq = seq.Sequence
+    if cohort_number < 2:
+        cohorts = [[indiv for indiv in individuals]]
+        categories = [f"{i}" for i in cohorts]
+        colors = generate_random_colors(len(cohorts))
+        combined_variants = combine_variants(variants, cohorts)
+        return cohorts, colors, categories, seq, combined_variants
 
-    # variants_copy = {}
-    # for vari in variants.keys():
-    #     if vari[0] in individuals:
-    #         variants_copy[vari] = variants[vari]
-    # variants = variants_copy
 
     mlb = MultiLabelBinarizer()
     encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
