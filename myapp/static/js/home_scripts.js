@@ -492,6 +492,10 @@ function call_make_cohorts(url){
     xhr.onload = function() {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
+            if(response.message.includes("Error")){
+                alert(response.message + "; try choosing a lower number of cohorts or resetting the filters.");
+                return;
+            }
             cohorts = response.cohorts;
             cohort_colors = response.cohort_colors;
             let categories = response.categories;

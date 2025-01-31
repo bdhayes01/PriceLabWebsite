@@ -254,6 +254,8 @@ def make_drug_cohorts(request):
 def make_age_cohorts(request):
     global cohorts, dt, cohort_colors, categories, individuals
     cohort_number = int(request.GET.get('cohort_number', 1))
+    if cohort_number > len(individuals):
+        return JsonResponse({'message': 'Error: Fewer cohorts than individuals'})
     dt = "age"
     cohorts, cohort_colors, categories = Age.make_age_cohort(cohort_number, individuals)
     return JsonResponse({'message': 'Cohorts created successfully', 'cohorts': cohorts,
