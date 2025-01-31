@@ -31,7 +31,6 @@ def make_mutation_cohort(accession, cohort_number, individuals):
         combined_variants = combine_variants(variants, cohorts)
         return cohorts, colors, categories, seq, combined_variants
 
-
     mlb = MultiLabelBinarizer()
     encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
     kmeans = KMeans(n_clusters=cohort_number,
