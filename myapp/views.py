@@ -52,14 +52,12 @@ def upload_visual_outputs(file):
         if isinstance(variants_str, str):
             varis = variants_str.split('],')
             for i in range(len(varis)):
-                # integer_variants = re.findall(r'\d+', varis[i])
                 split = varis[i].split(',')
                 integer_variants = int(re.findall(r'\d+', split[0])[0])
-                # integer_variants = re.findall(r'\d+', varis[i])[0]
-                peptide_variants = re.findall(r'[a-zA-Z]+', split[0])[0]
+                # peptide_variants = re.findall(r'[a-zA-Z]+', split[0])[0]  # This line is for if you need the actual
+                # mutation peptide
                 effect = float(split[4])
-                # peptide_variants = [str(ch) for ch in peptide_variants]
-                variants[individual][integer_variants] = peptide_variants
+                variants[individual][integer_variants] = effect
         sequence, created = Sequence.objects.get_or_create(
             Accession=row['Accession'],
             defaults={'Variants': variants, 'Sequence': row['Sequence']}

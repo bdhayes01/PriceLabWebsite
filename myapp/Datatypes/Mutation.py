@@ -99,7 +99,8 @@ def make_graph_mutation(chalf, cohorts, colors, categories):
 
 
 def make_dendrogram(individuals, curr_accession):
-    seq = Sequence.objects.get(Accession__exact=curr_accession)
+    # TODO: Change the way the dendrogram is made
+    seq = Sequence.objects.get(Accession__contains=curr_accession)
     variants = seq.Variants
     temp_variants = {}
     for indiv in individuals:
