@@ -56,7 +56,12 @@ def upload_visual_outputs(file):
                 integer_variants = int(re.findall(r'\d+', split[0])[0])
                 # peptide_variants = re.findall(r'[a-zA-Z]+', split[0])[0]  # This line is for if you need the actual
                 # mutation peptide
-                effect = float(split[4])
+                try:
+                    effect = float(split[4])
+                except ValueError:
+                    effect = float(split[-3])
+                if math.isnan(effect):
+                    effect = 0.0
                 variants[individual][integer_variants] = effect
         sequence, created = Sequence.objects.get_or_create(
             Accession=row['Accession'],
