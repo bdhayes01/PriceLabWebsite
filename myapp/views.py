@@ -56,6 +56,8 @@ def upload_visual_outputs(file):
                 integer_variants = int(re.findall(r'\d+', split[0])[0])
                 # peptide_variants = re.findall(r'[a-zA-Z]+', split[0])[0]  # This line is for if you need the actual
                 # mutation peptide
+
+                # TODO: Find a better way to pull out the effects!
                 try:
                     effect = float(split[4])
                 except ValueError:

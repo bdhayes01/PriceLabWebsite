@@ -32,9 +32,11 @@ def make_mutation_cohort(accession, cohort_number, individuals):
         return cohorts, colors, categories, seq, combined_variants
 
     mlb = MultiLabelBinarizer()
-    encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
+    encoded_data = pd.DataFrame.from_dict(variants, orient='index').fillna(0)
+
+    # encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
     kmeans = KMeans(n_clusters=cohort_number,
-                    random_state=42)  # Can add in random_state=42 to ensure that you will always get the same result.
+                    random_state=0)  # Can add in random_state=0,1,etc. to ensure that you will always get the same result.
     cohorts = None
     try:
         cohorts = kmeans.fit_predict(encoded_data)
@@ -98,7 +100,7 @@ def make_graph_mutation(chalf, cohorts, colors, categories):
 
 
 def make_dendrogram(individuals, curr_accession):
-    # TODO: Change the way the dendrogram is made
+    # TODO: Change the way the dendrogram is made so that individuals are on the x axis
     seq = Sequence.objects.get(Accession__contains=curr_accession)
     variants = seq.Variants
     temp_variants = {}
@@ -116,12 +118,14 @@ def make_dendrogram(individuals, curr_accession):
         max(minfigsize[1], figuresize[1])  # Select the larger height
     )
     all_items = set(item for sublist in variants.values() for item in sublist)
+    encoded_data = pd.DataFrame.from_dict(variants, orient='index').fillna(0)
+
     binary_matrix = pd.DataFrame(
         [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
         index=list(variants.keys()),
         columns=list(all_items)
     )
-    dist_matrix = pdist(binary_matrix.values, metric='jaccard')
+    dist_matrix = pdist(encoded_data.values, metric='jaccard')
 
     linked = linkage(dist_matrix, method='ward')
     plt.figure(figsize=selected_figuresize)
