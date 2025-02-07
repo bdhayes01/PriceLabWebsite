@@ -31,7 +31,7 @@ def make_mutation_cohort(accession, cohort_number, individuals):
         combined_variants = combine_variants(variants, cohorts)
         return cohorts, colors, categories, seq, combined_variants
 
-    mlb = MultiLabelBinarizer()
+    # mlb = MultiLabelBinarizer()
     encoded_data = pd.DataFrame.from_dict(variants, orient='index').fillna(0)
 
     # encoded_data = pd.DataFrame(mlb.fit_transform(variants.values()), index=variants.keys(), columns=mlb.classes_)
@@ -117,14 +117,14 @@ def make_dendrogram(individuals, curr_accession):
         max(minfigsize[0], figuresize[0]),  # Select the larger width
         max(minfigsize[1], figuresize[1])  # Select the larger height
     )
-    all_items = set(item for sublist in variants.values() for item in sublist)
+    # all_items = set(item for sublist in variants.values() for item in sublist)
     encoded_data = pd.DataFrame.from_dict(variants, orient='index').fillna(0)
 
-    binary_matrix = pd.DataFrame(
-        [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
-        index=list(variants.keys()),
-        columns=list(all_items)
-    )
+    # binary_matrix = pd.DataFrame(
+    #     [[1 if item in variants[key] else 0 for item in all_items] for key in variants.keys()],
+    #     index=list(variants.keys()),
+    #     columns=list(all_items)
+    # )
     dist_matrix = pdist(encoded_data.values, metric='jaccard')
 
     linked = linkage(dist_matrix, method='ward')
@@ -138,6 +138,7 @@ def make_dendrogram(individuals, curr_accession):
 
     # Return the image as an HTTP response
     return HttpResponse(buffer, content_type='image/png')
+
 
 def combine_variants(variants, cohorts):
     combined_variants = {}
