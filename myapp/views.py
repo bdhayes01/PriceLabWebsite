@@ -50,21 +50,26 @@ def upload_visual_outputs(file):
         variants_str = row.get('Variants', '{}')
         variants = {individual: {}}
         if isinstance(variants_str, str):
-            varis = variants_str.split('],')
-            for i in range(len(varis)):
-                split = varis[i].split(',')
-                integer_variants = int(re.findall(r'\d+', split[0])[0])
-                # peptide_variants = re.findall(r'[a-zA-Z]+', split[0])[0]  # This line is for if you need the actual
-                # mutation peptide
+            varis = re.split(r'\[|],', variants_str)
+            for idx, vari in enumerate(varis):
+                location = -1
+                effect = -1
+                if idx % 2 == 1:
+                    location = int(re.findall(r'\d+', vari)[0])
+                if idx % 2 == 0:
+                    # peptide_variants = re.findall(r'[a-zA-Z]+', vari)[0]  # This line is for if you need the actual
+                    # mutation peptide
+                    split = [part for part in re.split(r'\(|\)', vari) if part.strip()]
+                    if len(split) == 1:  # Only one of the DNA strands has a mutation
+                        effect = float(re.split(r',', split[0])[4])
+                    else:
+                        strand1e = float(re.split(r',', split[0])[4])
+                        strand2e = float(re.split(r',', split[-1])[4])
+                        effect = max(strand1e, strand2e)
+                    if math.isnan(effect):
+                        effect = 0.0
 
-                # TODO: Find a better way to pull out the effects!
-                try:
-                    effect = float(split[4])
-                except ValueError:
-                    effect = float(split[-3])
-                if math.isnan(effect):
-                    effect = 0.0
-                variants[individual][integer_variants] = effect
+                variants[individual][location] = effect
         sequence, created = Sequence.objects.get_or_create(
             Accession=row['Accession'],
             defaults={'Variants': variants, 'Sequence': row['Sequence']}
