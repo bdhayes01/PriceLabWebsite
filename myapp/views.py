@@ -6,13 +6,13 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from .models import Sequence, Metadata, CHalf
 import os, re, json
+from Bio import SeqIO
 
 import matplotlib.pyplot as plt
 import io
 
 from .Datatypes import Sex, Disease, Drug, Age, BMI, Mutation
 
-# global variants, cohorts, encoded_data, chalf, dt, cohort_colors, categories, individuals
 global cohorts, chalf, dt, cohort_colors, categories, individuals, curr_accession
 cohorts = None
 
@@ -34,6 +34,8 @@ def upload_file(request):
                 upload_c_half(file)
             elif "Masterlist" in file_name:
                 upload_metadata(file)
+            elif "uniprot" in file_name:
+                upload_fasta(file)
             else:
                 message = "No valid file uploaded."
     else:
@@ -119,6 +121,21 @@ def upload_metadata(file):
         meta, create = Metadata.objects.get_or_create(Individual=individual, Disease=disease,
                                                       Age=age, Sex=sex, BMI=bmi, Drug=drug)
     return
+
+
+def upload_fasta(file):
+    fasta_text = io.TextIOWrapper(file.file, encoding="utf-8")
+    for record in SeqIO.parse(fasta_text, "fasta"):
+        acc = record.id.split(r'|')[-1]
+        seq = str(record.seq)
+        sequence, created = Sequence.objects.get_or_create(
+            Accession=acc,
+            defaults={'Variants': {}, 'Sequence': seq}
+        )
+        if not created:
+            sequence.Sequence = seq
+            sequence.save()
+
 
 
 def home(request):

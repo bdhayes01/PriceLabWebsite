@@ -91,7 +91,7 @@
     <!-- Form to upload the Excel file -->
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="file" name="file" accept=".csv" multiple>
+        <input type="file" name="file" accept=".csv, .fasta" multiple>
         <button type="submit">Upload</button>
     </form>
 
