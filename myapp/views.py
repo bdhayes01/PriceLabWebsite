@@ -74,12 +74,11 @@ def upload_visual_outputs(file):
                 variants[individual][location] = effect
         sequence, created = Sequence.objects.get_or_create(
             Accession=row['Accession'],
-            defaults={'Variants': variants, 'Sequence': row['Sequence']}
+            defaults={'Variants': variants}
         )
 
         if not created:
             sequence.Variants.update(variants)
-            sequence.Sequence = row.get('Sequence', '')
             sequence.save()
     return
 
@@ -101,8 +100,8 @@ def upload_c_half(file):
                 chalf.save()
             curr_accession = accession
             c_half_vals = {individual: {}}
-        chalf = row.get('trim_CHalf')
-        error = row.get('trim_CHalf_ConfidenceInterval')
+        chalf = row.get('CHalf')
+        error = row.get('CHalf_ConfidenceInterval')
         position = row.get('Residue Number')
         c_half_vals[individual][position] = (chalf, error)
 
