@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import io
 from django.http import FileResponse
 from django.contrib.staticfiles import finders
+import ast
 
 from .Datatypes import Sex, Disease, Drug, Age, BMI, Mutation
 
@@ -52,28 +53,45 @@ def upload_visual_outputs(file):
     for _, row in df.iterrows():
 
         variants_str = row.get('Variants', '{}')
+        variants_str = variants_str.replace('nan', '0.0')
         variants = {individual: {}}
-        if isinstance(variants_str, str):
-            varis = re.split(r'\[|],', variants_str)
-            for idx, vari in enumerate(varis):
-                location = -1
-                effect = -1
-                if idx % 2 == 1:
-                    location = int(re.findall(r'\d+', vari)[0])
-                if idx % 2 == 0:
-                    # peptide_variants = re.findall(r'[a-zA-Z]+', vari)[0]  # This line is for if you need the actual
-                    # mutation peptide
-                    split = [part for part in re.split(r'\(|\)', vari) if part.strip()]
-                    if len(split) == 1:  # Only one of the DNA strands has a mutation
-                        effect = float(re.split(r',', split[0])[4])
-                    else:
-                        strand1e = float(re.split(r',', split[0])[4])
-                        strand2e = float(re.split(r',', split[-1])[4])
-                        effect = max(strand1e, strand2e)
-                    if math.isnan(effect):
-                        effect = 0.0
+        try:
+            varis = ast.literal_eval(variants_str)
+        except (SyntaxError, ValueError) as e:
+            raise ValueError(f"Invalid input format: {e}")
+        for loc, mutations in varis.items():
+            max_effect = 0.0
+            for mut in mutations:
+                effect = mut[4]
+                if isinstance(effect, float) and not math.isnan(effect):
+                    max_effect = max(max_effect, effect)
+            variants[individual][loc] = effect
 
-                variants[individual][location] = effect
+
+        # if isinstance(variants_str, str):
+        #     varis = re.split(r'\[|],', variants_str)
+        #     for idx, vari in enumerate(varis):
+        #         location = -1
+        #         effect = -1
+        #         if idx % 2 == 0:
+        #             location = int(re.findall(r'\d+', vari)[0])
+        #         if idx % 2 == 1:
+        #             # peptide_variants = re.findall(r'[a-zA-Z]+', vari)[0]  # This line is for if you need the actual
+        #             # mutation peptide
+        #             split = [part for part in re.split(r'\(|\)', vari) if part.strip()]
+        #             if len(split) < 3:  # Only one of the DNA strands has a mutation
+        #                 effect = float(re.split(r',', split[0])[4])
+        #             else:
+        #                 strand1e = float(re.split(r',', split[0])[4])
+        #                 try:
+        #                     strand2e = float(re.split(r',', split[-1])[4])
+        #                 except IndexError:
+        #                     print("here")
+        #                 effect = max(strand1e, strand2e)
+        #             if math.isnan(effect):
+        #                 effect = 0.0
+
+                # variants[individual][location] = effect
         sequence, created = Sequence.objects.get_or_create(
             Accession=row['Accession'],
             defaults={'Variants': variants}
