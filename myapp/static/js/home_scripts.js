@@ -626,3 +626,19 @@ function display_basic_graph(){
     xhr.send();
     bust_cache();
 }
+
+document.getElementById("reset-database-button").addEventListener("click", function() {
+    if (confirm("Are you sure you want to reset the database? This action cannot be undone.")) {
+        fetch("{% url 'reset_database' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message || data.error);
+        })
+        .catch(error => console.error("Error:", error));
+    }
+});

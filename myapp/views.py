@@ -7,9 +7,11 @@ from django.http import HttpResponse, JsonResponse
 from .models import Sequence, Metadata, CHalf
 import os, re, json
 from Bio import SeqIO
-
+from django.core.management import call_command
 import matplotlib.pyplot as plt
 import io
+from django.http import FileResponse
+from django.contrib.staticfiles import finders
 
 from .Datatypes import Sex, Disease, Drug, Age, BMI, Mutation
 
@@ -206,6 +208,12 @@ def make_basic_graph():
     y_values = []
     errors = []
     global chalf, individuals
+    chalf = chalf if 'chalf' in globals() else None
+    if chalf is None:
+        image_path = finders.find('images/CHalf-Logo.ico')  # Finds static file
+        if image_path:
+            return FileResponse(open(image_path, 'rb'), content_type='image/png')
+        return HttpResponse("Image not found", status=404)
     for key, value in chalf.items():
         if key not in individuals:
             continue
@@ -376,3 +384,13 @@ def filter_individuals(indivs):
     individuals = individuals_2
     return
 
+
+def reset_database(request):
+    if request.method == "POST":
+        try:
+            # Clears the database (excluding migrations)
+            call_command('flush', '--no-input')  # Reset database
+            return JsonResponse({'message': 'Database reset successfully!'}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request'}, status=400)

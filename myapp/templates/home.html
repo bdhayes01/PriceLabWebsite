@@ -83,7 +83,7 @@
 
     <br><br><br><br><br><br><br><br><br><br><br><br>
 
-    <h2>Upload Visual Output File(s)</h2>
+    <h2>Upload File(s)</h2>
     <!-- Display success or error message -->
     {% if message %}
         <p style="color: green;">{{ message }}</p>
@@ -95,8 +95,14 @@
         <button type="submit">Upload</button>
     </form>
 
-    <br><br>
-    <p id="response-message"></p>
+    <br>
+    <form method="POST" action="{% url 'reset_database' %}">
+    {% csrf_token %}
+    <button type="submit">Reset database</button>
+    </form>
+
+{#    <br><br>#}
+{#    <p id="response-message"></p>#}
 
 </body>
 </html>
