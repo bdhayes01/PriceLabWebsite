@@ -65,33 +65,7 @@ def upload_visual_outputs(file):
                 effect = mut[4]
                 if isinstance(effect, float) and not math.isnan(effect):
                     max_effect = max(max_effect, effect)
-            variants[individual][loc] = effect
-
-
-        # if isinstance(variants_str, str):
-        #     varis = re.split(r'\[|],', variants_str)
-        #     for idx, vari in enumerate(varis):
-        #         location = -1
-        #         effect = -1
-        #         if idx % 2 == 0:
-        #             location = int(re.findall(r'\d+', vari)[0])
-        #         if idx % 2 == 1:
-        #             # peptide_variants = re.findall(r'[a-zA-Z]+', vari)[0]  # This line is for if you need the actual
-        #             # mutation peptide
-        #             split = [part for part in re.split(r'\(|\)', vari) if part.strip()]
-        #             if len(split) < 3:  # Only one of the DNA strands has a mutation
-        #                 effect = float(re.split(r',', split[0])[4])
-        #             else:
-        #                 strand1e = float(re.split(r',', split[0])[4])
-        #                 try:
-        #                     strand2e = float(re.split(r',', split[-1])[4])
-        #                 except IndexError:
-        #                     print("here")
-        #                 effect = max(strand1e, strand2e)
-        #             if math.isnan(effect):
-        #                 effect = 0.0
-
-                # variants[individual][location] = effect
+            variants[individual][loc] = max_effect
         sequence, created = Sequence.objects.get_or_create(
             Accession=row['Accession'],
             defaults={'Variants': variants}
@@ -121,15 +95,20 @@ def upload_c_half(file):
             curr_accession = accession
             c_half_vals = {individual: {}}
         chalf = row.get('CHalf')
-        error = row.get('CHalf_ConfidenceInterval')
+        # error = row.get('CHalf_ConfidenceInterval') This value can be used but is not right now
         position = row.get('Residue Number')
-        c_half_vals[individual][position] = (chalf, error)
+        c_half_vals[individual][position] = chalf
 
     return
 
 
 def upload_metadata(file):
-    df = pd.read_csv(file)
+    if "xlsx" in str(file).split(".")[1].lower():
+        df = pd.read_excel(file)
+        # df.to_csv("your_file.csv", index=False)
+        # df = pd.read_csv("your_file.csv")
+    else:
+        df = pd.read_csv(file)
     for _, row in df.iterrows():
         individual = row['Condition']
         disease = (True if row['Disease'] == 1 else False)
