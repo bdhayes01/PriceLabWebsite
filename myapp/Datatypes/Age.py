@@ -56,13 +56,12 @@ def make_graph_age(chalf, cohorts, colors, categories):
             cohort_index = next((i for i, cohort in enumerate(cohorts) if indiv in cohort), None)
             color = colors[cohort_index] if cohort_index is not None else "#FFFFFF"
             x_values[color].append(round(float(k)))
-            y_values[color].append(v[0])
-            errors[color].append(v[1])
+            y_values[color].append(v)
     plt.figure(figsize=(10, 6))
     for color in colors:
         if color not in x_values:
             continue
-        sorted_data = sorted(zip(x_values[color], y_values[color], errors[color]),
+        sorted_data = sorted(zip(x_values[color], y_values[color]),
                              key=lambda x: x[0])  # Sort by x_values
         sorted_x, sorted_y, sorted_errors = zip(*views.aggregate_data(sorted_data))  # Use separate variables to unpack sorted data
         plt.errorbar(sorted_x, sorted_y, yerr=sorted_errors, fmt='o', capsize=5, label=f'Data ({color})',

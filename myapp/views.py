@@ -90,7 +90,10 @@ def upload_c_half(file):
                 defaults={'CHalf': c_half_vals}
             )
             if not created:
-                chalf.CHalf.update(c_half_vals)
+                if individual in chalf.CHalf:
+                    chalf.CHalf[individual].update(c_half_vals[individual])
+                else:
+                    chalf.CHalf[individual] = c_half_vals[individual]
                 chalf.save()
             curr_accession = accession
             c_half_vals = {individual: {}}

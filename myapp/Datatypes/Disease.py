@@ -22,13 +22,12 @@ def make_graph_disease(chalf, cohorts, colors, categories):
         for k, v in value.items():
             color = colors[0] if indiv in cohorts[0] else colors[1]
             x_values[color].append(round(float(k)))
-            y_values[color].append(v[0])
-            errors[color].append(v[1])
+            y_values[color].append(v)
     plt.figure(figsize=(10, 6))
     for color in colors:
         if color not in x_values:
             continue
-        sorted_data = sorted(zip(x_values[color], y_values[color], errors[color]),
+        sorted_data = sorted(zip(x_values[color], y_values[color]),
                              key=lambda x: x[0])  # Sort by x_values
         sorted_x, sorted_y, sorted_errors = zip(*views.aggregate_data(sorted_data))  # Use separate variables to unpack sorted data
         plt.errorbar(sorted_x, sorted_y, yerr=sorted_errors, fmt='o', capsize=5, label=f'Data ({color})',
