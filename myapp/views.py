@@ -79,7 +79,7 @@ def upload_visual_outputs(file):
 
 def upload_c_half(file):
     df = pd.read_csv(file)
-    individual = os.path.splitext(file.name)[0].split()[0]
+    individual = os.path.splitext(file.name)[0].split('_')[0]
     curr_accession = df.get('Accession')[0]
     c_half_vals = {individual: {}}
     for _, row in df.iterrows():
@@ -119,7 +119,7 @@ def upload_metadata(file):
         try:
             meta, create = Metadata.objects.get_or_create(Individual=individual, Disease=disease,
                                                       Age=age, Sex=sex, BMI=bmi, Drug=drug)
-        except: # Can take this line out once entire masterlist is finished.
+        except:  # Can take this line out once entire masterlist is finished.
             return
     return
 
@@ -219,10 +219,10 @@ def make_basic_graph():
             continue
         for k, v in value.items():
             x_values.append(round(float(k)))
-            y_values.append(v[0])
-            errors.append(v[1])
+            y_values.append(v)
+            # errors.append(v[1])
 
-    sorted_data = sorted(zip(x_values, y_values, errors), key=lambda x: x[0])  # Sort by x_values
+    sorted_data = sorted(zip(x_values, y_values), key=lambda x: x[0])  # Sort by x_values
     x_values, y_values, errors = zip(*aggregate_data(sorted_data))
 
     plt.figure(figsize=(10, 6))
@@ -245,15 +245,15 @@ def make_basic_graph():
 
 def aggregate_data(data):
     grouped_data = defaultdict(list)
-    for identifier, value, error in data:
-        grouped_data[identifier].append((value, error))
+    for identifier, value in data:
+        grouped_data[identifier].append(value)
 
     aggregated_data = []
     for identifier, entries in grouped_data.items():
-        values = [x[0] for x in entries]
-        errors = [x[1] for x in entries]
-        y = statistics.median(values)
-        err = (0.0 if len(errors) < 2 else statistics.stdev(errors))
+        # values = [x for x in entries]
+        # # errors = [x[1] for x in entries]
+        y = statistics.median(entries)
+        err = (0.0 if len(entries) < 2 else statistics.stdev(entries))
 
         aggregated_data.append((identifier, y, err))
     aggregated_data.sort(key=lambda x: x[0])

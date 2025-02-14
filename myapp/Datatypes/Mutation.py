@@ -72,8 +72,8 @@ def make_graph_mutation(chalf, cohorts, colors, categories):
             cohort_index = next((i for i, cohort in enumerate(cohorts) if indiv in cohort), None)
             color = colors[cohort_index] if cohort_index is not None else "#FFFFFF"
             x_values[color].append(round(float(k)))
-            y_values[color].append(v[0])
-            errors[color].append(v[1])
+            y_values[color].append(v[0]) #TODO: Same as below, make it just v
+            errors[color].append(v[1]) # TODO: Take errors out for each datatype
     plt.figure(figsize=(10, 6))
     for color in colors:
         if color not in x_values:
