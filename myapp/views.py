@@ -110,14 +110,17 @@ def upload_metadata(file):
     else:
         df = pd.read_csv(file)
     for _, row in df.iterrows():
-        individual = row['Condition']
-        disease = (True if row['Disease'] == 1 else False)
+        individual = row['ID'].split('-')[1]
+        disease = row['Amyloidogenic']
         age = int(row['Age'])
-        sex = (True if row['Sex'] == 1 else False)  # 1 represents male
+        sex = (True if row['Sex'] == 'M' else False)  # True represents male
         bmi = float(row['BMI'])
-        drug = (True if row['Drug'] == 1 else False)
-        meta, create = Metadata.objects.get_or_create(Individual=individual, Disease=disease,
+        drug = row['Anticoagulant']
+        try:
+            meta, create = Metadata.objects.get_or_create(Individual=individual, Disease=disease,
                                                       Age=age, Sex=sex, BMI=bmi, Drug=drug)
+        except: # Can take this line out once entire masterlist is finished.
+            return
     return
 
 
