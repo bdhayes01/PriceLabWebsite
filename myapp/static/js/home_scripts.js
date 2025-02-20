@@ -535,6 +535,7 @@ function make_mutation_dendrogram(){
         if (xhr.status === 200) {
             const img = document.createElement('img');
             img.src = URL.createObjectURL(xhr.response);
+            // if(xhr.response === FileResponse){}
             img.alt = 'Dendrogram';
 
             const container = document.getElementById('dynamic-content');

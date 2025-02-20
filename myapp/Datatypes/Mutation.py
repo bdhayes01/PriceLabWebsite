@@ -12,11 +12,13 @@ from scipy.spatial.distance import pdist
 from scipy.cluster.hierarchy import linkage, dendrogram
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.cluster import KMeans
+from django.contrib.staticfiles import finders
+from django.http import FileResponse
 import seaborn as sns
 
 
 def make_mutation_cohort(accession, cohort_number, individuals):
-    seq = Sequence.objects.get(Accession__contains=accession)
+    seq = Sequence.objects.filter(Accession__contains=accession).first()
     variants = seq.Variants
     temp_variants = {}
     for indiv in individuals:
@@ -99,8 +101,16 @@ def make_graph_mutation(chalf, cohorts, colors, categories):
 
 
 def make_dendrogram(individuals, curr_accession):
-    # TODO: Change the way the dendrogram is made so that individuals are on the x axis
-    seq = Sequence.objects.get(Accession__contains=curr_accession)
+    # TODO: Change the way the dendrogram is made so that individuals are on the x axis,
+    #  and also how no mutations are handled.
+    try:
+        seq = Sequence.objects.filter(Accession__contains=curr_accession).first()
+    except Exception:
+        image_path = finders.find('images/CHalf-Logo.ico')  # Finds static file
+        if image_path:
+            return FileResponse(open(image_path, 'rb'), content_type='image/png')
+        return
+
     variants = seq.Variants
     temp_variants = {}
     for indiv in individuals:

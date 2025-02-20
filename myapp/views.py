@@ -130,7 +130,7 @@ def upload_metadata(file):
 def upload_fasta(file):
     fasta_text = io.TextIOWrapper(file.file, encoding="utf-8")
     for record in SeqIO.parse(fasta_text, "fasta"):
-        acc = record.id.split(r'|')[-1]
+        acc = record.id[3:]
         seq = str(record.seq)
         sequence, created = Sequence.objects.get_or_create(
             Accession=acc,
